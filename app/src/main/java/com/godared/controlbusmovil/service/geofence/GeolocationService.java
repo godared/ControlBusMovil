@@ -68,7 +68,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
         Log.d(MainActivity.TAG, "Registering Geofences");
 
         HashMap<String, SimpleGeofence> geofences = SimpleGeofenceStore
-                .getInstance().getSimpleGeofences();
+                .getInstance(getApplication()).getSimpleGeofences();
 
         GeofencingRequest.Builder geofencingRequestBuilder = new GeofencingRequest.Builder();
         for (Map.Entry<String, SimpleGeofence> item : geofences.entrySet()) {
