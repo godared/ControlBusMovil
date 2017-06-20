@@ -1,0 +1,27 @@
+package com.godared.controlbusmovil.service;
+
+import android.content.Context;
+
+import com.godared.controlbusmovil.dao.BaseDatos;
+import com.godared.controlbusmovil.pojo.TarjetaControl;
+import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
+
+import java.util.ArrayList;
+
+/**
+ * Created by Ronald on 04/05/2017.
+ */
+
+public interface ITarjetaService {
+
+    void obtenerTarjetasDetalleRest( int taCoId);
+    ArrayList<TarjetaControl> obtenerTarjetasRest(int buId, String taCoFecha );
+    ArrayList<TarjetaControlDetalle> GetAllTarjetaDetalleBD(int taCoId);
+    ArrayList<TarjetaControlDetalle> GetAllTarjetaDetalleBDByTaCoActivo(int buId, String taCoFecha);
+    void insertarTarjetaBD(BaseDatos baseDatos,  TarjetaControl tarjetaControl);
+    void actualizarTarjetaBD(BaseDatos baseDatos, TarjetaControl tarjetaControl);
+    void insertarTarjetasDetalleBD(BaseDatos baseDatos, ArrayList<TarjetaControlDetalle> tarjetaControlDetalles);
+
+    //ArrayList<TarjetaControlDetalle> getTarjetasDetalle();
+    //ArrayList<TarjetaControl> getTarjetasControl();
+}
