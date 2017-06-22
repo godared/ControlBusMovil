@@ -36,8 +36,8 @@ public class GeofenceReceiver extends IntentService {
                 List<Geofence> triggerList = geoEvent.getTriggeringGeofences();
 
                 for (Geofence geofence : triggerList) {
-                    SimpleGeofence sg = SimpleGeofenceStore.getInstance(getApplication())
-                            .getSimpleGeofences().get(geofence.getRequestId());
+                    SimpleGeofence sg = SimpleGeofenceStore.getInstance()
+                            .getSimpleGeofences(this).get(geofence.getRequestId());
 
                     String transitionName = "";
                     switch (transitionType) {
