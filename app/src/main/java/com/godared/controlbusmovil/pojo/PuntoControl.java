@@ -9,18 +9,20 @@ import java.util.Date;
 public class PuntoControl {
     private int PuCoId;
     private int RuId;
-    private Date PuCoTiempoBus;
+    private String PuCoTiempoBus;
     private String PuCoClase;
     private int  UsId;
-    private Date UsFechaReg;
-
-    public PuntoControl(int puCoId, int ruId, Date puCoTiempoBus, String puCoClase, int usId, Date usFechaReg) {
+    private String UsFechaReg;
+    private String PuCoDescripcion;
+    public PuntoControl(){}
+    public PuntoControl(int puCoId, int ruId, String puCoTiempoBus, String puCoClase, int usId, String usFechaReg, String puCoDescripcion) {
         PuCoId = puCoId;
         RuId = ruId;
         PuCoTiempoBus = puCoTiempoBus;
         PuCoClase = puCoClase;
         UsId = usId;
         UsFechaReg = usFechaReg;
+        PuCoDescripcion=puCoDescripcion;
     }
 
     public int getPuCoId() {
@@ -39,11 +41,11 @@ public class PuntoControl {
         RuId = ruId;
     }
 
-    public Date getPuCoTiempoBus() {
+    public String getPuCoTiempoBus() {
         return PuCoTiempoBus;
     }
 
-    public void setPuCoTiempoBus(Date puCoTiempoBus) {
+    public void setPuCoTiempoBus(String puCoTiempoBus) {
         PuCoTiempoBus = puCoTiempoBus;
     }
 
@@ -63,11 +65,19 @@ public class PuntoControl {
         UsId = usId;
     }
 
-    public Date getUsFechaReg() {
+    public String getUsFechaReg() {
         return UsFechaReg;
     }
 
-    public void setUsFechaReg(Date usFechaReg) {
+    public void setUsFechaReg(String usFechaReg) {
         UsFechaReg = usFechaReg;
+    }
+
+    public String getPuCoDescripcion() {
+        return PuCoDescripcion;
+    }
+
+    public void setPuCoDescripcion(String puCoDescripcion) {
+        PuCoDescripcion = puCoDescripcion;
     }
 }

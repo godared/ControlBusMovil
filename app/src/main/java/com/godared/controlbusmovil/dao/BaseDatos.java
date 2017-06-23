@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.godared.controlbusmovil.pojo.PuntoControl;
 import com.godared.controlbusmovil.pojo.TarjetaBitacoraMovil;
 import com.godared.controlbusmovil.pojo.TarjetaControl;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
@@ -30,6 +31,7 @@ public class BaseDatos extends SQLiteOpenHelper{
     }
     @Override
     public void onCreate(SQLiteDatabase db) {
+        //Tarjeta de Control
         String queryCrearTablaTarjetaControl="CREATE TABLE TarjetaControl(TaCoId INTEGER PRIMARY KEY,"+
                 "PuCoId INTEGER, RuId INTEGER, BuId INTEGER, TaCoFecha TEXT, TaCoHoraSalida TEXT,"+
                 "TaCoCuota REAL, UsId INTEGER, UsFechaReg TEXT) ";
@@ -37,17 +39,31 @@ public class BaseDatos extends SQLiteOpenHelper{
                 "TaCoId INTEGER, PuCoDeId INTEGER, TaCoDeFecha TEXT, TaCoDeHora TEXT,"+
                 "TaCoDeLatitud REAL,TaCoDeLongitud REAL,TaCoDeTiempo TEXT,TaCoDeDescripcion TEXT,"+
                 "UsId INTEGER, UsFechaReg TEXT, FOREIGN KEY(TaCoId) REFERENCES TarjetaControl(TaCoId)) ";
-        String queryCrearTablaTarjetaBitacoraMovil="CREATE TABLE TarjetaBitacoraMovil(TaCoId INTEGER,"+
+
+                //Punto de Control
+        String queryCrearTablaPuntoControl="CREATE TABLE PuntoControl(PuCoId INTEGER PRIMARY KEY,"+
+                "RuId INTEGER, PuCoTiempoBus TEXT, PuCoClase TEXT,"+
+                "UsId INTEGER, UsFechaReg TEXT,PuCoDescripcion TEXT) ";
+        String queryCrearTablaPuntoControlDetalle="CREATE TABLE PuntoControlDetalle(PuCoDeId INTEGER,"+
+                "PuCoId INTEGER, PuCoDeLatitud REAL, PuCoDeLongitud REAL, PuCoDeDescripcion TEXT,"+
+                "PuCoDeHora TEXT,UsId INTEGER, UsFechaReg TEXT,"+
+                "PuCoDeOrden INTEGER FOREIGN KEY(PuCoId) REFERENCES PuntoControl(PuCoId)) ";
+
+        String queryCrearTablaTarjetaBitacoraMovil="CREATE TABLE TarjetaBit,acoraMovil(TaCoId INTEGER,"+
                 "TaBiMoRemotoId INTEGER, TaBiMoEnviado INTEGER, TaBiMoActivo integer, TaBiMoFinalDetalle INTEGER) ";
 
         db.execSQL(queryCrearTablaTarjetaControl);
         db.execSQL(queryCrearTablaTarjetaControlDetalle);
+        db.execSQL(queryCrearTablaPuntoControl);
+        db.execSQL(queryCrearTablaPuntoControlDetalle);
         db.execSQL(queryCrearTablaTarjetaBitacoraMovil);
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXIST TarjetaControl");
         db.execSQL("DROP TABLE IF EXIST TarjetaControlDetalle");
+        db.execSQL("DROP TABLE IF EXIST PuntoControl");
+        db.execSQL("DROP TABLE IF EXIST PuntoControlDetalle");
         db.execSQL("DROP TABLE IF EXIST TarjetaBitacoraMovil");
         onCreate(db);
     }
@@ -187,6 +203,26 @@ public class BaseDatos extends SQLiteOpenHelper{
         db.update("TarjetaControlDetalle",contentValues,"TaCoDeId="+taCoDeId,null);
         db.close();
     }
+    //PuntoControl
+    public PuntoControl ObtenerPuntoControl(int puCoId){
+        // ArrayList<TarjetaControl> tarjetas=new ArrayList<>();
+        PuntoControl puntoActual=new PuntoControl();
+        String query="SELECT * FROM PuntoControl where PuCoId="+puCoId;
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor registros=db.rawQuery(query,null);
+        while(registros.moveToNext()){
+            puntoActual.setPuCoId(registros.getInt(0));
+            puntoActual.setRuId(registros.getInt(1));
+            puntoActual.setPuCoTiempoBus(registros.getString(2));
+            puntoActual.setPuCoClase(registros.getString(3));
+            puntoActual.setUsId(registros.getInt(4));
+            puntoActual.setUsFechaReg(registros.getString(5));
+            puntoActual.setPuCoDescripcion(registros.getString(6));
+        }
+        db.close();
+        return puntoActual;
+    }
+
     ///TarjetaBitacoraMovil
     public void insertarTarjetaBitacoraMovil(ContentValues contentValues){
         SQLiteDatabase db=this.getWritableDatabase();

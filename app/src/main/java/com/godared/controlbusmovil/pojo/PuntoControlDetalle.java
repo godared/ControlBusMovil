@@ -12,13 +12,13 @@ public class PuntoControlDetalle {
     private double PuCoDeLatitud;
     private double PuCoDeLongitud;
     private String PuCoDeDescripcion;
-    private Date PuCoDeHora;
+    private String PuCoDeHora;
     private int UsId;
-    private Date UsFechaReg;
+    private String UsFechaReg;
     private int PuCoDeOrden;
 
     public PuntoControlDetalle(int puCoDeId, int puCoId, double puCoDeLatitud, double puCoDeLongitud,
-                               String puCoDeDescripcion, Date puCoDeHora, int usId, Date usFechaReg,
+                               String puCoDeDescripcion, String puCoDeHora, int usId, String usFechaReg,
                                int puCoDeOrden) {
         PuCoDeId = puCoDeId;
         PuCoId = puCoId;
@@ -71,11 +71,11 @@ public class PuntoControlDetalle {
         PuCoDeDescripcion = puCoDeDescripcion;
     }
 
-    public Date getPuCoDeHora() {
+    public String getPuCoDeHora() {
         return PuCoDeHora;
     }
 
-    public void setPuCoDeHora(Date puCoDeHora) {
+    public void setPuCoDeHora(String puCoDeHora) {
         PuCoDeHora = puCoDeHora;
     }
 
@@ -87,11 +87,11 @@ public class PuntoControlDetalle {
         UsId = usId;
     }
 
-    public Date getUsFechaReg() {
+    public String getUsFechaReg() {
         return UsFechaReg;
     }
 
-    public void setUsFechaReg(Date usFechaReg) {
+    public void setUsFechaReg(String usFechaReg) {
         UsFechaReg = usFechaReg;
     }
 

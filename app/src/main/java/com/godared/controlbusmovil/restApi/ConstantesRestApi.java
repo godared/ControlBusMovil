@@ -8,8 +8,8 @@ public final class ConstantesRestApi {
     public static final String ROOT_URL="http://controlbus-ronaldmam.rhcloud.com";
     //http://localhost:8089/controlbus/rest/tarjetacontrol/getalltarjetacontrolbybuidfecha?buId=1&taCoFecha=26-12-2016
     public static final String URL_TARJETA_CONTROL="/rest/tarjetacontrol/getalltarjetacontrolbybuidfecha";
-    public static final String URL_TARJETA_CONTROL_DETALLE="/rest/tarjetacontroldetalle/tacoid/1";
-    public static final String URL_PUNTO_CONTROL="puntocontrol/";
-    public static final String URL_PUNTO_CONTROL_DETALLE="puntocontroldetalle/";
+    public static final String URL_TARJETA_CONTROL_DETALLE="/rest/tarjetacontroldetalle/tacoid/";
+    public static final String URL_PUNTO_CONTROL="/rest/puntocontrol/";
+    public static final String URL_PUNTO_CONTROL_DETALLE="/rest/puntocontroldetalle/pucoid/";
 
 }
