@@ -3,8 +3,13 @@ package com.godared.controlbusmovil.service.geofence;
 import android.content.Context;
 import android.text.format.DateUtils;
 
+import com.godared.controlbusmovil.pojo.PuntoControl;
+import com.godared.controlbusmovil.pojo.PuntoControlDetalle;
+import com.godared.controlbusmovil.pojo.TarjetaControl;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
+import com.godared.controlbusmovil.service.IPuntoControlService;
 import com.godared.controlbusmovil.service.ITarjetaService;
+import com.godared.controlbusmovil.service.PuntoControlService;
 import com.godared.controlbusmovil.service.TarjetaService;
 import com.google.android.gms.location.Geofence;
 
@@ -38,9 +43,20 @@ public class SimpleGeofenceStore {
 
     public HashMap<String, SimpleGeofence> getSimpleGeofences(Context context) {
         ArrayList<TarjetaControlDetalle> tarjetasDetalle;
+        ArrayList<PuntoControlDetalle> puntoControlDetalles;
+        TarjetaControl tarjetaControl;
         ITarjetaService tarjetaService=new TarjetaService(context);
+        IPuntoControlService puntoControlService=new PuntoControlService(context);
         tarjetasDetalle =tarjetaService.GetAllTarjetaDetalleBDByTaCoActivo(1,"31-03-2017");
-
+        tarjetaControl=tarjetaService.GetTarjetaControlBD(tarjetasDetalle.get(0).getTaCoId());
+        puntoControlDetalles=puntoControlService.GetAllPuntoControlDetalleBD(tarjetaControl.getPuCoId());
+        for(PuntoControlDetalle puntoControlDetalle: puntoControlDetalles){
+            geofences.put(puntoControlDetalle.getPuCoDeDescripcion(), new SimpleGeofence(puntoControlDetalle.getPuCoDeDescripcion(), puntoControlDetalle.getPuCoDeLatitud(), puntoControlDetalle.getPuCoDeLongitud(),
+                    100, GEOFENCE_EXPIRATION_IN_MILLISECONDS,
+                    Geofence.GEOFENCE_TRANSITION_ENTER
+                            | Geofence.GEOFENCE_TRANSITION_DWELL
+                            | Geofence.GEOFENCE_TRANSITION_EXIT));
+        }
         return this.geofences;
     }
 }

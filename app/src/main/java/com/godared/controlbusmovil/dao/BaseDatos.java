@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.godared.controlbusmovil.pojo.PuntoControl;
+import com.godared.controlbusmovil.pojo.PuntoControlDetalle;
 import com.godared.controlbusmovil.pojo.TarjetaBitacoraMovil;
 import com.godared.controlbusmovil.pojo.TarjetaControl;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
@@ -47,9 +48,9 @@ public class BaseDatos extends SQLiteOpenHelper{
         String queryCrearTablaPuntoControlDetalle="CREATE TABLE PuntoControlDetalle(PuCoDeId INTEGER,"+
                 "PuCoId INTEGER, PuCoDeLatitud REAL, PuCoDeLongitud REAL, PuCoDeDescripcion TEXT,"+
                 "PuCoDeHora TEXT,UsId INTEGER, UsFechaReg TEXT,"+
-                "PuCoDeOrden INTEGER FOREIGN KEY(PuCoId) REFERENCES PuntoControl(PuCoId)) ";
+                "PuCoDeOrden INTEGER, FOREIGN KEY(PuCoId) REFERENCES PuntoControl(PuCoId)) ";
 
-        String queryCrearTablaTarjetaBitacoraMovil="CREATE TABLE TarjetaBit,acoraMovil(TaCoId INTEGER,"+
+        String queryCrearTablaTarjetaBitacoraMovil="CREATE TABLE TarjetaBitacoraMovil(TaCoId INTEGER,"+
                 "TaBiMoRemotoId INTEGER, TaBiMoEnviado INTEGER, TaBiMoActivo integer, TaBiMoFinalDetalle INTEGER) ";
 
         db.execSQL(queryCrearTablaTarjetaControl);
@@ -222,7 +223,57 @@ public class BaseDatos extends SQLiteOpenHelper{
         db.close();
         return puntoActual;
     }
-
+    public void InsertarPuntoControl(ContentValues contentValues){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.insert("PuntoControl",null,contentValues);
+        db.close();
+    }
+    public void ActualizarPuntoControl(ContentValues contentValues,int puCoId){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.update("PuntoControl",contentValues,"PuCoId="+puCoId,null);
+        db.close();
+    }
+    public void EliminarPuntoControl(int puCoId){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.delete("TarjetaControl","puCoId="+puCoId, null);
+        db.close();
+    }
+    public ArrayList<PuntoControlDetalle> ObtenerPuntoControlDetalle(int puCoId){
+        ArrayList<PuntoControlDetalle> puntosDetalle=new ArrayList<>();
+        String query="SELECT * FROM PuntoControlDetalle where PuCoId=?";
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor registros=db.rawQuery(query,new String []{String.valueOf(puCoId)});//
+        while(registros.moveToNext()){
+            PuntoControlDetalle puntoDetalleActual=new PuntoControlDetalle();
+            puntoDetalleActual.setPuCoDeId(registros.getInt(0));
+            puntoDetalleActual.setPuCoId(registros.getInt(1));
+            puntoDetalleActual.setPuCoDeLatitud(registros.getDouble(2));
+            puntoDetalleActual.setPuCoDeLongitud(registros.getDouble(3));//formatted2
+            puntoDetalleActual.setPuCoDeDescripcion(registros.getString(4));
+            puntoDetalleActual.setPuCoDeHora(registros.getString(5));
+            puntoDetalleActual.setUsId(registros.getInt(6));
+            puntoDetalleActual.setUsFechaReg(registros.getString(7));
+            puntoDetalleActual.setPuCoDeOrden(registros.getInt(8));
+            puntosDetalle.add(puntoDetalleActual);
+        }
+        db.close();
+        return puntosDetalle;
+    }
+    public void InsertarPuntoControlDetalle(ContentValues contentValues){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.insert("PuntoControlDetalle",null,contentValues);
+        db.close();
+    }
+    public void EliminarPuntoControlDetalle(int puCoDeId){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.delete("PuntoControlDetalle","PuCoDeId="+puCoDeId, null);
+        db.close();
+    }
+    public void EliminarPuntoControlDetalleByPuCo(int puCoId){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.delete("PuntoControlDetalle","PuCoId="+puCoId, null);
+        db.close();
+    }
     ///TarjetaBitacoraMovil
     public void insertarTarjetaBitacoraMovil(ContentValues contentValues){
         SQLiteDatabase db=this.getWritableDatabase();

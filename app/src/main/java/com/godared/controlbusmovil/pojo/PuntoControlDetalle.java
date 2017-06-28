@@ -16,7 +16,7 @@ public class PuntoControlDetalle {
     private int UsId;
     private String UsFechaReg;
     private int PuCoDeOrden;
-
+    public PuntoControlDetalle(){};
     public PuntoControlDetalle(int puCoDeId, int puCoId, double puCoDeLatitud, double puCoDeLongitud,
                                String puCoDeDescripcion, String puCoDeHora, int usId, String usFechaReg,
                                int puCoDeOrden) {

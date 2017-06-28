@@ -31,6 +31,7 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
     BaseDatos db;
     private  ArrayList<TarjetaControl> tarjetasControl;
     private  ArrayList<TarjetaControlDetalle> tarjetasDetalle;
+    PuntoControlService puntoControlService;
 /*
     public ArrayList<TarjetaControlDetalle> getTarjetasDetalle() {
         return tarjetasDetalle;
@@ -47,6 +48,7 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
         this.context=context;
         //obtenerTarjetasDetalleRest(1);
         db=new BaseDatos(context);
+        puntoControlService=new PuntoControlService(context);
     }
     public void obtenerTarjetasDetalleRest(int taCoId){
 
@@ -92,7 +94,7 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
                     if (tarjetaControl2.getTaCoId() <1) {
                         insertarTarjetaBD(db,tarjetaControl);
                         insertarTarjetaBitacoraMovilBD(db,tarjetaControl);
-
+                        puntoControlService.ObtenerPuntoControlRest(tarjetaControl.getPuCoId());
                         obtenerTarjetasDetalleRest(tarjetaControl.getTaCoId());
                     }else {
                         actualizarTarjetaBD(db,tarjetaControl);
@@ -136,6 +138,9 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
 
 
         return tarjetasControl;
+    }
+    public TarjetaControl GetTarjetaControlBD(int taCoId){
+        return db.ObtenerTarjeta(taCoId);
     }
     public ArrayList<TarjetaControlDetalle> GetAllTarjetaDetalleBD(int taCoId){
 
