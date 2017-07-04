@@ -27,7 +27,7 @@ public interface IEndpointApi {
     Call<List<TarjetaControlDetalle>> getTarjetaControlDetalle(@Path("taCoId") int taCoId);//
 
     @GET(ConstantesRestApi.URL_PUNTO_CONTROL+"{puCoId}")
-    Call<List<PuntoControl>> getPuntoControl(@Path("puCoId") int puCoId);
+    Call<PuntoControl> getPuntoControl(@Path("puCoId") int puCoId);
 
     @GET(ConstantesRestApi.URL_PUNTO_CONTROL_DETALLE+"{puCoId}")
     Call<List<PuntoControlDetalle>> getPuntoControlDetalle(@Path("puCoId") int puCoId);//

@@ -33,26 +33,26 @@ public class PuntoControlService implements IPuntoControlService {
     public ArrayList<PuntoControl> ObtenerPuntoControlRest(int puCoId) {
         RestApiAdapter restApiAdapter = new RestApiAdapter();
         IEndpointApi endpointApi = restApiAdapter.establecerConexionRestApi();
-        Call<List<PuntoControl>> puntoControlCall = endpointApi.getPuntoControl(puCoId);
-        puntoControlCall.enqueue(new Callback<List<PuntoControl>>() {
+        Call<PuntoControl> puntoControlCall = endpointApi.getPuntoControl(puCoId);
+        puntoControlCall.enqueue(new Callback<PuntoControl>() {
 
             @Override
-            public void onResponse(Call<List<PuntoControl>> call, Response<List<PuntoControl>> response) {
-                ArrayList<PuntoControl> _puntoControl;
-                _puntoControl=(ArrayList<PuntoControl>) response.body();
+            public void onResponse(Call<PuntoControl> call, Response<PuntoControl> response) {
+                PuntoControl _puntoControl;
+                _puntoControl=(PuntoControl) response.body();
                 PuntoControl _puntoControl2 = null;
                 //puntoControl2=_tarjetaControl.get(0);
-                _puntoControl2=db.ObtenerPuntoControl(_puntoControl.get(0).getPuCoId());
-                if(_puntoControl2.getPuCoId()>1){
-                    InsertarPuntoControlBD(db,_puntoControl.get(0));
-                    ObtenerPuntosControlDetalleRest(_puntoControl.get(0).getPuCoId());
+                _puntoControl2=db.ObtenerPuntoControl(_puntoControl.getPuCoId());
+                if(_puntoControl2.getPuCoId()<1){
+                    InsertarPuntoControlBD(db,_puntoControl);
+                    ObtenerPuntosControlDetalleRest(_puntoControl.getPuCoId());
                 }else{
-                    ActualizarPuntoControlBD(db,_puntoControl.get(0));
+                    ActualizarPuntoControlBD(db,_puntoControl);
                 }
             }
 
             @Override
-            public void onFailure(Call<List<PuntoControl>> call, Throwable t) {
+            public void onFailure(Call<PuntoControl> call, Throwable t) {
                 Log.e("Fallo la conexion", t.toString());
             }
         });

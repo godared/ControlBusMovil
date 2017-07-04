@@ -94,7 +94,7 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
                     if (tarjetaControl2.getTaCoId() <1) {
                         insertarTarjetaBD(db,tarjetaControl);
                         insertarTarjetaBitacoraMovilBD(db,tarjetaControl);
-                        puntoControlService.ObtenerPuntoControlRest(tarjetaControl.getPuCoId());
+                       puntoControlService.ObtenerPuntoControlRest(tarjetaControl.getPuCoId());
                         obtenerTarjetasDetalleRest(tarjetaControl.getTaCoId());
                     }else {
                         actualizarTarjetaBD(db,tarjetaControl);

@@ -33,7 +33,7 @@ public class SimpleGeofenceStore {
     public SimpleGeofenceStore() {
 
 
-        geofences.put("Cuarto", new SimpleGeofence("Cuarto", -18.001907, -70.251293,
+        geofences.put("Cuarto", new SimpleGeofence(10000, -18.001907, -70.251293,
                 100, GEOFENCE_EXPIRATION_IN_MILLISECONDS,
                 Geofence.GEOFENCE_TRANSITION_ENTER
                         | Geofence.GEOFENCE_TRANSITION_DWELL
@@ -48,14 +48,16 @@ public class SimpleGeofenceStore {
         ITarjetaService tarjetaService=new TarjetaService(context);
         IPuntoControlService puntoControlService=new PuntoControlService(context);
         tarjetasDetalle =tarjetaService.GetAllTarjetaDetalleBDByTaCoActivo(1,"31-03-2017");
-        tarjetaControl=tarjetaService.GetTarjetaControlBD(tarjetasDetalle.get(0).getTaCoId());
-        puntoControlDetalles=puntoControlService.GetAllPuntoControlDetalleBD(tarjetaControl.getPuCoId());
-        for(PuntoControlDetalle puntoControlDetalle: puntoControlDetalles){
-            geofences.put(puntoControlDetalle.getPuCoDeDescripcion(), new SimpleGeofence(puntoControlDetalle.getPuCoDeDescripcion(), puntoControlDetalle.getPuCoDeLatitud(), puntoControlDetalle.getPuCoDeLongitud(),
-                    100, GEOFENCE_EXPIRATION_IN_MILLISECONDS,
-                    Geofence.GEOFENCE_TRANSITION_ENTER
-                            | Geofence.GEOFENCE_TRANSITION_DWELL
-                            | Geofence.GEOFENCE_TRANSITION_EXIT));
+        if (tarjetasDetalle.size()>0) {
+            tarjetaControl = tarjetaService.GetTarjetaControlBD(tarjetasDetalle.get(0).getTaCoId());
+            puntoControlDetalles = puntoControlService.GetAllPuntoControlDetalleBD(tarjetaControl.getPuCoId());
+            for (PuntoControlDetalle puntoControlDetalle : puntoControlDetalles) {
+                geofences.put(puntoControlDetalle.getPuCoDeDescripcion(), new SimpleGeofence(puntoControlDetalle.getPuCoDeId(), puntoControlDetalle.getPuCoDeLatitud(), puntoControlDetalle.getPuCoDeLongitud(),
+                        100, GEOFENCE_EXPIRATION_IN_MILLISECONDS,
+                        Geofence.GEOFENCE_TRANSITION_ENTER
+                                | Geofence.GEOFENCE_TRANSITION_DWELL
+                                | Geofence.GEOFENCE_TRANSITION_EXIT));
+            }
         }
         return this.geofences;
     }

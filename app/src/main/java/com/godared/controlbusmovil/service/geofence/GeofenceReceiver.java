@@ -6,6 +6,8 @@ import android.text.format.DateFormat;
 import android.util.Log;
 
 import com.godared.controlbusmovil.MainActivity;
+import com.godared.controlbusmovil.service.ITarjetaService;
+import com.godared.controlbusmovil.service.TarjetaService;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
@@ -15,7 +17,7 @@ import java.util.List;
 public class GeofenceReceiver extends IntentService {
 
     public static final int NOTIFICATION_ID = 1;
-
+    ITarjetaService tarjetaService;
     public GeofenceReceiver() {
         super("GeofenceReceiver");
     }
@@ -60,6 +62,7 @@ public class GeofenceReceiver extends IntentService {
                             getApplicationContext());
                     eds.create(transitionName, date, geofence.getRequestId());
                     eds.close();*/
+                    tarjetaService=new TarjetaService(getApplicationContext());
 
                     GeofenceNotification geofenceNotification = new GeofenceNotification(
                             this);
