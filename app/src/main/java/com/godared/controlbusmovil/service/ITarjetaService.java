@@ -19,6 +19,7 @@ public interface ITarjetaService {
     ArrayList<TarjetaControlDetalle> GetAllTarjetaDetalleBD(int taCoId);
     TarjetaControl GetTarjetaControlBD(int taCoId);
     ArrayList<TarjetaControlDetalle> GetAllTarjetaDetalleBDByTaCoActivo(int buId, String taCoFecha);
+    TarjetaControlDetalle GetTarjetaDetalleByPuCoDe(int puCoDeId);
     void insertarTarjetaBD(BaseDatos baseDatos,  TarjetaControl tarjetaControl);
     void actualizarTarjetaBD(BaseDatos baseDatos, TarjetaControl tarjetaControl);
     void insertarTarjetasDetalleBD(BaseDatos baseDatos, ArrayList<TarjetaControlDetalle> tarjetaControlDetalles);

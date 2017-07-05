@@ -56,7 +56,9 @@ public class GeofenceReceiver extends IntentService {
                             transitionName = "exit";
                             break;
                     }
-                    String date = DateFormat.format("yyyy-MM-dd hh:mm:ss",
+                    String date = DateFormat.format("dd-MM-yyyy",
+                            new Date()).toString();
+                    String hora = DateFormat.format("hh:mm:ss",
                             new Date()).toString();
                     ///Guardar en la DB
                     /*EventDataSource eds = new EventDataSource(
@@ -64,10 +66,13 @@ public class GeofenceReceiver extends IntentService {
                     eds.create(transitionName, date, geofence.getRequestId());
                     eds.close();*/
                     tarjetaService=new TarjetaService(getApplicationContext());
-                    TarjetaControlDetalle tarjetaControlDetalle=new TarjetaControlDetalle();
-
+                    TarjetaControlDetalle tarjetaControlDetalle;
+                    tarjetaControlDetalle=tarjetaService.GetTarjetaDetalleByPuCoDe(sg.getId());
                     tarjetaControlDetalle.setTaCoDeId(sg.getId());
-
+                    tarjetaControlDetalle.setTaCoDeFecha(date);
+                    tarjetaControlDetalle.setTaCoDeLatitud(sg.getLatitude());
+                    tarjetaControlDetalle.setTaCoDeLongitud(sg.getLongitude());
+                    tarjetaControlDetalle.setTaCoDeTiempo(hora);
                     tarjetaService.actualizarTarjetaDetalleBD(tarjetaControlDetalle);
                     GeofenceNotification geofenceNotification = new GeofenceNotification(
                             this);

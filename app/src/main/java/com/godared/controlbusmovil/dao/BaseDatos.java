@@ -175,10 +175,17 @@ public class BaseDatos extends SQLiteOpenHelper{
         SQLiteDatabase db=this.getWritableDatabase();
         Cursor registros=db.rawQuery(query,null);
         while(registros.moveToNext()){
-            tarjetaDetalleActual.setTaCoId(registros.getInt(0));
-            //tarjetaDetalleActual.setPuCoId(registros.getInt(1));
-            //tarjetaDetalleActual.setRuId(registros.getInt(2));
-            //tarjetaDetalleActual.setBuId(registros.getInt(3));
+            tarjetaDetalleActual.setTaCoDeId(registros.getInt(0));
+            tarjetaDetalleActual.setTaCoId(registros.getInt(1));
+            tarjetaDetalleActual.setPuCoDeId(registros.getInt(2));
+            tarjetaDetalleActual.setTaCoDeFecha(registros.getString(3));
+            tarjetaDetalleActual.setTaCoDeHora(registros.getString(4));
+            tarjetaDetalleActual.setTaCoDeLatitud(registros.getDouble(5));
+            tarjetaDetalleActual.setTaCoDeLongitud(registros.getDouble(6));
+            tarjetaDetalleActual.setTaCoDeTiempo(registros.getString(7));
+            tarjetaDetalleActual.setTaCoDeDescripcion(registros.getString(8));
+            tarjetaDetalleActual.setUsId(registros.getInt(9));
+            tarjetaDetalleActual.setUsFechaReg(registros.getString(10));
         }
         db.close();
         return tarjetaDetalleActual;
