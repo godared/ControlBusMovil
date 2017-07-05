@@ -6,6 +6,7 @@ import android.text.format.DateFormat;
 import android.util.Log;
 
 import com.godared.controlbusmovil.MainActivity;
+import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
 import com.godared.controlbusmovil.service.ITarjetaService;
 import com.godared.controlbusmovil.service.TarjetaService;
 import com.google.android.gms.location.Geofence;
@@ -63,7 +64,11 @@ public class GeofenceReceiver extends IntentService {
                     eds.create(transitionName, date, geofence.getRequestId());
                     eds.close();*/
                     tarjetaService=new TarjetaService(getApplicationContext());
+                    TarjetaControlDetalle tarjetaControlDetalle=new TarjetaControlDetalle();
 
+                    tarjetaControlDetalle.setTaCoDeId(sg.getId());
+
+                    tarjetaService.actualizarTarjetaDetalleBD(tarjetaControlDetalle);
                     GeofenceNotification geofenceNotification = new GeofenceNotification(
                             this);
                     geofenceNotification.displayNotification(sg, transitionType);

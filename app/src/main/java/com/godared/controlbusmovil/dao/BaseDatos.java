@@ -169,6 +169,20 @@ public class BaseDatos extends SQLiteOpenHelper{
         db.close();
         return tarjetasDetalle;
     }
+    public TarjetaControlDetalle ObtenerTarjetaDetalleByPuCoDe(int puCoDeId){
+        TarjetaControlDetalle tarjetaDetalleActual=new TarjetaControlDetalle();
+        String query="SELECT * FROM TarjetaControlDetalle where PuCoDeId="+puCoDeId;
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor registros=db.rawQuery(query,null);
+        while(registros.moveToNext()){
+            tarjetaDetalleActual.setTaCoId(registros.getInt(0));
+            //tarjetaDetalleActual.setPuCoId(registros.getInt(1));
+            //tarjetaDetalleActual.setRuId(registros.getInt(2));
+            //tarjetaDetalleActual.setBuId(registros.getInt(3));
+        }
+        db.close();
+        return tarjetaDetalleActual;
+    }
     public void insertarTarjeta(ContentValues contentValues){
         SQLiteDatabase db=this.getWritableDatabase();
         db.insert("TarjetaControl",null,contentValues);

@@ -22,7 +22,7 @@ public interface ITarjetaService {
     void insertarTarjetaBD(BaseDatos baseDatos,  TarjetaControl tarjetaControl);
     void actualizarTarjetaBD(BaseDatos baseDatos, TarjetaControl tarjetaControl);
     void insertarTarjetasDetalleBD(BaseDatos baseDatos, ArrayList<TarjetaControlDetalle> tarjetaControlDetalles);
-
+    void actualizarTarjetaDetalleBD(TarjetaControlDetalle tarjetaControlDetalle);
     //ArrayList<TarjetaControlDetalle> getTarjetasDetalle();
     //ArrayList<TarjetaControl> getTarjetasControl();
 }

@@ -212,6 +212,22 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
         }
 
     }
+    public void actualizarTarjetaDetalleBD(TarjetaControlDetalle tarjetaControlDetalle){
+            ContentValues contentValues=new ContentValues();
+            contentValues.put("TaCoDeId",tarjetaControlDetalle.getTaCoDeId());
+            contentValues.put("TaCoId",tarjetaControlDetalle.getTaCoId());
+            contentValues.put("PuCoDeId",tarjetaControlDetalle.getPuCoDeId());
+            contentValues.put("TaCoDeFecha",tarjetaControlDetalle.getTaCoDeFecha());
+            contentValues.put("TaCoDeHora",tarjetaControlDetalle.getTaCoDeHora());
+            contentValues.put("TaCoDeLatitud",tarjetaControlDetalle.getTaCoDeLatitud());
+            contentValues.put("TaCoDeLongitud",tarjetaControlDetalle.getTaCoDeLongitud());
+            contentValues.put("TaCoDeTiempo",tarjetaControlDetalle.getTaCoDeTiempo());
+            contentValues.put("TaCoDeDescripcion",tarjetaControlDetalle.getTaCoDeDescripcion());
+            contentValues.put("UsId",tarjetaControlDetalle.getUsId());
+            contentValues.put("UsFechaReg",tarjetaControlDetalle.getUsFechaReg());
+            db.actualizarTarjetaDetalle(contentValues,tarjetaControlDetalle.getTaCoDeId());
+    }
+
     ///Para controlar los registros de envio, activo y otros
     public void insertarTarjetaBitacoraMovilBD(BaseDatos baseDatos, TarjetaControl tarjetaControl){
         ContentValues contentValues = new ContentValues();
