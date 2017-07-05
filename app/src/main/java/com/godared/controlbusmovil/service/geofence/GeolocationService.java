@@ -69,32 +69,33 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
 
         HashMap<String, SimpleGeofence> geofences = SimpleGeofenceStore
                 .getInstance().getSimpleGeofences(this);
+        if(geofences.size()>0) {//Tiene que ver algun Geofence sino da error
+            GeofencingRequest.Builder geofencingRequestBuilder = new GeofencingRequest.Builder();
+            for (Map.Entry<String, SimpleGeofence> item : geofences.entrySet()) {
+                SimpleGeofence sg = item.getValue();
 
-        GeofencingRequest.Builder geofencingRequestBuilder = new GeofencingRequest.Builder();
-        for (Map.Entry<String, SimpleGeofence> item : geofences.entrySet()) {
-            SimpleGeofence sg = item.getValue();
+                geofencingRequestBuilder.addGeofence(sg.toGeofence());
+            }
 
-            geofencingRequestBuilder.addGeofence(sg.toGeofence());
+            GeofencingRequest geofencingRequest = geofencingRequestBuilder.build();
+
+            mPendingIntent = requestPendingIntent();
+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            LocationServices.GeofencingApi.addGeofences(mGoogleApiClient,
+                    geofencingRequest, mPendingIntent).setResultCallback(this);
         }
+            MainActivity.geofencesAlreadyRegistered = true;
 
-        GeofencingRequest geofencingRequest = geofencingRequestBuilder.build();
-
-        mPendingIntent = requestPendingIntent();
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        LocationServices.GeofencingApi.addGeofences(mGoogleApiClient,
-                geofencingRequest, mPendingIntent).setResultCallback(this);
-
-        MainActivity.geofencesAlreadyRegistered = true;
     }
 
     private PendingIntent requestPendingIntent() {

@@ -33,7 +33,7 @@ public class SimpleGeofenceStore {
     public SimpleGeofenceStore() {
 
 
-        geofences.put("Cuarto", new SimpleGeofence(10000, -18.001907, -70.251293,
+       geofences.put("QALIWARMA", new SimpleGeofence(10000, -18.012587, -70.253336,
                 100, GEOFENCE_EXPIRATION_IN_MILLISECONDS,
                 Geofence.GEOFENCE_TRANSITION_ENTER
                         | Geofence.GEOFENCE_TRANSITION_DWELL
@@ -42,7 +42,7 @@ public class SimpleGeofenceStore {
 
 
     public HashMap<String, SimpleGeofence> getSimpleGeofences(Context context) {
-        ArrayList<TarjetaControlDetalle> tarjetasDetalle;
+       /* ArrayList<TarjetaControlDetalle> tarjetasDetalle;
         ArrayList<PuntoControlDetalle> puntoControlDetalles;
         TarjetaControl tarjetaControl;
         ITarjetaService tarjetaService=new TarjetaService(context);
@@ -58,7 +58,7 @@ public class SimpleGeofenceStore {
                                 | Geofence.GEOFENCE_TRANSITION_DWELL
                                 | Geofence.GEOFENCE_TRANSITION_EXIT));
             }
-        }
+        }*/
         return this.geofences;
     }
 }
