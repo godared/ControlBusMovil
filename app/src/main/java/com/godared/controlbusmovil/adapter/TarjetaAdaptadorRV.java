@@ -55,9 +55,15 @@ public class TarjetaAdaptadorRV extends RecyclerView.Adapter<TarjetaAdaptadorRV.
         SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");//"yyyy-MM-dd HH:mm:ss"
         sdf2.setTimeZone(cal.getTimeZone());
         String formatted2 = sdf2.format(cal.getTime());
-
         holder.txtHoraProg.setText(formatted2);//
-        holder.txtHoraReg.setText(tarjetaDetalle.getTaCoDeTiempo());
+        if(!(tarjetaDetalle.getTaCoDeTiempo().compareTo("18000000")==0)) {
+            hora = tarjetaDetalle.getTaCoDeTiempo();
+            cal.setTimeInMillis(Long.parseLong(hora));
+            formatted2 = sdf2.format(cal.getTime());
+            holder.txtHoraReg.setText(formatted2);
+        }else{
+            holder.txtHoraReg.setText("");
+        }
     }
 
 

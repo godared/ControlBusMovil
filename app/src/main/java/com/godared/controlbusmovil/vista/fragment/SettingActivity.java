@@ -25,7 +25,7 @@ public class SettingActivity extends AppCompatActivity {
     public void Sincronizar(View view) {
         iTarjetaService=new TarjetaService(view.getContext());
 
-        iTarjetaService.obtenerTarjetasRest(1,"31-03-2017");
+        iTarjetaService.obtenerTarjetasRest(7,"31-03-2017");
        // tarjetasControl=iTarjetaService.getTarjetasControl();
         if(tarjetasDetalle!=null) {
 

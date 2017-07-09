@@ -7,23 +7,25 @@ import com.google.android.gms.location.Geofence;
  */
 
 public class SimpleGeofence {
-    private final int id;
+    private final String id;
     private final double latitude;
     private final double longitude;
     private final float radius;
     private long expirationDuration;
     private int transitionType;
     private int loiteringDelay = 60000;
-    public SimpleGeofence(int geofenceId, double latitude, double longitude,
-                          float radius, long expiration, int transition) {
+    private int puCoDeId;
+    public SimpleGeofence(String geofenceId, double latitude, double longitude,
+                          float radius, long expiration, int transition, int puCoDeId) {
         this.id = geofenceId;
         this.latitude = latitude;
         this.longitude = longitude;
         this.radius = radius;
         this.expirationDuration = expiration;
         this.transitionType = transition;
+        this.puCoDeId=puCoDeId;
     }
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -46,8 +48,11 @@ public class SimpleGeofence {
     public int getTransitionType() {
         return transitionType;
     }
+    public int getPuCoDeId() {
+        return puCoDeId;
+    }
     public Geofence toGeofence() {
-        Geofence g = new Geofence.Builder().setRequestId(Integer.toString(getId()))
+        Geofence g = new Geofence.Builder().setRequestId(getId())
                 .setTransitionTypes(transitionType)
                 .setCircularRegion(getLatitude(), getLongitude(), getRadius())
                 .setExpirationDuration(expirationDuration)

@@ -12,8 +12,12 @@ import com.godared.controlbusmovil.service.TarjetaService;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class GeofenceReceiver extends IntentService {
 
@@ -58,22 +62,37 @@ public class GeofenceReceiver extends IntentService {
                     }
                     String date = DateFormat.format("dd-MM-yyyy",
                             new Date()).toString();
-                    String hora = DateFormat.format("hh:mm:ss",
-                            new Date()).toString();
+                    String zona="America/Lima";
+                    TimeZone timeZone2 = TimeZone.getTimeZone(zona);
+                    Calendar cal = Calendar.getInstance(timeZone2);
+                    //Calendar cal = Calendar.getInstance();
+                    cal.setTime(new Date());
+
                     ///Guardar en la DB
                     /*EventDataSource eds = new EventDataSource(
                             getApplicationContext());
                     eds.create(transitionName, date, geofence.getRequestId());
                     eds.close();*/
-                  /*  tarjetaService=new TarjetaService(getApplicationContext());
+                   tarjetaService=new TarjetaService(getApplicationContext());
                     TarjetaControlDetalle tarjetaControlDetalle;
-                    tarjetaControlDetalle=tarjetaService.GetTarjetaDetalleByPuCoDe(sg.getId());
-                    tarjetaControlDetalle.setTaCoDeId(sg.getId());
-                    tarjetaControlDetalle.setTaCoDeFecha(date);
+                    tarjetaControlDetalle=tarjetaService.GetTarjetaDetalleByPuCoDe(sg.getPuCoDeId());
+                    //tarjetaControlDetalle.setTaCoDeId(sg.getPuCoDeId());
+                    Long value=cal.getTimeInMillis();
+                    tarjetaControlDetalle.setTaCoDeFecha( value.toString());
                     tarjetaControlDetalle.setTaCoDeLatitud(sg.getLatitude());
                     tarjetaControlDetalle.setTaCoDeLongitud(sg.getLongitude());
-                    tarjetaControlDetalle.setTaCoDeTiempo(hora);
-                    tarjetaService.actualizarTarjetaDetalleBD(tarjetaControlDetalle);*/
+
+                    String hora = DateFormat.format("HH:mm:ss",
+                            new Date()).toString();
+                    SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
+                    try {
+                        cal.setTime(sdf2.parse(hora));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    value=cal.getTimeInMillis();
+                    tarjetaControlDetalle.setTaCoDeTiempo(value.toString());
+                    tarjetaService.actualizarTarjetaDetalleBD(tarjetaControlDetalle);
                     GeofenceNotification geofenceNotification = new GeofenceNotification(
                             this);
                     geofenceNotification.displayNotification(sg, transitionType);

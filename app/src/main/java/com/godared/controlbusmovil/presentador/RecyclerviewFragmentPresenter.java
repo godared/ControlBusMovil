@@ -42,7 +42,7 @@ public class RecyclerviewFragmentPresenter implements IRecyclerviewFragmentPrese
         //constructorTarjetas =new ConstructorTarjetas(context);
         //tarjetasDetalle = constructorTarjetas.ObtenerDatosTarjetasDetalle();
         ITarjetaService tarjetaService=new TarjetaService(context);
-        tarjetasDetalle =tarjetaService.GetAllTarjetaDetalleBDByTaCoActivo(1,"31-03-2017");
+        tarjetasDetalle =tarjetaService.GetAllTarjetaDetalleBDByTaCoActivo(7,"31-03-2017");
         mostrarTarjetasDetalleRV();
     }
 

@@ -31,34 +31,42 @@ public class SimpleGeofenceStore {
     }
 
     public SimpleGeofenceStore() {
-
-
-       geofences.put("QALIWARMA", new SimpleGeofence(10000, -18.012587, -70.253336,
+        /*
+      geofences.put("CUARTO 01", new SimpleGeofence("CUARTO 01", -18.002054, -70.251264,
                 100, GEOFENCE_EXPIRATION_IN_MILLISECONDS,
                 Geofence.GEOFENCE_TRANSITION_ENTER
                         | Geofence.GEOFENCE_TRANSITION_DWELL
                         | Geofence.GEOFENCE_TRANSITION_EXIT));
+
+       geofences.put("QALIWARMA 02", new SimpleGeofence("QALIWARMA 02", -18.012587, -70.253336,
+                100, GEOFENCE_EXPIRATION_IN_MILLISECONDS,
+                Geofence.GEOFENCE_TRANSITION_ENTER
+                        | Geofence.GEOFENCE_TRANSITION_DWELL
+                        | Geofence.GEOFENCE_TRANSITION_EXIT));*/
     }
 
 
     public HashMap<String, SimpleGeofence> getSimpleGeofences(Context context) {
-       /* ArrayList<TarjetaControlDetalle> tarjetasDetalle;
+        ArrayList<TarjetaControlDetalle> tarjetasDetalle;
         ArrayList<PuntoControlDetalle> puntoControlDetalles;
         TarjetaControl tarjetaControl;
         ITarjetaService tarjetaService=new TarjetaService(context);
         IPuntoControlService puntoControlService=new PuntoControlService(context);
-        tarjetasDetalle =tarjetaService.GetAllTarjetaDetalleBDByTaCoActivo(1,"31-03-2017");
+        tarjetasDetalle =tarjetaService.GetAllTarjetaDetalleBDByTaCoActivo(7,"31-03-2017");
         if (tarjetasDetalle.size()>0) {
             tarjetaControl = tarjetaService.GetTarjetaControlBD(tarjetasDetalle.get(0).getTaCoId());
             puntoControlDetalles = puntoControlService.GetAllPuntoControlDetalleBD(tarjetaControl.getPuCoId());
             for (PuntoControlDetalle puntoControlDetalle : puntoControlDetalles) {
-                geofences.put(puntoControlDetalle.getPuCoDeDescripcion(), new SimpleGeofence(puntoControlDetalle.getPuCoDeId(), puntoControlDetalle.getPuCoDeLatitud(), puntoControlDetalle.getPuCoDeLongitud(),
+                geofences.put(puntoControlDetalle.getPuCoDeDescripcion()+"-"+Integer.toString(puntoControlDetalle.getPuCoDeId()),
+                        new SimpleGeofence(puntoControlDetalle.getPuCoDeDescripcion()+"-"+Integer.toString(puntoControlDetalle.getPuCoDeId()),
+                        puntoControlDetalle.getPuCoDeLatitud(), puntoControlDetalle.getPuCoDeLongitud(),
                         100, GEOFENCE_EXPIRATION_IN_MILLISECONDS,
                         Geofence.GEOFENCE_TRANSITION_ENTER
                                 | Geofence.GEOFENCE_TRANSITION_DWELL
-                                | Geofence.GEOFENCE_TRANSITION_EXIT));
+                                | Geofence.GEOFENCE_TRANSITION_EXIT,puntoControlDetalle.getPuCoDeId()));
             }
-        }*/
+        }
+
         return this.geofences;
     }
 }
