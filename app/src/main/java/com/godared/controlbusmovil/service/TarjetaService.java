@@ -139,6 +139,24 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
 
         return tarjetasControl;
     }
+    public void UpdateTarjetaDetalleRest(TarjetaControlDetalle tarjetaControlDetalle){
+        RestApiAdapter restApiAdapter = new RestApiAdapter();
+        IEndpointApi endpointApi = restApiAdapter.establecerConexionRestApi();
+        Call<Boolean> tarjetaControlDetalleSend = endpointApi.updateTarjetaControlDetalle(tarjetaControlDetalle);
+        tarjetaControlDetalleSend.enqueue(new Callback<Boolean>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                //Aqui debe guardar el codigo remoto
+                Toast.makeText(context, "Se actualizo correctamento", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable t) {
+                Toast.makeText(context, "Algo paso en la conexion", Toast.LENGTH_SHORT).show();
+                Log.e("Fallo la conexion", t.toString());
+            }
+        });
+    }
     public TarjetaControl GetTarjetaControlBD(int taCoId){
         return db.ObtenerTarjeta(taCoId);
     }

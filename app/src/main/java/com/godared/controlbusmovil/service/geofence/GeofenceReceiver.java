@@ -93,6 +93,7 @@ public class GeofenceReceiver extends IntentService {
                     value=cal.getTimeInMillis();
                     tarjetaControlDetalle.setTaCoDeTiempo(value.toString());
                     tarjetaService.actualizarTarjetaDetalleBD(tarjetaControlDetalle);
+                    tarjetaService.UpdateTarjetaDetalleRest(tarjetaControlDetalle);
                     GeofenceNotification geofenceNotification = new GeofenceNotification(
                             this);
                     geofenceNotification.displayNotification(sg, transitionType);

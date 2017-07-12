@@ -16,6 +16,7 @@ public interface ITarjetaService {
 
     void obtenerTarjetasDetalleRest( int taCoId);
     ArrayList<TarjetaControl> obtenerTarjetasRest(int buId, String taCoFecha );
+    void UpdateTarjetaDetalleRest(TarjetaControlDetalle tarjetaControlDetalle);
     ArrayList<TarjetaControlDetalle> GetAllTarjetaDetalleBD(int taCoId);
     TarjetaControl GetTarjetaControlBD(int taCoId);
     ArrayList<TarjetaControlDetalle> GetAllTarjetaDetalleBDByTaCoActivo(int buId, String taCoFecha);

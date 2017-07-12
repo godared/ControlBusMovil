@@ -10,7 +10,9 @@ import com.godared.controlbusmovil.restApi.model.TarjetaControlResponse;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -26,6 +28,10 @@ public interface IEndpointApi {
     @GET("/rest/tarjetacontroldetalle/tacoid/{taCoId}")
     Call<List<TarjetaControlDetalle>> getTarjetaControlDetalle(@Path("taCoId") int taCoId);//
 
+    @POST(ConstantesRestApi.URL_TARJETA_CONTROL_DETALLE+"saveone")
+    Call<Boolean> updateTarjetaControlDetalle(@Body TarjetaControlDetalle tarjetaControlDetalle);//
+
+    //PuntoCOntrol
     @GET(ConstantesRestApi.URL_PUNTO_CONTROL+"{puCoId}")
     Call<PuntoControl> getPuntoControl(@Path("puCoId") int puCoId);
 
