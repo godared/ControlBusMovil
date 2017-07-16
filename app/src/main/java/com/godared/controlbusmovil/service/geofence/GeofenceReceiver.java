@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.godared.controlbusmovil.MainActivity;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
+import com.godared.controlbusmovil.pojo.TarjetaDetalleBitacoraMovil;
 import com.godared.controlbusmovil.service.ITarjetaService;
 import com.godared.controlbusmovil.service.TarjetaService;
 import com.google.android.gms.location.Geofence;
@@ -76,24 +77,36 @@ public class GeofenceReceiver extends IntentService {
                    tarjetaService=new TarjetaService(getApplicationContext());
                     TarjetaControlDetalle tarjetaControlDetalle;
                     tarjetaControlDetalle=tarjetaService.GetTarjetaDetalleByPuCoDe(sg.getPuCoDeId());
-                    //tarjetaControlDetalle.setTaCoDeId(sg.getPuCoDeId());
-                    Long value=cal.getTimeInMillis();
-                    tarjetaControlDetalle.setTaCoDeFecha( value.toString());
-                    tarjetaControlDetalle.setTaCoDeLatitud(sg.getLatitude());
-                    tarjetaControlDetalle.setTaCoDeLongitud(sg.getLongitude());
+                    //verificamos si es que no se ha registrado o enviado la geofence
+                    if (!tarjetaService.VerificarTarjetaDetalleBDByTaCoDeRegistradoEnviado(tarjetaControlDetalle.getTaCoDeId())) {
+                        //tarjetaControlDetalle.setTaCoDeId(sg.getPuCoDeId());
+                        Long value = cal.getTimeInMillis();
+                        tarjetaControlDetalle.setTaCoDeFecha(value.toString());
+                        tarjetaControlDetalle.setTaCoDeLatitud(sg.getLatitude());
+                        tarjetaControlDetalle.setTaCoDeLongitud(sg.getLongitude());
 
-                    String hora = DateFormat.format("HH:mm:ss",
-                            new Date()).toString();
-                    SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
-                    try {
-                        cal.setTime(sdf2.parse(hora));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+                        String hora = DateFormat.format("HH:mm:ss",
+                                new Date()).toString();
+                        SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
+                        try {
+                            cal.setTime(sdf2.parse(hora));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        value = cal.getTimeInMillis();
+                        tarjetaControlDetalle.setTaCoDeTiempo(value.toString());
+                        tarjetaService.actualizarTarjetaDetalleBD(tarjetaControlDetalle);
+                        //Actualizamos el Registro
+                        TarjetaDetalleBitacoraMovil tarjetaDetalleBitacoraMovil;
+                        tarjetaDetalleBitacoraMovil=tarjetaService.obtenerTarjetaDetalleBitacoraMovilByTaCoDe(tarjetaControlDetalle.getTaCoDeId());
+                        tarjetaDetalleBitacoraMovil.setTaDeBiMoRegistradoId(1);
+                        tarjetaService.actualizarTarjetaDetalleBitacoraMovilBD(tarjetaControlDetalle.getTaCoDeId(),tarjetaDetalleBitacoraMovil);
+                        //Actualizamos en el servidor
+                        tarjetaService.UpdateTarjetaDetalleRest(tarjetaControlDetalle);
+                        //verificamos si todo el detalle ya tienen registros para activar finaliza en la cabecera TarjetaCOntrol
+                        tarjetaService.VerificarActualizaTarjetaFinaliza(tarjetaControlDetalle.getTaCoId());
+
                     }
-                    value=cal.getTimeInMillis();
-                    tarjetaControlDetalle.setTaCoDeTiempo(value.toString());
-                    tarjetaService.actualizarTarjetaDetalleBD(tarjetaControlDetalle);
-                    tarjetaService.UpdateTarjetaDetalleRest(tarjetaControlDetalle);
                     GeofenceNotification geofenceNotification = new GeofenceNotification(
                             this);
                     geofenceNotification.displayNotification(sg, transitionType);

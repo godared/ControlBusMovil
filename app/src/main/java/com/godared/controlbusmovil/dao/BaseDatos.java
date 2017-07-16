@@ -11,6 +11,7 @@ import com.godared.controlbusmovil.pojo.PuntoControlDetalle;
 import com.godared.controlbusmovil.pojo.TarjetaBitacoraMovil;
 import com.godared.controlbusmovil.pojo.TarjetaControl;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
+import com.godared.controlbusmovil.pojo.TarjetaDetalleBitacoraMovil;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -49,15 +50,18 @@ public class BaseDatos extends SQLiteOpenHelper{
                 "PuCoId INTEGER, PuCoDeLatitud REAL, PuCoDeLongitud REAL, PuCoDeDescripcion TEXT,"+
                 "PuCoDeHora TEXT,UsId INTEGER, UsFechaReg TEXT,"+
                 "PuCoDeOrden INTEGER, FOREIGN KEY(PuCoId) REFERENCES PuntoControl(PuCoId)) ";
-
+        //Bitacora, estas tablas es para el control de envios
         String queryCrearTablaTarjetaBitacoraMovil="CREATE TABLE TarjetaBitacoraMovil(TaCoId INTEGER,"+
                 "TaBiMoRemotoId INTEGER, TaBiMoEnviado INTEGER, TaBiMoActivo integer, TaBiMoFinalDetalle INTEGER) ";
+        String queryCrearTablaTarjetaDetalleBitacoraMovil="CREATE TABLE TarjetaDetalleBitacoraMovil(TaCoDeId INTEGER, TaCoId INTEGER,"+
+                "TaDeBiMoRemotoId INTEGER,TaDeBiMoRegistradoId INTEGER, TaDeBiMoEnviado INTEGER) ";
 
         db.execSQL(queryCrearTablaTarjetaControl);
         db.execSQL(queryCrearTablaTarjetaControlDetalle);
         db.execSQL(queryCrearTablaPuntoControl);
         db.execSQL(queryCrearTablaPuntoControlDetalle);
         db.execSQL(queryCrearTablaTarjetaBitacoraMovil);
+        db.execSQL(queryCrearTablaTarjetaDetalleBitacoraMovil);
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -172,6 +176,27 @@ public class BaseDatos extends SQLiteOpenHelper{
     public TarjetaControlDetalle ObtenerTarjetaDetalleByPuCoDe(int puCoDeId){
         TarjetaControlDetalle tarjetaDetalleActual=new TarjetaControlDetalle();
         String query="SELECT * FROM TarjetaControlDetalle where PuCoDeId="+puCoDeId;
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor registros=db.rawQuery(query,null);
+        while(registros.moveToNext()){
+            tarjetaDetalleActual.setTaCoDeId(registros.getInt(0));
+            tarjetaDetalleActual.setTaCoId(registros.getInt(1));
+            tarjetaDetalleActual.setPuCoDeId(registros.getInt(2));
+            tarjetaDetalleActual.setTaCoDeFecha(registros.getString(3));
+            tarjetaDetalleActual.setTaCoDeHora(registros.getString(4));
+            tarjetaDetalleActual.setTaCoDeLatitud(registros.getDouble(5));
+            tarjetaDetalleActual.setTaCoDeLongitud(registros.getDouble(6));
+            tarjetaDetalleActual.setTaCoDeTiempo(registros.getString(7));
+            tarjetaDetalleActual.setTaCoDeDescripcion(registros.getString(8));
+            tarjetaDetalleActual.setUsId(registros.getInt(9));
+            tarjetaDetalleActual.setUsFechaReg(registros.getString(10));
+        }
+        db.close();
+        return tarjetaDetalleActual;
+    }
+    public TarjetaControlDetalle ObtenerTarjetaDetalleByTaCoDe(int taCoDeId){
+        TarjetaControlDetalle tarjetaDetalleActual=new TarjetaControlDetalle();
+        String query="SELECT * FROM TarjetaControlDetalle where TaCoDeId="+taCoDeId;
         SQLiteDatabase db=this.getWritableDatabase();
         Cursor registros=db.rawQuery(query,null);
         while(registros.moveToNext()){
@@ -332,5 +357,42 @@ public class BaseDatos extends SQLiteOpenHelper{
             return tarjetasBitacoraMovil.get(0);
         //else
           //  return tarjetaBitacoraMovil;
+    }
+    //TarjetaDetalleBitacoraMovil
+    public void insertarTarjetaDetalleBitacoraMovil(ContentValues contentValues){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.insert("TarjetaDetalleBitacoraMovil",null,contentValues);
+        db.close();
+    }
+    public void eliminarTarjetaDetalleBitacoraMovilByTaCo(int taCoId){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.delete("TarjetaDetalleBitacoraMovil","TaCoId="+taCoId, null);
+        db.close();
+    }
+    public void actualizarTarjetaDetalleBitacoraMovil(ContentValues contentValues,int taCoDeId){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.update("TarjetaDetalleBitacoraMovil",contentValues,"TaCoDeId="+taCoDeId,null);
+        db.close();
+    }
+    public TarjetaDetalleBitacoraMovil ObtenerTarjetaDetalleBitacoraMovilByTaCoDe(int taCoDeId) {
+        List<TarjetaDetalleBitacoraMovil> tarjetasDetalleBitacoraMovil = new ArrayList<>();
+
+        String query = "SELECT * FROM TarjetaDetalleBitacoraMovil where TaCoDeId=" + taCoDeId;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor registros = db.rawQuery(query, null);
+        while (registros.moveToNext()) {
+            TarjetaDetalleBitacoraMovil tarjetaDetalleBitacoraMovil = new TarjetaDetalleBitacoraMovil();
+            tarjetaDetalleBitacoraMovil.setTaCoDeId(registros.getInt(0));
+            tarjetaDetalleBitacoraMovil.setTaCoId(registros.getInt(1));
+            tarjetaDetalleBitacoraMovil.setTaDeBiMoRemotoId(registros.getInt(2));
+            tarjetaDetalleBitacoraMovil.setTaDeBiMoRegistradoId(registros.getInt(3));
+            tarjetaDetalleBitacoraMovil.setTaDeBiMoEnviado(registros.getInt(4));
+            tarjetasDetalleBitacoraMovil.add(tarjetaDetalleBitacoraMovil);
+        }
+        db.close();
+        //if (tarjetasBitacoraMovil.size()>0)
+        return tarjetasDetalleBitacoraMovil.get(0);
+        //else
+        //  return tarjetaBitacoraMovil;
     }
 }

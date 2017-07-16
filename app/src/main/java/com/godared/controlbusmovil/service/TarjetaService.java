@@ -9,6 +9,7 @@ import com.godared.controlbusmovil.dao.BaseDatos;
 import com.godared.controlbusmovil.pojo.TarjetaBitacoraMovil;
 import com.godared.controlbusmovil.pojo.TarjetaControl;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
+import com.godared.controlbusmovil.pojo.TarjetaDetalleBitacoraMovil;
 import com.godared.controlbusmovil.restApi.IEndpointApi;
 import com.godared.controlbusmovil.restApi.adapter.RestApiAdapter;
 
@@ -65,6 +66,8 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
                     tarjetasDetalle = tarjetaControlDetalleResponse;// tarjetaControlDetalle.getTarjetasDetalle();
 
                     insertarTarjetasDetalleBD(db,tarjetasDetalle);
+                    insertarTarjetaDetalleBitacoraMovilBD(tarjetasDetalle);
+
                 }
             @Override
             public void onFailure(Call<List<TarjetaControlDetalle>> call, Throwable t) {
@@ -118,6 +121,7 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
                             db.eliminarTarjetaDetalleByTaCo(tarjetaControl.getTaCoId());
                             db.eliminarTarjeta(tarjetaControl.getTaCoId());
                             db.eliminarTarjetaBitacoraMovilByTaCo(tarjetaControl.getTaCoId());
+                            db.eliminarTarjetaDetalleBitacoraMovilByTaCo(tarjetaControl.getTaCoId());
                         }
 
                     }
@@ -140,6 +144,7 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
         return tarjetasControl;
     }
     public void UpdateTarjetaDetalleRest(TarjetaControlDetalle tarjetaControlDetalle){
+        final TarjetaControlDetalle  tarjetaControlDetalle2=tarjetaControlDetalle;
         RestApiAdapter restApiAdapter = new RestApiAdapter();
         IEndpointApi endpointApi = restApiAdapter.establecerConexionRestApi();
         Call<Boolean> tarjetaControlDetalleSend = endpointApi.updateTarjetaControlDetalle(tarjetaControlDetalle);
@@ -147,7 +152,16 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                 //Aqui debe guardar el codigo remoto
+                Boolean val=response.body();
                 Toast.makeText(context, "Se actualizo correctamento", Toast.LENGTH_SHORT).show();
+
+                if(val){
+                    //Actualizamos el envio
+                    TarjetaDetalleBitacoraMovil tarjetaDetalleBitacoraMovil;
+                    tarjetaDetalleBitacoraMovil=db.ObtenerTarjetaDetalleBitacoraMovilByTaCoDe(tarjetaControlDetalle2.getTaCoDeId());
+                    tarjetaDetalleBitacoraMovil.setTaDeBiMoEnviado(1);
+                    actualizarTarjetaDetalleBitacoraMovilBD(tarjetaControlDetalle2.getTaCoDeId(),tarjetaDetalleBitacoraMovil);
+                }
             }
 
             @Override
@@ -182,6 +196,37 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
                 break; /// salimos del for
         }
         return db.ObtenerTarjetasDetalle(_taCoId);
+    }
+    public Boolean VerificarTarjetaDetalleBDByTaCoDeRegistradoEnviado(int taCoDeId){
+        //TarjetaControlDetalle tarjetaControlDetalle;
+        //tarjetaControlDetalle = db.ObtenerTarjetaDetalleByTaCoDe(taCoDeId);
+        Boolean _enviado=false;
+        TarjetaDetalleBitacoraMovil tarjetaDetalleBitacoraMovil;
+        tarjetaDetalleBitacoraMovil=db.ObtenerTarjetaDetalleBitacoraMovilByTaCoDe(taCoDeId);
+        if(tarjetaDetalleBitacoraMovil.getTaDeBiMoEnviado()==1 ||tarjetaDetalleBitacoraMovil.getTaDeBiMoRegistradoId()==1 )
+            _enviado=true;
+        return  _enviado;
+    }
+    public void VerificarActualizaTarjetaFinaliza(int taCoId){
+        List<TarjetaControlDetalle> tarjetasControlDetalle;
+        tarjetasControlDetalle = db.ObtenerTarjetasDetalle(taCoId);
+        TarjetaDetalleBitacoraMovil tarjetaDetalleBitacoraMovil;
+        int sw=1;
+        for(TarjetaControlDetalle tarjetaControlDetalle:tarjetasControlDetalle){
+            tarjetaDetalleBitacoraMovil=db.ObtenerTarjetaDetalleBitacoraMovilByTaCoDe(tarjetaControlDetalle.getTaCoDeId());
+            if(tarjetaDetalleBitacoraMovil.getTaDeBiMoRegistradoId()==0){
+                sw=0;
+                break;
+            }
+        }
+        //Actualizamos  el campo finalizado de  TarjetaControlBitacoraMovil y con esto ya no se cargara en el movil para sincronizar
+        TarjetaBitacoraMovil tarjetaBitacoraMovil;
+        if (sw==1){
+            tarjetaBitacoraMovil=db.ObtenerTarjetaBitacoraMovilByTaCo(taCoId);
+            tarjetaBitacoraMovil.setTaBiMoFinalDetalle(1);
+
+            actualizarTarjetaBitacoraMovilBD(tarjetaBitacoraMovil);
+        }
     }
     public TarjetaControlDetalle GetTarjetaDetalleByPuCoDe(int puCoDeId){
         return db.ObtenerTarjetaDetalleByPuCoDe(puCoDeId);
@@ -289,5 +334,38 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
 
     }
 
+    public void insertarTarjetaDetalleBitacoraMovilBD(List<TarjetaControlDetalle> tarjetaControlDetalles){
+        for(TarjetaControlDetalle tarjetaControlDetalle:tarjetaControlDetalles) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("TaCoDeId", tarjetaControlDetalle.getTaCoDeId());
+            contentValues.put("TaCoId", tarjetaControlDetalle.getTaCoId());
+            contentValues.put("TaDeBiMoRemotoId", 0);
+            contentValues.put("TaDeBiMoRegistradoId", 0);
+            contentValues.put("TaDeBiMoEnviado", 0);
+            db.insertarTarjetaDetalleBitacoraMovil(contentValues);
+        }
+    }
+    public void actualizarTarjetaBitacoraMovilBD(TarjetaBitacoraMovil tarjetaBitacoraMovil){
+        ContentValues contentValues=new ContentValues();
+        contentValues.put("TaCoId",tarjetaBitacoraMovil.getTaCoId());
+        contentValues.put("TaBiMoRemotoId",tarjetaBitacoraMovil.getTaBiMoRemotoId());
+        contentValues.put("TaBiMoEnviado",tarjetaBitacoraMovil.getTaBiMoEnviado());
+        contentValues.put("TaBiMoActivo",tarjetaBitacoraMovil.getTaBiMoActivo());
+        contentValues.put("TaBiMoFinalDetalle",tarjetaBitacoraMovil.getTaBiMoFinalDetalle());
+
+        db.actualizarTarjetaBitacoraMovil(contentValues, tarjetaBitacoraMovil.getTaCoId());
+    }
+    public void actualizarTarjetaDetalleBitacoraMovilBD(int taCoDeId,TarjetaDetalleBitacoraMovil tarjetaDetalleBitacoraMovil){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("TaCoDeId", tarjetaDetalleBitacoraMovil.getTaCoDeId());
+        contentValues.put("TaCoId", tarjetaDetalleBitacoraMovil.getTaCoId());
+        contentValues.put("TaDeBiMoRemotoId", tarjetaDetalleBitacoraMovil.getTaDeBiMoRemotoId());
+        contentValues.put("TaDeBiMoRegistradoId", tarjetaDetalleBitacoraMovil.getTaDeBiMoRegistradoId());
+        contentValues.put("TaDeBiMoEnviado", tarjetaDetalleBitacoraMovil.getTaDeBiMoEnviado());
+        db.actualizarTarjetaDetalleBitacoraMovil(contentValues,taCoDeId );
+    }
+    public TarjetaDetalleBitacoraMovil obtenerTarjetaDetalleBitacoraMovilByTaCoDe(int taCoDeId){
+        return db.ObtenerTarjetaDetalleBitacoraMovilByTaCoDe(taCoDeId);
+    }
 
 }

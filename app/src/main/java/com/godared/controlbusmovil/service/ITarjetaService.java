@@ -5,6 +5,7 @@ import android.content.Context;
 import com.godared.controlbusmovil.dao.BaseDatos;
 import com.godared.controlbusmovil.pojo.TarjetaControl;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
+import com.godared.controlbusmovil.pojo.TarjetaDetalleBitacoraMovil;
 
 import java.util.ArrayList;
 
@@ -20,11 +21,15 @@ public interface ITarjetaService {
     ArrayList<TarjetaControlDetalle> GetAllTarjetaDetalleBD(int taCoId);
     TarjetaControl GetTarjetaControlBD(int taCoId);
     ArrayList<TarjetaControlDetalle> GetAllTarjetaDetalleBDByTaCoActivo(int buId, String taCoFecha);
+    Boolean VerificarTarjetaDetalleBDByTaCoDeRegistradoEnviado(int taCoDeId);
+    void VerificarActualizaTarjetaFinaliza(int taCoId);
     TarjetaControlDetalle GetTarjetaDetalleByPuCoDe(int puCoDeId);
     void insertarTarjetaBD(BaseDatos baseDatos,  TarjetaControl tarjetaControl);
     void actualizarTarjetaBD(BaseDatos baseDatos, TarjetaControl tarjetaControl);
     void insertarTarjetasDetalleBD(BaseDatos baseDatos, ArrayList<TarjetaControlDetalle> tarjetaControlDetalles);
     void actualizarTarjetaDetalleBD(TarjetaControlDetalle tarjetaControlDetalle);
+    void actualizarTarjetaDetalleBitacoraMovilBD(int taCoDeId,TarjetaDetalleBitacoraMovil tarjetaDetalleBitacoraMovil);
+    TarjetaDetalleBitacoraMovil obtenerTarjetaDetalleBitacoraMovilByTaCoDe(int taCoDeId);
     //ArrayList<TarjetaControlDetalle> getTarjetasDetalle();
     //ArrayList<TarjetaControl> getTarjetasControl();
 }
