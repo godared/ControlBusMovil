@@ -18,8 +18,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.godared.controlbusmovil.R;
+import com.godared.controlbusmovil.pojo.RutaDetalle;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
+import com.godared.controlbusmovil.service.IRutaService;
 import com.godared.controlbusmovil.service.ITarjetaService;
+import com.godared.controlbusmovil.service.RutaService;
 import com.godared.controlbusmovil.service.geofence.SimpleGeofence;
 import com.godared.controlbusmovil.service.geofence.SimpleGeofenceStore;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -32,9 +35,11 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -120,7 +125,7 @@ public class MapsFragment extends Fragment implements IMapsFragment {
     protected void displayGeofences() {
         HashMap<String, SimpleGeofence> geofences = SimpleGeofenceStore
                 .getInstance().getSimpleGeofences(getActivity());
-
+        int _ruId=0;
         for (Map.Entry<String, SimpleGeofence> item : geofences.entrySet()) {
             SimpleGeofence sg = item.getValue();
 
@@ -130,8 +135,21 @@ public class MapsFragment extends Fragment implements IMapsFragment {
                     .strokeWidth(2).fillColor(0x500000ff);
             map.addCircle(circleOptions1);
 
-        }
+            _ruId=sg.getRuId();
 
+        }
+        //Buscando la ruta para cargarlo
+        if (_ruId>0){
+            IRutaService rutaService=new RutaService(context);
+            ArrayList<RutaDetalle> rutasDetalle;
+            rutasDetalle=rutaService.GetAllRutaDetalleBD(_ruId);
+            for (RutaDetalle rutaDetalle:rutasDetalle) {
+                PolylineOptions polylineOptions=new PolylineOptions()
+                        .add(new LatLng(rutaDetalle.getRuDeLatitud(), rutaDetalle.getRuDeLongitud()))
+                        .color(0x500000ff);
+                map.addPolyline(polylineOptions);
+            }
+        }
     }
     protected void createMarker(Double latitude, Double longitude) {
         LatLng latLng = new LatLng(latitude, longitude);

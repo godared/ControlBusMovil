@@ -12,7 +12,7 @@ import java.util.ArrayList;
 /**
  * Created by ronald on 14/04/2017.
  */
-
+//esta clase deberia quitarse, se usaba cuendo no se podian obtener datos, y des ingresaban aqui(ahora ya se obtiene del rest)
 public class ConstructorTarjetas {
     Context context;
 

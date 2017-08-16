@@ -8,10 +8,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.godared.controlbusmovil.pojo.PuntoControl;
 import com.godared.controlbusmovil.pojo.PuntoControlDetalle;
+import com.godared.controlbusmovil.pojo.Ruta;
+import com.godared.controlbusmovil.pojo.RutaDetalle;
 import com.godared.controlbusmovil.pojo.TarjetaBitacoraMovil;
 import com.godared.controlbusmovil.pojo.TarjetaControl;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
 import com.godared.controlbusmovil.pojo.TarjetaDetalleBitacoraMovil;
+import com.godared.controlbusmovil.pojo.Telefono;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -50,6 +53,19 @@ public class BaseDatos extends SQLiteOpenHelper{
                 "PuCoId INTEGER, PuCoDeLatitud REAL, PuCoDeLongitud REAL, PuCoDeDescripcion TEXT,"+
                 "PuCoDeHora TEXT,UsId INTEGER, UsFechaReg TEXT,"+
                 "PuCoDeOrden INTEGER, FOREIGN KEY(PuCoId) REFERENCES PuntoControl(PuCoId)) ";
+        //Ruta
+        String queryCrearTablaRuta="CREATE TABLE Ruta(RuId INTEGER PRIMARY KEY,"+
+                "EmId INTEGER, RuDescripcion TEXT, RuFechaCreacion TEXT,"+
+                "RuRegMunicipal TEXT, RuKilometro REAL,RuActivo INTEGER, UsId INTEGER, UsFechaReg TEXT,) ";
+        String queryCrearTablaRutaDetalle="CREATE TABLE RutaDetalle(PuCoDeId INTEGER,"+
+                "RuId INTEGER, RuDeOrden INTEGER,RuDeLatitud REAL, RuDeLongitud REAL,"+
+                "UsId INTEGER, UsFechaReg TEXT "+
+                "FOREIGN KEY(RuId) REFERENCES Ruta(RuId)) ";
+        //Telefono
+        String queryCrearTablaTelefono="CREATE TABLE Telefono(TeId INTEGER PRIMARY KEY,"+
+                "BuId INTEGER, TeMarca TEXT, TeModelo TEXT,TeVersionAndroid TEXT,TeActivo INTEGER,"+
+                "TeImei TEXT, UsId INTEGER, UsFechaReg TEXT,) ";
+
         //Bitacora, estas tablas es para el control de envios
         String queryCrearTablaTarjetaBitacoraMovil="CREATE TABLE TarjetaBitacoraMovil(TaCoId INTEGER,"+
                 "TaBiMoRemotoId INTEGER, TaBiMoEnviado INTEGER, TaBiMoActivo integer, TaBiMoFinalDetalle INTEGER) ";
@@ -281,7 +297,7 @@ public class BaseDatos extends SQLiteOpenHelper{
     }
     public void EliminarPuntoControl(int puCoId){
         SQLiteDatabase db=this.getWritableDatabase();
-        db.delete("TarjetaControl","puCoId="+puCoId, null);
+        db.delete("PuntoControl","PuCoId="+puCoId, null);
         db.close();
     }
     public ArrayList<PuntoControlDetalle> ObtenerPuntoControlDetalle(int puCoId){
@@ -318,6 +334,112 @@ public class BaseDatos extends SQLiteOpenHelper{
     public void EliminarPuntoControlDetalleByPuCo(int puCoId){
         SQLiteDatabase db=this.getWritableDatabase();
         db.delete("PuntoControlDetalle","PuCoId="+puCoId, null);
+        db.close();
+    }
+    //Ruta
+    public Ruta ObtenerRuta(int ruId){
+        // ArrayList<TarjetaControl> tarjetas=new ArrayList<>();
+        Ruta rutaActual=new Ruta();
+        String query="SELECT * FROM Ruta where RuId="+ruId;
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor registros=db.rawQuery(query,null);
+        while(registros.moveToNext()){
+            rutaActual.setRuId(registros.getInt(0));
+            rutaActual.setEmId(registros.getInt(1));
+            rutaActual.setRuDescripcion(registros.getString(2));
+            rutaActual.setRuFechaCreacion(registros.getString(3));
+            rutaActual.setRuRegMunicipal(registros.getString(4));
+            rutaActual.setRuKilometro(registros.getFloat(5));
+            rutaActual.setRuActivo(registros.getInt(6));
+            rutaActual.setUsId(registros.getInt(7));
+            rutaActual.setUsFechaReg(registros.getString(8));
+        }
+        db.close();
+        return rutaActual;
+    }
+    public void InsertarRuta(ContentValues contentValues){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.insert("Ruta",null,contentValues);
+        db.close();
+    }
+    public void ActualizarRuta(ContentValues contentValues,int ruId){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.update("Ruta",contentValues,"RuId="+ruId,null);
+        db.close();
+    }
+    public void EliminarRuta(int ruId){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.delete("Ruta","RuId="+ruId, null);
+        db.close();
+    }
+    public ArrayList<RutaDetalle> ObtenerRutaDetalle(int ruId){
+        ArrayList<RutaDetalle> rutasDetalle=new ArrayList<>();
+        String query="SELECT * FROM RutaDetalle where RuId=?";
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor registros=db.rawQuery(query,new String []{String.valueOf(ruId)});//
+        while(registros.moveToNext()){
+            RutaDetalle rutaDetalleActual=new RutaDetalle();
+            rutaDetalleActual.setRuDeId(registros.getInt(0));
+            rutaDetalleActual.setRuId(registros.getInt(1));
+            rutaDetalleActual.setRuDeOrden(registros.getInt(2));
+            rutaDetalleActual.setRuDeLatitud(registros.getDouble(3));
+            rutaDetalleActual.setRuDeLongitud(registros.getDouble(4));//formatted2
+            rutaDetalleActual.setUsId(registros.getInt(5));
+            rutaDetalleActual.setUsFechaReg(registros.getString(6));
+            rutasDetalle.add(rutaDetalleActual);
+        }
+        db.close();
+        return rutasDetalle;
+    }
+    public void InsertarRutaDetalle(ContentValues contentValues){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.insert("RutaDetalle",null,contentValues);
+        db.close();
+    }
+    public void EliminarRutaDetalle(int ruDeId){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.delete("RutaDetalle","RuDeId="+ruDeId, null);
+        db.close();
+    }
+    public void EliminarRutaDetalleByRu(int ruId){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.delete("RutaDetalle","RuId="+ruId, null);
+        db.close();
+    }
+    //Telefono
+    public Telefono ObtenerTelefono(int teId){
+        // ArrayList<TarjetaControl> tarjetas=new ArrayList<>();
+        Telefono telefonoActual=new Telefono();
+        String query="SELECT * FROM Telefono where TeId="+teId;
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor registros=db.rawQuery(query,null);
+        while(registros.moveToNext()){
+            telefonoActual.setTeId(registros.getInt(0));
+            telefonoActual.setBuId(registros.getInt(1));
+            telefonoActual.setTeMarca(registros.getString(2));
+            telefonoActual.setTeModelo(registros.getString(3));
+            telefonoActual.setTeVersionAndroid(registros.getString(4));
+            telefonoActual.setTeActivo(registros.getInt(5));
+            telefonoActual.setTeImei(registros.getString(6));
+            telefonoActual.setUsId(registros.getInt(7));
+            telefonoActual.setUsFechaReg(registros.getString(8));
+        }
+        db.close();
+        return telefonoActual;
+    }
+    public void InsertarTelefono(ContentValues contentValues){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.insert("Telefono",null,contentValues);
+        db.close();
+    }
+    public void ActualizarTelefono(ContentValues contentValues,int teId){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.update("Telefono",contentValues,"TeId="+teId,null);
+        db.close();
+    }
+    public void EliminarTelefono(int teId){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.delete("Telefono","TeId="+teId, null);
         db.close();
     }
     ///TarjetaBitacoraMovil

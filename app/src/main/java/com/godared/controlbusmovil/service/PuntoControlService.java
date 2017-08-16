@@ -25,6 +25,7 @@ import retrofit2.Response;
 public class PuntoControlService implements IPuntoControlService {
     BaseDatos db;
     private Context context;
+    RutaService rutaService;
     public PuntoControlService(Context context){
         this.context=context;
         db=new BaseDatos(context);
@@ -45,6 +46,7 @@ public class PuntoControlService implements IPuntoControlService {
                 _puntoControl2=db.ObtenerPuntoControl(_puntoControl.getPuCoId());
                 if(_puntoControl2.getPuCoId()<1){
                     InsertarPuntoControlBD(db,_puntoControl);
+                    rutaService.ObtenerRutaRest(_puntoControl.getRuId());
                     ObtenerPuntosControlDetalleRest(_puntoControl.getPuCoId());
                 }else{
                     ActualizarPuntoControlBD(db,_puntoControl);
@@ -65,7 +67,6 @@ public class PuntoControlService implements IPuntoControlService {
         Call<List<PuntoControlDetalle>> puntoControlDetalleResponseCall = endpointApi.getPuntoControlDetalle(puCoId);
         //controlamos alguns eventos de a respuesta
         puntoControlDetalleResponseCall.enqueue(new Callback<List<PuntoControlDetalle>>(){
-
             @Override
             public void onResponse(Call<List<PuntoControlDetalle>> call, Response<List<PuntoControlDetalle>> response) {
                 ArrayList<PuntoControlDetalle> puntoControlDetalleResponse;
@@ -81,6 +82,10 @@ public class PuntoControlService implements IPuntoControlService {
                 Log.e("Fallo la conexion", t.toString());
             }
         });
+    }
+    @Override
+    public PuntoControl GetPuntoControlBD(int puCoId) {
+        return db.ObtenerPuntoControl(puCoId);
     }
 
     @Override

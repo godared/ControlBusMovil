@@ -11,5 +11,8 @@ public final class ConstantesRestApi {
     public static final String URL_TARJETA_CONTROL_DETALLE="/rest/tarjetacontroldetalle/";
     public static final String URL_PUNTO_CONTROL="/rest/puntocontrol/";
     public static final String URL_PUNTO_CONTROL_DETALLE="/rest/puntocontroldetalle/pucoid/";
+    public static final String URL_RUTA="/rest/ruta/";
+    public static final String URL_RUTA_DETALLE="/rest/rutadetalle/ruid/";
+    public static final String URL_TELEFONO="/rest/telefono/";
 
 }

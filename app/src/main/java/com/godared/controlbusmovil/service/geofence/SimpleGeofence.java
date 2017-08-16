@@ -15,8 +15,9 @@ public class SimpleGeofence {
     private int transitionType;
     private int loiteringDelay = 60000;
     private int puCoDeId;
+    private int ruId;
     public SimpleGeofence(String geofenceId, double latitude, double longitude,
-                          float radius, long expiration, int transition, int puCoDeId) {
+                          float radius, long expiration, int transition, int puCoDeId,int ruId) {
         this.id = geofenceId;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -24,6 +25,7 @@ public class SimpleGeofence {
         this.expirationDuration = expiration;
         this.transitionType = transition;
         this.puCoDeId=puCoDeId;
+        this.ruId=ruId;
     }
     public String getId() {
         return id;
@@ -50,6 +52,9 @@ public class SimpleGeofence {
     }
     public int getPuCoDeId() {
         return puCoDeId;
+    }
+    public int getRuId() {
+        return ruId;
     }
     public Geofence toGeofence() {
         Geofence g = new Geofence.Builder().setRequestId(getId())

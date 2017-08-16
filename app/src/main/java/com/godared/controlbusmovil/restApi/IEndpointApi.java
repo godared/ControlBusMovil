@@ -2,8 +2,11 @@ package com.godared.controlbusmovil.restApi;
 
 import com.godared.controlbusmovil.pojo.PuntoControl;
 import com.godared.controlbusmovil.pojo.PuntoControlDetalle;
+import com.godared.controlbusmovil.pojo.Ruta;
+import com.godared.controlbusmovil.pojo.RutaDetalle;
 import com.godared.controlbusmovil.pojo.TarjetaControl;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
+import com.godared.controlbusmovil.pojo.Telefono;
 import com.godared.controlbusmovil.restApi.model.TarjetaControlDetalleResponse;
 import com.godared.controlbusmovil.restApi.model.TarjetaControlResponse;
 
@@ -37,4 +40,13 @@ public interface IEndpointApi {
 
     @GET(ConstantesRestApi.URL_PUNTO_CONTROL_DETALLE+"{puCoId}")
     Call<List<PuntoControlDetalle>> getPuntoControlDetalle(@Path("puCoId") int puCoId);//
+    //Ruta
+    @GET(ConstantesRestApi.URL_RUTA+"{ruId}")
+    Call<Ruta> getRuta(@Path("ruId") int ruId);
+
+    @GET(ConstantesRestApi.URL_RUTA_DETALLE+"{ruId}")
+    Call<List<RutaDetalle>> getRutaDetalle(@Path("ruId") int ruId);//
+    //Ruta
+    @GET(ConstantesRestApi.URL_TELEFONO+"{teId}")
+    Call<Telefono> getTelefono(@Path("teId") int teId);
 }

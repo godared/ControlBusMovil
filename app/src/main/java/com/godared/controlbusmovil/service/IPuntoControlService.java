@@ -11,6 +11,7 @@ import java.util.ArrayList;
  */
 
 public interface IPuntoControlService {
+    PuntoControl GetPuntoControlBD(int puCoId);
     ArrayList<PuntoControl> ObtenerPuntoControlRest(int puCoId);
     void ObtenerPuntosControlDetalleRest( int puCoId);
     ArrayList<PuntoControlDetalle> GetAllPuntoControlDetalleBD(int puCoId);

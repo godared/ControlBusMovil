@@ -50,11 +50,13 @@ public class SimpleGeofenceStore {
         ArrayList<TarjetaControlDetalle> tarjetasDetalle;
         ArrayList<PuntoControlDetalle> puntoControlDetalles;
         TarjetaControl tarjetaControl;
+        PuntoControl puntoControl;
         ITarjetaService tarjetaService=new TarjetaService(context);
         IPuntoControlService puntoControlService=new PuntoControlService(context);
         tarjetasDetalle =tarjetaService.GetAllTarjetaDetalleBDByTaCoActivo(7,"31-03-2017");
         if (tarjetasDetalle.size()>0) {
             tarjetaControl = tarjetaService.GetTarjetaControlBD(tarjetasDetalle.get(0).getTaCoId());
+            puntoControl=puntoControlService.GetPuntoControlBD(tarjetaControl.getPuCoId());
             puntoControlDetalles = puntoControlService.GetAllPuntoControlDetalleBD(tarjetaControl.getPuCoId());
             for (PuntoControlDetalle puntoControlDetalle : puntoControlDetalles) {
                 geofences.put(puntoControlDetalle.getPuCoDeDescripcion()+"-"+Integer.toString(puntoControlDetalle.getPuCoDeId()),
@@ -63,7 +65,7 @@ public class SimpleGeofenceStore {
                         100, GEOFENCE_EXPIRATION_IN_MILLISECONDS,
                         Geofence.GEOFENCE_TRANSITION_ENTER
                                 | Geofence.GEOFENCE_TRANSITION_DWELL
-                                | Geofence.GEOFENCE_TRANSITION_EXIT,puntoControlDetalle.getPuCoDeId()));
+                                | Geofence.GEOFENCE_TRANSITION_EXIT,puntoControlDetalle.getPuCoDeId(),puntoControl.getRuId()));
             }
         }
 
