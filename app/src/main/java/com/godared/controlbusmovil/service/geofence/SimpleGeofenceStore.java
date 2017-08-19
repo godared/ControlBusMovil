@@ -1,6 +1,7 @@
 package com.godared.controlbusmovil.service.geofence;
 
 import android.content.Context;
+import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 
 import com.godared.controlbusmovil.pojo.PuntoControl;
@@ -14,6 +15,7 @@ import com.godared.controlbusmovil.service.TarjetaService;
 import com.google.android.gms.location.Geofence;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -46,14 +48,16 @@ public class SimpleGeofenceStore {
     }
 
 
-    public HashMap<String, SimpleGeofence> getSimpleGeofences(Context context) {
+    public HashMap<String, SimpleGeofence> getSimpleGeofences(Context context,int buId) {
         ArrayList<TarjetaControlDetalle> tarjetasDetalle;
         ArrayList<PuntoControlDetalle> puntoControlDetalles;
         TarjetaControl tarjetaControl;
         PuntoControl puntoControl;
         ITarjetaService tarjetaService=new TarjetaService(context);
         IPuntoControlService puntoControlService=new PuntoControlService(context);
-        tarjetasDetalle =tarjetaService.GetAllTarjetaDetalleBDByTaCoActivo(7,"31-03-2017");
+        String dateNow = DateFormat.format("dd-MM-yyyy",
+                new Date()).toString();
+        tarjetasDetalle =tarjetaService.GetAllTarjetaDetalleBDByTaCoActivo(buId,dateNow);//"16-08-2017"
         if (tarjetasDetalle.size()>0) {
             tarjetaControl = tarjetaService.GetTarjetaControlBD(tarjetasDetalle.get(0).getTaCoId());
             puntoControl=puntoControlService.GetPuntoControlBD(tarjetaControl.getPuCoId());

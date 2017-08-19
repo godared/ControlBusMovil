@@ -11,14 +11,14 @@ public class Ruta {
     private String RuFechaCreacion;
     private String RuRegMunicipal;
     private float RuKilometro;
-    private int RuActivo;
+    private Boolean RuActivo;
     private int UsId;
     private String UsFechaReg;
     public Ruta(){
 
     }
     public Ruta(int ruId,int emId,String ruDescripcion, String ruFechaCreacion, String ruRegMunicipal,
-                float ruKilometro, int ruActivo, int usId, String usFechaReg){
+                float ruKilometro, Boolean ruActivo, int usId, String usFechaReg){
         this.RuId=ruId;
         this.EmId=emId;
         this.RuDescripcion=ruDescripcion;
@@ -79,11 +79,11 @@ public class Ruta {
         RuKilometro = ruKilometro;
     }
 
-    public int getRuActivo() {
+    public Boolean getRuActivo() {
         return RuActivo;
     }
 
-    public void setRuActivo(int ruActivo) {
+    public void setRuActivo(Boolean ruActivo) {
         RuActivo = ruActivo;
     }
 

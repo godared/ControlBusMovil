@@ -1,5 +1,7 @@
 package com.godared.controlbusmovil.vista.fragment;
 
+import android.support.v7.widget.RecyclerView;
+
 import com.godared.controlbusmovil.adapter.TarjetaAdaptadorRV;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
 

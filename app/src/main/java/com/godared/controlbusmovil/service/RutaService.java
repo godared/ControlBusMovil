@@ -94,7 +94,7 @@ public class RutaService implements IRutaService {
         contentValues.put("RuFechaCreacion", ruta.getRuFechaCreacion());
         contentValues.put("RuRegMunicipal", ruta.getRuRegMunicipal());
         contentValues.put("RuKilometro", ruta.getRuKilometro());
-        contentValues.put("RuActivo", ruta.getRuActivo());
+        //contentValues.put("RuActivo", ruta.getRuActivo());
         contentValues.put("UsId", ruta.getUsId());
         contentValues.put("UsFechaReg", ruta.getUsFechaReg());
         baseDatos.InsertarRuta(contentValues);

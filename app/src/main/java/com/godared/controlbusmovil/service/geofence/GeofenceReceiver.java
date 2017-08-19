@@ -2,6 +2,8 @@ package com.godared.controlbusmovil.service.geofence;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
 
@@ -24,12 +26,16 @@ public class GeofenceReceiver extends IntentService {
 
     public static final int NOTIFICATION_ID = 1;
     ITarjetaService tarjetaService;
+    int BuId;
     public GeofenceReceiver() {
         super("GeofenceReceiver");
+
     }
     @Override
     protected void onHandleIntent(Intent intent) {
         GeofencingEvent geoEvent = GeofencingEvent.fromIntent(intent);
+        Bundle extra_buId=intent.getExtras();
+        BuId=extra_buId.getInt("BUS_ID");
         if (geoEvent.hasError()) {
             Log.d(MainActivity.TAG, "Error GeofenceReceiver.onHandleIntent");
         } else {
@@ -45,7 +51,7 @@ public class GeofenceReceiver extends IntentService {
 
                 for (Geofence geofence : triggerList) {
                     SimpleGeofence sg = SimpleGeofenceStore.getInstance()
-                            .getSimpleGeofences(this).get(geofence.getRequestId());
+                            .getSimpleGeofences(this,BuId).get(geofence.getRequestId());
 
                     String transitionName = "";
                     switch (transitionType) {

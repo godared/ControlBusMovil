@@ -37,7 +37,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
     public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 5;
     protected GoogleApiClient mGoogleApiClient;
     protected LocationRequest mLocationRequest;
-
+    int BuId;
     private PendingIntent mPendingIntent;
 
     public GeolocationService() {
@@ -46,8 +46,10 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
     @Override
     public void onStart(Intent intent, int startId) {
         buildGoogleApiClient();
-
+        Bundle extra_buId=intent.getExtras();
+        BuId=extra_buId.getInt("BUS_ID");
         mGoogleApiClient.connect();
+
     }
 
     @Override
@@ -68,7 +70,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
         Log.d(MainActivity.TAG, "Registering Geofences");
 
         HashMap<String, SimpleGeofence> geofences = SimpleGeofenceStore
-                .getInstance().getSimpleGeofences(this);
+                .getInstance().getSimpleGeofences(this,BuId);
         if(geofences.size()>0) {//Tiene que ver algun Geofence sino da error
             GeofencingRequest.Builder geofencingRequestBuilder = new GeofencingRequest.Builder();
             for (Map.Entry<String, SimpleGeofence> item : geofences.entrySet()) {

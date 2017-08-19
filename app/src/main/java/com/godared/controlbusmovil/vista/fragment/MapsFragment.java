@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.godared.controlbusmovil.MainActivity;
 import com.godared.controlbusmovil.R;
 import com.godared.controlbusmovil.pojo.RutaDetalle;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
@@ -35,6 +36,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
@@ -51,7 +53,7 @@ public class MapsFragment extends Fragment implements IMapsFragment {
     protected Marker myPositionMarker;
     protected int sw=0;
     private Context context;
-
+    int BuId;
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 
         @Override
@@ -78,6 +80,9 @@ public class MapsFragment extends Fragment implements IMapsFragment {
         setHasOptionsMenu(true);
 
         super.onCreate(savedInstanceState);
+        MainActivity _actividadPrincipal = (MainActivity)getActivity();
+        BuId=_actividadPrincipal.BuId;
+
     }
     @Nullable
     @Override
@@ -124,31 +129,42 @@ public class MapsFragment extends Fragment implements IMapsFragment {
     }
     protected void displayGeofences() {
         HashMap<String, SimpleGeofence> geofences = SimpleGeofenceStore
-                .getInstance().getSimpleGeofences(getActivity());
+                .getInstance().getSimpleGeofences(getActivity(),BuId);
         int _ruId=0;
         for (Map.Entry<String, SimpleGeofence> item : geofences.entrySet()) {
             SimpleGeofence sg = item.getValue();
 
             CircleOptions circleOptions1 = new CircleOptions()
                     .center(new LatLng(sg.getLatitude(), sg.getLongitude()))
-                    .radius(sg.getRadius()).strokeColor(Color.BLACK)
-                    .strokeWidth(2).fillColor(0x500000ff);
+                    .radius(sg.getRadius()).strokeColor(Color.RED)
+                    .strokeWidth(2).fillColor(Color.argb(60,255,0,0));
             map.addCircle(circleOptions1);
 
             _ruId=sg.getRuId();
 
         }
         //Buscando la ruta para cargarlo
+
         if (_ruId>0){
             IRutaService rutaService=new RutaService(context);
             ArrayList<RutaDetalle> rutasDetalle;
+            List<LatLng> val2=new ArrayList();
             rutasDetalle=rutaService.GetAllRutaDetalleBD(_ruId);
             for (RutaDetalle rutaDetalle:rutasDetalle) {
-                PolylineOptions polylineOptions=new PolylineOptions()
+               /* PolylineOptions polylineOptions=new PolylineOptions()
                         .add(new LatLng(rutaDetalle.getRuDeLatitud(), rutaDetalle.getRuDeLongitud()))
-                        .color(0x500000ff);
-                map.addPolyline(polylineOptions);
+                        .color(0x500000ff)
+                        .width(12);
+                map.addPolyline(polylineOptions);*/
+                LatLng val=new LatLng(rutaDetalle.getRuDeLatitud(), rutaDetalle.getRuDeLongitud());
+                val2.add(val);
+
             }
+                Polyline line = map.addPolyline(new PolylineOptions()
+                    .addAll(val2) //new LatLng(51.5, -0.1), new LatLng(40.7, -74.0)
+                    //.width(5)
+                        .geodesic(true)
+                    .color(Color.rgb(58,115,14)));
         }
     }
     protected void createMarker(Double latitude, Double longitude) {

@@ -3,13 +3,16 @@ package com.godared.controlbusmovil.service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.godared.controlbusmovil.dao.BaseDatos;
 import com.godared.controlbusmovil.pojo.Telefono;
+import com.godared.controlbusmovil.pojo.TelefonoImei;
 import com.godared.controlbusmovil.restApi.IEndpointApi;
 import com.godared.controlbusmovil.restApi.adapter.RestApiAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -81,5 +84,52 @@ public class TelefonoService implements  ITelefonoService {
         contentValues.put("UsId", telefono.getUsId());
         contentValues.put("UsFechaReg", telefono.getUsFechaReg());
         baseDatos.ActualizarTelefono(contentValues,telefono.getTeId());
+    }
+    //TelefonoImei
+    @Override
+    public void ObtenerTelefonoImeiRest(String teImei){
+        RestApiAdapter restApiAdapter = new RestApiAdapter();
+        IEndpointApi endpointApi = restApiAdapter.establecerConexionRestApi();
+        Call<List<TelefonoImei>> telefonoResponseCall = endpointApi.getAllTelefonoImei(teImei);
+        telefonoResponseCall.enqueue(new Callback<List<TelefonoImei>>() {
+            @Override
+            public void onResponse(Call<List<TelefonoImei>> call, Response<List<TelefonoImei>> response) {
+                ArrayList<TelefonoImei> telefonosImeiResponse;
+                ArrayList<TelefonoImei> telefonosImeiDetalle;
+                //tarjetaControlDetalleResponse=new ArrayList<>();
+                telefonosImeiResponse = (ArrayList<TelefonoImei>) response.body();
+                telefonosImeiDetalle=telefonosImeiResponse;
+                InsertarTelefonoImeiBD(db,telefonosImeiDetalle);
+            }
+
+            @Override
+            public void onFailure(Call<List<TelefonoImei>> call, Throwable t) {
+                Toast.makeText(context, "Algo paso en la conexion", Toast.LENGTH_SHORT).show();
+                Log.e("Fallo la conexion", t.toString());
+            }
+        });
+    }
+    @Override
+    public List<TelefonoImei> ObtenerTelefonoImeibyImeiBD(String teImei){
+        return db.ObtenerTelefonoImeibyImei(teImei);
+    }
+    @Override
+    public void InsertarTelefonoImeiBD(BaseDatos baseDatos, List<TelefonoImei> telefonosImei){
+        for(TelefonoImei telefonoImei:telefonosImei) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("TeId", telefonoImei.getTeId());
+            contentValues.put("BuId", telefonoImei.getBuId());
+            contentValues.put("EmId", telefonoImei.getEmId());
+            contentValues.put("SuEmRSocial", telefonoImei.getSuEmRSocial());
+            contentValues.put("BuPlaca", telefonoImei.getBuPlaca());
+            contentValues.put("TeMarca", telefonoImei.getTeMarca());
+            contentValues.put("TeImei", telefonoImei.getTeImei());
+            contentValues.put("EmConsorcio", telefonoImei.getEmConsorcio());
+            baseDatos.InsertarTelefonoImei(contentValues);
+        }
+    }
+    @Override
+    public void ActualizarTelefonoImeiBD(BaseDatos baseDatos, TelefonoImei telefonoImei){
+
     }
 }

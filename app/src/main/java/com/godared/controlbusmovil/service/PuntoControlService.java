@@ -25,10 +25,11 @@ import retrofit2.Response;
 public class PuntoControlService implements IPuntoControlService {
     BaseDatos db;
     private Context context;
-    RutaService rutaService;
+    IRutaService rutaService;
     public PuntoControlService(Context context){
         this.context=context;
         db=new BaseDatos(context);
+        rutaService=new RutaService(context);
     }
     @Override
     public ArrayList<PuntoControl> ObtenerPuntoControlRest(int puCoId) {

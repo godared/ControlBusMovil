@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.godared.controlbusmovil.MainActivity;
 import com.godared.controlbusmovil.R;
 import com.godared.controlbusmovil.adapter.TarjetaAdaptadorRV;
 import com.godared.controlbusmovil.pojo.TarjetaControl;
@@ -27,15 +28,18 @@ public class RecyclerviewFragment extends Fragment implements  IRecyclerviewFrag
     //ArrayList<TarjetaControl> tarjetas;
     RecyclerView listaTarjetasDetalle;
     IRecyclerviewFragmentPresenter recyclerviewFragmentPresenter;
+    int BuId;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
         View v=inflater.inflate(R.layout.fragment_recyclerview,container,false); //asignamos un layout
-
         listaTarjetasDetalle=(RecyclerView)v.findViewById(R.id.rvTarjeta);
-        recyclerviewFragmentPresenter =new RecyclerviewFragmentPresenter(this,getContext());
+        //Obteniendo dato del main
+        MainActivity _actividadPrincipal = (MainActivity)getActivity();
+        BuId=_actividadPrincipal.BuId;
+        recyclerviewFragmentPresenter =new RecyclerviewFragmentPresenter(this,getContext(),BuId);
         return v;
     }
 

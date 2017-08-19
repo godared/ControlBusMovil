@@ -16,5 +16,12 @@
             android:onClick="Sincronizar"
                 />
 
+      <!--Es una clase personalizada para hora digital en el formato hora minuto y segundo-->
+        <com.godared.controlbusmovil.service.DigitalClock
+            android:id="@+id/fragment_clock_digital"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DigitalClock" />
+
 </LinearLayout>
 

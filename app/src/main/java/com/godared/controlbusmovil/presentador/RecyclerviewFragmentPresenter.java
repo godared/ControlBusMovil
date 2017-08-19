@@ -1,9 +1,11 @@
 package com.godared.controlbusmovil.presentador;
 
 import android.content.Context;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.godared.controlbusmovil.MainActivity;
 import com.godared.controlbusmovil.dao.ConstructorTarjetas;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
 import com.godared.controlbusmovil.restApi.IEndpointApi;
@@ -15,6 +17,7 @@ import com.godared.controlbusmovil.vista.fragment.IRecyclerviewFragment;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -30,19 +33,23 @@ public class RecyclerviewFragmentPresenter implements IRecyclerviewFragmentPrese
     private Context context;
     private ConstructorTarjetas constructorTarjetas;
     private ArrayList<TarjetaControlDetalle> tarjetasDetalle;
-    public RecyclerviewFragmentPresenter(IRecyclerviewFragment iRecyclerviewFragment, Context context) {
+    int BuId;
+    public RecyclerviewFragmentPresenter(IRecyclerviewFragment iRecyclerviewFragment, Context context, int buId) {
         this.iRecyclerviewFragment=iRecyclerviewFragment;
         this.context=context;
+        this.BuId=buId;
         obtenerTarjetasDetalleBD();
        // obtenerTarjetasDetalleRest();
     }
-
     @Override
     public void obtenerTarjetasDetalleBD() {
         //constructorTarjetas =new ConstructorTarjetas(context);
         //tarjetasDetalle = constructorTarjetas.ObtenerDatosTarjetasDetalle();
+
         ITarjetaService tarjetaService=new TarjetaService(context);
-        tarjetasDetalle =tarjetaService.GetAllTarjetaDetalleBDByTaCoActivo(7,"31-03-2017");
+        String dateNow = DateFormat.format("dd-MM-yyyy",
+                new Date()).toString();
+        tarjetasDetalle =tarjetaService.GetAllTarjetaDetalleBDByTaCoActivo(BuId,dateNow);//"16-08-2017"
         mostrarTarjetasDetalleRV();
     }
 

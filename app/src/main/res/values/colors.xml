@@ -7,4 +7,6 @@
     <color name="textPrimaryColor">#FFFFFF</color>
     <color name="primaryTextColor">#212121</color>
     <color name="secondaryTextColor">#757575</color>
+    <color name="colorRuta">#21610B</color>
+    <color name="colorCirculo">#FF0000</color>
 </resources>
