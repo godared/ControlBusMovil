@@ -5,7 +5,7 @@ package com.godared.controlbusmovil.restApi;
  */
 
 public final class ConstantesRestApi {
-    public static final String ROOT_URL="http://controlbus-ronaldmam.rhcloud.com";//http://controlbus-ronaldmam.rhcloud.com
+    public static final String ROOT_URL="http://controlbus.us-east-1.elasticbeanstalk.com";//"http://controlbus-ronaldmam.rhcloud.com";//http://controlbus-ronaldmam.rhcloud.com
     //http://localhost:8089/controlbus/rest/tarjetacontrol/getalltarjetacontrolbybuidfecha?buId=1&taCoFecha=26-12-2016
     public static final String URL_TARJETA_CONTROL="/rest/tarjetacontrol/getalltarjetacontrolbybuidfecha";
     public static final String URL_TARJETA_CONTROL_DETALLE="/rest/tarjetacontroldetalle/";

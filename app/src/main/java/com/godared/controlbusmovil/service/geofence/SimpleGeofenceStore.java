@@ -63,8 +63,8 @@ public class SimpleGeofenceStore {
             puntoControl=puntoControlService.GetPuntoControlBD(tarjetaControl.getPuCoId());
             puntoControlDetalles = puntoControlService.GetAllPuntoControlDetalleBD(tarjetaControl.getPuCoId());
             for (PuntoControlDetalle puntoControlDetalle : puntoControlDetalles) {
-                geofences.put(puntoControlDetalle.getPuCoDeDescripcion()+"-"+Integer.toString(puntoControlDetalle.getPuCoDeId()),
-                        new SimpleGeofence(puntoControlDetalle.getPuCoDeDescripcion()+"-"+Integer.toString(puntoControlDetalle.getPuCoDeId()),
+                geofences.put(Integer.toString(puntoControlDetalle.getPuCoDeId()),
+                        new SimpleGeofence(Integer.toString(puntoControlDetalle.getPuCoDeId()), //puntoControlDetalle.getPuCoDeDescripcion()+"-"+
                         puntoControlDetalle.getPuCoDeLatitud(), puntoControlDetalle.getPuCoDeLongitud(),
                         100, GEOFENCE_EXPIRATION_IN_MILLISECONDS,
                         Geofence.GEOFENCE_TRANSITION_ENTER
