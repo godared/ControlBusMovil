@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        tbToolBar=(Toolbar)findViewById(R.id.tbToolBar);
+        tbToolBar=(Toolbar)findViewById(R.id.miBarra);
         setSupportActionBar(tbToolBar);
         obtenerImeiRest();
         validarImei();
@@ -72,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
         //agremaos los fragments al viewPager
         vpViewPager.setAdapter(new PageAdapterVP(getSupportFragmentManager(),fragmets));
         tlTablaLayout.setupWithViewPager(vpViewPager);
-        tlTablaLayout.getTabAt(0).setIcon(R.drawable.tiempo_de_propiedades_48);
-        tlTablaLayout.getTabAt(1).setIcon(R.drawable.tiempo_de_propiedades_48);
+        tlTablaLayout.getTabAt(0).setIcon(R.drawable.icons8_tarjeta_para_fichar_48);
+        tlTablaLayout.getTabAt(1).setIcon(R.drawable.icons8_marcador_de_mapa_48);
         Intent i=new Intent(this, GeolocationService.class);
         i.putExtra("BUS_ID",BuId);
         startService(i);

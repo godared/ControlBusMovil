@@ -29,6 +29,7 @@ public class SettingActivity extends AppCompatActivity {
         DigitalClock dc = (DigitalClock)findViewById(R.id.fragment_clock_digital);
         Bundle bu=getIntent().getExtras();
         BuId=bu.getInt("BUS_ID");
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
     public void Sincronizar(View view) {
         iTarjetaService=new TarjetaService(view.getContext());
