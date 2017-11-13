@@ -578,6 +578,7 @@ public class BaseDatos extends SQLiteOpenHelper{
             tarjetasDetalleBitacoraMovil.add(tarjetaDetalleBitacoraMovil);
         }
         db.close();
+
         //if (tarjetasBitacoraMovil.size()>0)
         return tarjetasDetalleBitacoraMovil.get(0);
         //else

@@ -54,6 +54,7 @@ public class MapsFragment extends Fragment implements IMapsFragment {
     protected int sw=0;
     private Context context;
     int BuId;
+
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 
         @Override
@@ -78,11 +79,19 @@ public class MapsFragment extends Fragment implements IMapsFragment {
     public void onCreate(Bundle savedInstanceState) {
         setRetainInstance(true);
         setHasOptionsMenu(true);
-
+        if (savedInstanceState != null) { //para guardar el estado en caso la pantalla cambia de orientacion
+            BuId = savedInstanceState.getInt("busId");
+        }
         super.onCreate(savedInstanceState);
         MainActivity _actividadPrincipal = (MainActivity)getActivity();
         BuId=_actividadPrincipal.BuId;
 
+    }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt("busId", BuId);
+        //savedInstanceState.putBoolean("running", running);
+        //savedInstanceState.putBoolean("wasRunning", wasRunning);
     }
     @Nullable
     @Override
