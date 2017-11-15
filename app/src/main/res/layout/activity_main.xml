@@ -10,13 +10,18 @@
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         >
-        <android.support.v7.widget.Toolbar
+       <!-- <android.support.v7.widget.Toolbar
             android:id="@+id/tbToolBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_scrollFlags="scroll|enterAlways"><!--efecto que se oculta la barra para mostrar la lista completa-->
+            app:layout_scrollFlags="scroll|enterAlways">
 
         </android.support.v7.widget.Toolbar>
+    -->
+        <include android:id="@+id/miBarra"
+            layout="@layout/actionbar">
+        </include>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
