@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        tbToolBar=(Toolbar)findViewById(R.id.tbToolBar);
+        //tbToolBar=(Toolbar)findViewById(R.id.tbToolBar);
 
         tbToolBar=(Toolbar)findViewById(R.id.miBarra);
 

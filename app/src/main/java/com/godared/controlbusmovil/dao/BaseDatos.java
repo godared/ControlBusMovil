@@ -69,7 +69,10 @@ public class BaseDatos extends SQLiteOpenHelper{
         String queryCrearTablaTelefonoImei="CREATE TABLE TelefonoImei(TeId INTEGER PRIMARY KEY,"+
                 "BuId INTEGER, EmId INTEGER, SuEmRSocial TEXT,BuPlaca TEXT,TeMarca TEXT,"+
                 "TeImei TEXT, EmConsorcio TEXT) ";
-
+        //Georefercnia
+        String queryCrearTablaGeoreferencia="CREATE TABLE Telefono(TeId INTEGER PRIMARY KEY,"+
+                "BuId INTEGER, TeMarca TEXT, TeModelo TEXT,TeVersionAndroid TEXT,TeActivo INTEGER,"+
+                "TeImei TEXT, UsId INTEGER, UsFechaReg TEXT) ";
         //Bitacora, estas tablas es para el control de envios
         String queryCrearTablaTarjetaBitacoraMovil="CREATE TABLE TarjetaBitacoraMovil(TaCoId INTEGER,"+
                 "TaBiMoRemotoId INTEGER, TaBiMoEnviado INTEGER, TaBiMoActivo integer, TaBiMoFinalDetalle INTEGER) ";
