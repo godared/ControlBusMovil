@@ -70,9 +70,9 @@ public class BaseDatos extends SQLiteOpenHelper{
                 "BuId INTEGER, EmId INTEGER, SuEmRSocial TEXT,BuPlaca TEXT,TeMarca TEXT,"+
                 "TeImei TEXT, EmConsorcio TEXT) ";
         //Georefercnia
-        String queryCrearTablaGeoreferencia="CREATE TABLE Telefono(TeId INTEGER PRIMARY KEY,"+
-                "BuId INTEGER, TeMarca TEXT, TeModelo TEXT,TeVersionAndroid TEXT,TeActivo INTEGER,"+
-                "TeImei TEXT, UsId INTEGER, UsFechaReg TEXT) ";
+        String queryCrearTablaGeoreferencia="CREATE TABLE Georeferencia(GeId INTEGER PRIMARY KEY,"+
+                "TaCoId INTEGER, GeLatitud REAL, GeLongitud REAL,GeFechaHora TEXT,"+
+                "UsId INTEGER, UsFechaReg TEXT) ";
         //Bitacora, estas tablas es para el control de envios
         String queryCrearTablaTarjetaBitacoraMovil="CREATE TABLE TarjetaBitacoraMovil(TaCoId INTEGER,"+
                 "TaBiMoRemotoId INTEGER, TaBiMoEnviado INTEGER, TaBiMoActivo integer, TaBiMoFinalDetalle INTEGER) ";
@@ -87,6 +87,7 @@ public class BaseDatos extends SQLiteOpenHelper{
         db.execSQL(queryCrearTablaRutaDetalle);
         db.execSQL(queryCrearTablaTelefono);
         db.execSQL(queryCrearTablaTelefonoImei);
+        db.execSQL(queryCrearTablaGeoreferencia);
         db.execSQL(queryCrearTablaTarjetaBitacoraMovil);
         db.execSQL(queryCrearTablaTarjetaDetalleBitacoraMovil);
     }
@@ -100,6 +101,7 @@ public class BaseDatos extends SQLiteOpenHelper{
         db.execSQL("DROP TABLE IF EXIST RutaDetalle");
         db.execSQL("DROP TABLE IF EXIST Telefono");
         db.execSQL("DROP TABLE IF EXIST TelefonoImei");
+        db.execSQL("DROP TABLE IF EXIST Georeferencia");
         db.execSQL("DROP TABLE IF EXIST TarjetaBitacoraMovil");
         db.execSQL("DROP TABLE IF EXIST TarjetaDetalleBitacoraMovil");
         onCreate(db);
@@ -512,6 +514,23 @@ public class BaseDatos extends SQLiteOpenHelper{
         db.delete("TelefonoImei","TeId="+teId, null);
         db.close();
     }
+    //Georeferencia
+    public void InsertarGeoreferencia(ContentValues contentValues){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.insert("Georeferencia",null,contentValues);
+        db.close();
+    }
+    public void ActualizarGeoreferencia(ContentValues contentValues,int geId){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.update("Georeferencia",contentValues,"GeId="+geId,null);
+        db.close();
+    }
+    public void EliminarGeoreferencia(int geId){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.delete("Georeferencia","GeId="+geId, null);
+        db.close();
+    }
+
     ///TarjetaBitacoraMovil
     public void insertarTarjetaBitacoraMovil(ContentValues contentValues){
         SQLiteDatabase db=this.getWritableDatabase();

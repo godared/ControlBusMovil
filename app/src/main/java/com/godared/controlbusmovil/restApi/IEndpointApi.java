@@ -1,5 +1,6 @@
 package com.godared.controlbusmovil.restApi;
 
+import com.godared.controlbusmovil.pojo.Georeferencia;
 import com.godared.controlbusmovil.pojo.PuntoControl;
 import com.godared.controlbusmovil.pojo.PuntoControlDetalle;
 import com.godared.controlbusmovil.pojo.Ruta;
@@ -53,4 +54,8 @@ public interface IEndpointApi {
 
     @GET(ConstantesRestApi.URL_TELEFONO_IMEI)
     Call<List<TelefonoImei>> getAllTelefonoImei( @Query("teImei") String teImei);
+
+    //Georeferencia
+    @POST(ConstantesRestApi.URL_GEOREFERENCIA+"saveone")
+    Call<Boolean> updateTarjetaControlDetalle(@Body Georeferencia georeferencia);//
 }
