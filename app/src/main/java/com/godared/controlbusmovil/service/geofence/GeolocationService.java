@@ -235,9 +235,11 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
             //System.out.println("Value: " + df.format(value));
             df.setRoundingMode(RoundingMode.CEILING);
             double _latitudActual=Double.valueOf(df.format(location.getLatitude()));
-
-            //if()
-            _georeferenciaService.SaveGeoreferenciaRest(_georeferencia);
+            double _longitudActual=Double.valueOf(df.format(location.getLongitude()));
+            double _latitudLastBD=Double.valueOf(df.format(georeferencia.getGeLatitud()));
+            double _longitudLastBD=Double.valueOf(df.format(georeferencia.getGeLongitud()));
+            if(_latitudActual!=_latitudLastBD || _longitudActual!=_longitudLastBD)
+                _georeferenciaService.SaveGeoreferenciaRest(_georeferencia);
         }
     }
     protected synchronized void buildGoogleApiClient() {
