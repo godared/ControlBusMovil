@@ -13,6 +13,7 @@ public interface IGeoreferenciaService {
     void SaveGeoreferenciaRest(List<Georeferencia> georeferencias);
     void InsertarGeoreferenciaBD(BaseDatos baseDatos, Georeferencia georeferencia);
     void ActualizarGeoreferenciaBD(BaseDatos baseDatos, Georeferencia georeferencia);
-
+    int GetCountGeoreferenciadByTaCo(int taCoId);
+    Georeferencia GetLastGeoreferenciaByTaCo(int taCoId);
 
 }

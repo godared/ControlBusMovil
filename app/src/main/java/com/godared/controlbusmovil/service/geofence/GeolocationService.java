@@ -13,11 +13,17 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.godared.controlbusmovil.MainActivity;
 import com.godared.controlbusmovil.R;
+import com.godared.controlbusmovil.pojo.Georeferencia;
+import com.godared.controlbusmovil.service.GeoreferenciaService;
+import com.godared.controlbusmovil.service.IGeoreferenciaService;
+import com.godared.controlbusmovil.service.ITarjetaService;
+import com.godared.controlbusmovil.service.TarjetaService;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -28,16 +34,20 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class GeolocationService extends Service implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<Status> {
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 30000; //1000 es un segundo
     public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 5;
     protected GoogleApiClient mGoogleApiClient;
     protected LocationRequest mLocationRequest;
     int BuId;
+    int TaCoId;
     private PendingIntent mPendingIntent;
 
     public GeolocationService() {
@@ -48,6 +58,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
         buildGoogleApiClient();
         Bundle extra_buId=intent.getExtras();
         BuId=extra_buId.getInt("BUS_ID");
+        TaCoId=extra_buId.getInt("TACO_ID");
         mGoogleApiClient.connect();
 
     }
@@ -115,7 +126,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
     }
 
     public void broadcastLocationFound(Location location) {
-        Intent intent = new Intent("me.hoen.geofence_21.geolocation.service");
+        Intent intent = new Intent("com.godared.controlbusmovil.service.geofence");//me.hoen.geofence_21.geolocation.service
         intent.putExtra("latitude", location.getLatitude());
         intent.putExtra("longitude", location.getLongitude());
         intent.putExtra("done", 1);
@@ -136,6 +147,8 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
+        //podemos obtener la ultima localizacion conocida al conectarse
+        //Location mlastLocation=LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
     }
     protected void stopLocationUpdates() {
         LocationServices.FusedLocationApi.removeLocationUpdates(
@@ -190,6 +203,41 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
 
         if (!MainActivity.geofencesAlreadyRegistered) {
             registerGeofences();
+        }
+        //es aqui que vamos a guardar la georeferencia(movimientos del bus
+        GuardarGeoreferenciaRest(this,location);
+
+
+    }
+    //Con este procedimiento guardamos en el servidor rest de la nube
+    //sino en la base de datos del movil
+    private void GuardarGeoreferenciaRest(Context context,Location location){
+        IGeoreferenciaService _georeferenciaService=new GeoreferenciaService(context);
+        Georeferencia _georeferencia=new Georeferencia();
+
+        _georeferencia.setGeId(0);
+        _georeferencia.setTaCoId(this.TaCoId);
+        _georeferencia.setGeLatitud(location.getLatitude());
+        _georeferencia.setGeLongitud(location.getLongitude());
+        String dateNow = DateFormat.format("yyyy-dd-MM",
+                new Date()).toString();
+        _georeferencia.setGeFechaHora(dateNow);
+        int cantidad=_georeferenciaService.GetCountGeoreferenciadByTaCo(this.TaCoId);
+        _georeferencia.setGeOrden(cantidad+1);
+        _georeferencia.setUsId(1);
+        if (this.TaCoId>0){
+            //Verificamos si el ultimo registro no ha variado con respecto al actual
+            //primero obtenemos el ultimo registro
+            Georeferencia georeferencia=null;
+            georeferencia=_georeferenciaService.GetLastGeoreferenciaByTaCo(this.TaCoId);
+            //redondeamos a 3 digitos, debido que es ahi varia cuando varia de posicion auna distancia prudente de 30mts
+            DecimalFormat df = new DecimalFormat("####0.000");
+            //System.out.println("Value: " + df.format(value));
+            df.setRoundingMode(RoundingMode.CEILING);
+            double _latitudActual=Double.valueOf(df.format(location.getLatitude()));
+
+            //if()
+            _georeferenciaService.SaveGeoreferenciaRest(_georeferencia);
         }
     }
     protected synchronized void buildGoogleApiClient() {

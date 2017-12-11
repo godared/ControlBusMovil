@@ -178,8 +178,9 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
 
         return db.ObtenerTarjetasDetalle(taCoId);
     }
-    public ArrayList<TarjetaControlDetalle> GetAllTarjetaDetalleBDByTaCoActivo(int buId, String taCoFecha){
+    public TarjetaControl GetTarjetaControlActivo(int buId, String taCoFecha){
         //Primero averiguamos cual tarjeta de control esta activo
+        TarjetaControl _tarjetaControl=null;
         List<TarjetaControl> tarjetasControl2;
         tarjetasControl2 = db.ObtenerTarjetas(buId, taCoFecha);
         TarjetaBitacoraMovil tarjetaBitacoraMovil;
@@ -195,7 +196,13 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
             if(sw==1)
                 break; /// salimos del for
         }
-        return db.ObtenerTarjetasDetalle(_taCoId);
+
+        return _tarjetaControl=db.ObtenerTarjeta(_taCoId);
+    }
+    public ArrayList<TarjetaControlDetalle> GetAllTarjetaDetalleBDByTaCoActivo(int buId, String taCoFecha){
+        TarjetaControl _tarjetaControl=null;
+        _tarjetaControl=GetTarjetaControlActivo(buId, taCoFecha);
+        return db.ObtenerTarjetasDetalle(_tarjetaControl.getTaCoId());
     }
     public Boolean VerificarTarjetaDetalleBDByTaCoDeRegistradoEnviado(int taCoDeId){
         //TarjetaControlDetalle tarjetaControlDetalle;

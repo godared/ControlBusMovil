@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,7 +23,9 @@ import com.godared.controlbusmovil.pojo.TelefonoImei;
 import com.godared.controlbusmovil.presentador.IRecyclerviewFragmentPresenter;
 import com.godared.controlbusmovil.presentador.RecyclerviewFragmentPresenter;
 import com.godared.controlbusmovil.service.DigitalClock;
+import com.godared.controlbusmovil.service.ITarjetaService;
 import com.godared.controlbusmovil.service.ITelefonoService;
+import com.godared.controlbusmovil.service.TarjetaService;
 import com.godared.controlbusmovil.service.TelefonoService;
 import com.godared.controlbusmovil.service.geofence.GeolocationService;
 import com.godared.controlbusmovil.pojo.TarjetaControl;
@@ -33,6 +36,7 @@ import com.godared.controlbusmovil.vista.fragment.SettingActivity;
 import com.godared.controlbusmovil.vista.fragment.MapsFragment;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -47,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     public int BuId;
     public int EmId;
     public int TeId;
+    public int TaCoId;
     public String BuPlaca;
     public String EmConsorcio;
 
@@ -82,8 +87,16 @@ public class MainActivity extends AppCompatActivity {
         tlTablaLayout.setupWithViewPager(vpViewPager);
         tlTablaLayout.getTabAt(0).setIcon(R.drawable.icons8_tarjeta_para_fichar_48);
         tlTablaLayout.getTabAt(1).setIcon(R.drawable.icons8_marcador_de_mapa_48);
+        //obteniendo la tarejacontrol activo
+        ITarjetaService tarjetaService=new TarjetaService(this);
+        TarjetaControl _tarjetaControl=null;
+        String dateNow = DateFormat.format("dd-MM-yyyy",
+                new Date()).toString();
+        _tarjetaControl =tarjetaService.GetTarjetaControlActivo(BuId,dateNow);//"16-08-2017"
+        this.TaCoId=_tarjetaControl.getTaCoId();
         Intent i=new Intent(this, GeolocationService.class);
         i.putExtra("BUS_ID",BuId);
+        i.putExtra("TACO_ID",TaCoId);
         startService(i);
         //startService(new Intent(this, GeolocationService.class));
     }

@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.godared.controlbusmovil.pojo.Georeferencia;
 import com.godared.controlbusmovil.pojo.PuntoControl;
 import com.godared.controlbusmovil.pojo.PuntoControlDetalle;
 import com.godared.controlbusmovil.pojo.Ruta;
@@ -72,7 +73,7 @@ public class BaseDatos extends SQLiteOpenHelper{
         //Georefercnia
         String queryCrearTablaGeoreferencia="CREATE TABLE Georeferencia(GeId INTEGER PRIMARY KEY,"+
                 "TaCoId INTEGER, GeLatitud REAL, GeLongitud REAL,GeFechaHora TEXT,"+
-                "UsId INTEGER, UsFechaReg TEXT) ";
+                "UsId INTEGER, UsFechaReg TEXT,GeOrden INTEGER) ";
         //Bitacora, estas tablas es para el control de envios
         String queryCrearTablaTarjetaBitacoraMovil="CREATE TABLE TarjetaBitacoraMovil(TaCoId INTEGER,"+
                 "TaBiMoRemotoId INTEGER, TaBiMoEnviado INTEGER, TaBiMoActivo integer, TaBiMoFinalDetalle INTEGER) ";
@@ -530,7 +531,32 @@ public class BaseDatos extends SQLiteOpenHelper{
         db.delete("Georeferencia","GeId="+geId, null);
         db.close();
     }
-
+    public int GetCountGeoreferenciadByTaCo(int taCoId){
+        String query="SELECT * FROM Georeferencia where TaCoId="+taCoId;
+        SQLiteDatabase db=this.getWritableDatabase();
+        int cantidad=db.rawQuery(query,null).getCount();
+        db.close();
+        return cantidad;
+    }
+    //Obtenemos el ultimo registro
+    public Georeferencia GetLastGeoreferenciaByTaCo(int taCoId){
+        Georeferencia georeferenciaActual=new Georeferencia();
+        String query="SELECT * FROM Georeferencia where TaCoId="+taCoId+" ORDER BY GeId DESC LIMIT 1";
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor registros=db.rawQuery(query,null);
+        while(registros.moveToNext()){
+            georeferenciaActual.setGeId(registros.getInt(0));
+            georeferenciaActual.setTaCoId(registros.getInt(1));
+            georeferenciaActual.setGeLatitud(registros.getDouble(2));
+            georeferenciaActual.setGeLongitud(registros.getDouble(3));
+            georeferenciaActual.setGeFechaHora(registros.getString(4));
+            georeferenciaActual.setUsId(registros.getInt(5));
+            georeferenciaActual.setUsFechaReg(registros.getString(6));
+            georeferenciaActual.setGeOrden(registros.getInt(7));
+        }
+        db.close();
+        return georeferenciaActual;
+    }
     ///TarjetaBitacoraMovil
     public void insertarTarjetaBitacoraMovil(ContentValues contentValues){
         SQLiteDatabase db=this.getWritableDatabase();

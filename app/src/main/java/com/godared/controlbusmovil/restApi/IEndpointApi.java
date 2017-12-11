@@ -57,8 +57,8 @@ public interface IEndpointApi {
 
     //Georeferencia
     @POST(ConstantesRestApi.URL_GEOREFERENCIA+"saveone")
-    Call<Boolean> saveGeoreferenciaOne(@Body Georeferencia georeferencia);
+    Call<Integer> saveGeoreferenciaOne(@Body Georeferencia georeferencia);
 
-   @POST(ConstantesRestApi.URL_GEOREFERENCIA+"saveone")
-   Call<Boolean> saveGeoreferencia(@Body List<Georeferencia> georeferencias);//
+    @POST(ConstantesRestApi.URL_GEOREFERENCIA+"save")
+    Call<Boolean> saveGeoreferencia(@Body List<Georeferencia> georeferencias);//
 }
