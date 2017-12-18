@@ -22,6 +22,7 @@ public interface ITarjetaService {
     TarjetaControl GetTarjetaControlBD(int taCoId);
     TarjetaControl GetTarjetaControlActivo(int buId, String taCoFecha);
     ArrayList<TarjetaControlDetalle> GetAllTarjetaDetalleBDByTaCoActivo(int buId, String taCoFecha);
+    ArrayList<TarjetaControl> GetTarjetaControlBDEnviados(Boolean enviado);
     Boolean VerificarTarjetaDetalleBDByTaCoDeRegistradoEnviado(int taCoDeId);
     void VerificarActualizaTarjetaFinaliza(int taCoId);
     TarjetaControlDetalle GetTarjetaDetalleByPuCoDe(int puCoDeId);

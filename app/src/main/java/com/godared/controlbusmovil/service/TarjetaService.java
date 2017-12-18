@@ -204,6 +204,9 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
         _tarjetaControl=GetTarjetaControlActivo(buId, taCoFecha);
         return db.ObtenerTarjetasDetalle(_tarjetaControl.getTaCoId());
     }
+    public ArrayList<TarjetaControl> GetTarjetaControlBDEnviados(Boolean enviado){
+        return db.ObtenerTarjetasEnviado(enviado);
+    }
     public Boolean VerificarTarjetaDetalleBDByTaCoDeRegistradoEnviado(int taCoDeId){
         //TarjetaControlDetalle tarjetaControlDetalle;
         //tarjetaControlDetalle = db.ObtenerTarjetaDetalleByTaCoDe(taCoDeId);

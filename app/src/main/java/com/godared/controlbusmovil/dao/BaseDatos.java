@@ -173,6 +173,12 @@ public class BaseDatos extends SQLiteOpenHelper{
         return tarjetasActual;
 
     }
+    public ArrayList<TarjetaControl> ObtenerTarjetasEnviado(Boolean enviado){
+        ArrayList<TarjetaControl> tarjetasActual=new ArrayList<>();
+        String query="SELECT taco.* FROM TarjetaControl taco inner join " +
+                "TarjetaBitacoraMovil tabimo on taco.TaCoId=tabimo.TaCoId where TaBiMoEnviado="+enviado;
+        return tarjetasActual;
+    }
     public ArrayList<TarjetaControlDetalle> ObtenerTarjetasDetalle(int taCoId){
         ArrayList<TarjetaControlDetalle> tarjetasDetalle=new ArrayList<>();
         String query="SELECT * FROM TarjetaControlDetalle where TaCoId=?";

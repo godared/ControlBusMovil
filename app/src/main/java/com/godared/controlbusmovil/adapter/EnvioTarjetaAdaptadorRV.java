@@ -9,8 +9,7 @@ import android.widget.TextView;
 
 import com.godared.controlbusmovil.R;
 import com.godared.controlbusmovil.pojo.TarjetaBitacoraMovil;
-import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
-import com.godared.controlbusmovil.pojo.TarjetaDetalleBitacoraMovil;
+import com.godared.controlbusmovil.pojo.TarjetaControl;
 
 import java.util.ArrayList;
 
@@ -20,10 +19,10 @@ import java.util.ArrayList;
 
 public class EnvioTarjetaAdaptadorRV extends RecyclerView.Adapter<EnvioTarjetaAdaptadorRV.EnvioTarjetaViewHolder> {
     Activity activity;
-    ArrayList<TarjetaBitacoraMovil> tarjetasBitacoraMovil;
+    ArrayList<TarjetaControl> tarjetasControl;
 
-    public EnvioTarjetaAdaptadorRV(ArrayList<TarjetaBitacoraMovil> tarjetasBitacoraMovil,Activity activity) {
-        this.tarjetasBitacoraMovil=tarjetasBitacoraMovil;
+    public EnvioTarjetaAdaptadorRV(ArrayList<TarjetaControl> tarjetasControl, Activity activity) {
+        this.tarjetasControl =tarjetasControl;
         this.activity = activity;
     }
 
@@ -35,8 +34,8 @@ public class EnvioTarjetaAdaptadorRV extends RecyclerView.Adapter<EnvioTarjetaAd
 
     @Override
     public void onBindViewHolder(EnvioTarjetaAdaptadorRV.EnvioTarjetaViewHolder holder, int position) {
-        TarjetaBitacoraMovil _tarjetaBitacoraMovil=tarjetasBitacoraMovil.get(position);
-        holder.txtDescripcion.setText(_tarjetaBitacoraMovil.getTaCoId());
+        TarjetaControl _tarjetaControl= tarjetasControl.get(position);
+        holder.txtDescripcion.setText(_tarjetaControl.getTaCoId());
     }
 
     @Override

@@ -3,7 +3,10 @@ package com.godared.controlbusmovil.presentador;
 import android.content.Context;
 
 import com.godared.controlbusmovil.pojo.TarjetaBitacoraMovil;
+import com.godared.controlbusmovil.pojo.TarjetaControl;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
+import com.godared.controlbusmovil.service.ITarjetaService;
+import com.godared.controlbusmovil.service.TarjetaService;
 import com.godared.controlbusmovil.vista.fragment.IRecyclerviewEnvioTarjetaFragment;
 
 import java.util.ArrayList;
@@ -15,19 +18,21 @@ import java.util.ArrayList;
 public class RecyclerviewEnvioTarjetaPresenter implements IRecyclerviewEnvioTarjetaPresenter {
     private IRecyclerviewEnvioTarjetaFragment iRecyclerviewEnvioTarjetaFragment;
     private Context context;
-    private ArrayList<TarjetaBitacoraMovil> tarjetasBitacoraMovil;
+    private ArrayList<TarjetaControl> tarjetasControl;
 
     public RecyclerviewEnvioTarjetaPresenter(IRecyclerviewEnvioTarjetaFragment iRecyclerviewEnvioTarjetaFragment,Context context) {
         this.iRecyclerviewEnvioTarjetaFragment = iRecyclerviewEnvioTarjetaFragment;
         this.context=context;
-        obtenerEnvioTarjetasBD();
+        obtenerEnvioTarjetasBD(true);
     }
 
-    public void obtenerEnvioTarjetasBD(){
+    public void obtenerEnvioTarjetasBD(Boolean enviado){
+        ITarjetaService tarjetaService=new TarjetaService(context);
+        tarjetasControl=tarjetaService.GetTarjetaControlBDEnviados(enviado);
 
     }
     public void mostrarEnvioTarjetasRV(){
-        iRecyclerviewEnvioTarjetaFragment.inicializarAdaptadorRV(iRecyclerviewEnvioTarjetaFragment.crearAdaptador(tarjetasBitacoraMovil));
+        iRecyclerviewEnvioTarjetaFragment.inicializarAdaptadorRV(iRecyclerviewEnvioTarjetaFragment.crearAdaptador(tarjetasControl));
         iRecyclerviewEnvioTarjetaFragment.generarLinearLayoutVertical();
     }
 }

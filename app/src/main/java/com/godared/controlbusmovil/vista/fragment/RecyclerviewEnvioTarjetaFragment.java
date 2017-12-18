@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.godared.controlbusmovil.adapter.EnvioTarjetaAdaptadorRV;
 import com.godared.controlbusmovil.pojo.TarjetaBitacoraMovil;
+import com.godared.controlbusmovil.pojo.TarjetaControl;
 
 import java.util.ArrayList;
 
@@ -20,8 +21,8 @@ public class RecyclerviewEnvioTarjetaFragment extends Fragment implements IRecyc
         lLM.setOrientation(LinearLayoutManager.VERTICAL);
         listaEnvioTarjetas.setLayoutManager(lLM);
     }
-    public EnvioTarjetaAdaptadorRV crearAdaptador(ArrayList<TarjetaBitacoraMovil> tarjetasBitacoraMovil){
-        EnvioTarjetaAdaptadorRV _envioTarjetaAdaptadorRV= new EnvioTarjetaAdaptadorRV(tarjetasBitacoraMovil,getActivity());
+    public EnvioTarjetaAdaptadorRV crearAdaptador(ArrayList<TarjetaControl> tarjetascontrol){
+        EnvioTarjetaAdaptadorRV _envioTarjetaAdaptadorRV= new EnvioTarjetaAdaptadorRV(tarjetascontrol,getActivity());
         return _envioTarjetaAdaptadorRV;
     }
     public void inicializarAdaptadorRV(EnvioTarjetaAdaptadorRV adaptador){
