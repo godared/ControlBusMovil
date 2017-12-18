@@ -10,21 +10,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
 import android.text.format.DateFormat;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.godared.controlbusmovil.adapter.PageAdapterVP;
-import com.godared.controlbusmovil.dao.BaseDatos;
 import com.godared.controlbusmovil.pojo.TelefonoImei;
-import com.godared.controlbusmovil.presentador.IRecyclerviewFragmentPresenter;
-import com.godared.controlbusmovil.presentador.RecyclerviewFragmentPresenter;
 import com.godared.controlbusmovil.service.DigitalClock;
 import com.godared.controlbusmovil.service.ITarjetaService;
 import com.godared.controlbusmovil.service.ITelefonoService;
@@ -33,9 +27,9 @@ import com.godared.controlbusmovil.service.TelefonoService;
 import com.godared.controlbusmovil.service.geofence.GeolocationService;
 import com.godared.controlbusmovil.pojo.TarjetaControl;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
+import com.godared.controlbusmovil.vista.SettingActivity;
 import com.godared.controlbusmovil.vista.fragment.IRecyclerviewFragment;
 import com.godared.controlbusmovil.vista.fragment.RecyclerviewFragment;
-import com.godared.controlbusmovil.vista.fragment.SettingActivity;
 import com.godared.controlbusmovil.vista.fragment.MapsFragment;
 
 import java.util.ArrayList;
@@ -57,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     public int TaCoId;
     public String BuPlaca;
     public String EmConsorcio;
-
+    ITarjetaService iTarjetaService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,11 +137,27 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.mDescarga:
+                Sincronizar(this.getBaseContext());
+                break;
+            case R.id.mSetting:
                 Intent intent= new Intent(this, SettingActivity.class);
                 intent.putExtra("BUS_ID",BuId);
                 this.startActivity(intent);
+                break;
+
         }
         return super.onOptionsItemSelected(item);
+    }
+    public void Sincronizar(Context context) {
+        iTarjetaService=new TarjetaService(context);
+        //MainActivity _actividadPrincipal = (MainActivity)getActivity();//getCallingActivity();
+        String dateNow = DateFormat.format("dd-MM-yyyy",
+                new Date()).toString();
+        iTarjetaService.obtenerTarjetasRest(BuId,dateNow);//"16-08-2017"
+        // tarjetasControl=iTarjetaService.getTarjetasControl();
+        if(tarjetasDetalle!=null) {
+
+        }
     }
     public void obtenerImeiRest() {
         TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);

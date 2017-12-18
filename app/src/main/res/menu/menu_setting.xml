@@ -2,18 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/mDescarga"
-        android:title="Descarga"
+        android:id="@+id/mVisible"
+        android:title="Visible"
         android:orderInCategory="101"
         app:showAsAction="always"
-        android:icon="@drawable/descargar_desde_la_nube_48"
+        android:icon="@drawable/icons8_visible_48"
         ></item>
     <item
-        android:id="@+id/mSetting"
-        android:title="Setting"
+        android:id="@+id/mSubida"
+        android:title="Subida"
         android:orderInCategory="101"
         app:showAsAction="always"
-        android:icon="@drawable/icons8_ajustes_48"
+        android:icon="@drawable/icons8_subir_a_la_nube_48"
         ></item>
-
 </menu>

@@ -75,22 +75,6 @@ public class RecyclerviewFragmentPresenter implements IRecyclerviewFragmentPrese
                 Log.e("Fallo la conexion",t.toString());
             }
         });
-/*
-        tarjetaControlDetalleResponseCall.enqueue(new Callback<List<TarjetaControlDetalle>>() {
-            @Override
-            public void onResponse(Call<List<TarjetaControlDetalleResponse>> call, Response<List<TarjetaControlDetalle>> response) {
-              List<TarjetaControlDetalleResponse> tarjetaControlDetalleResponse=new ArrayList<>();
-                tarjetaControlDetalleResponse=response.body();
-                tarjetasDetalle=  tarjetaControlDetalleResponse.get(0).getTarjetasDetalle();
-                mostrarTarjetasDetalleRV();
-            }
-
-            @Override
-            public void onFailure(Call<List<TarjetaControlDetalle>> call, Throwable t) {
-                Toast.makeText(context, "Algo paso en la conexion", Toast.LENGTH_SHORT).show();
-                Log.e("Fallo la conexion",t.toString());
-            }
-        });*/
 
     }
 
