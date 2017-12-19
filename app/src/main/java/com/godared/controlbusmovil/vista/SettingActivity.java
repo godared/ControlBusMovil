@@ -1,5 +1,8 @@
 package com.godared.controlbusmovil.vista;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +22,7 @@ import com.godared.controlbusmovil.pojo.TarjetaControl;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
 import com.godared.controlbusmovil.service.ITarjetaService;
 import com.godared.controlbusmovil.service.TarjetaService;
+import com.godared.controlbusmovil.vista.fragment.RecyclerviewEnvioTarjetaFragment;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,6 +32,7 @@ public class SettingActivity extends AppCompatActivity{
     private ArrayList<TarjetaControlDetalle> tarjetasDetalle;
     private ArrayList<TarjetaControl> tarjetasControl;
     int BuId;
+    public Boolean Enviado;
     private Toolbar tbToolBar;
 
     @Override
@@ -35,14 +40,22 @@ public class SettingActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
 
-        DigitalClock dc = (DigitalClock)findViewById(R.id.fragment_clock_digital);
+       // DigitalClock dc = (DigitalClock)findViewById(R.id.fragment_clock_digital);
         Bundle bu=getIntent().getExtras();
-        BuId=bu.getInt("BUS_ID");
-
+       // BuId=bu.getInt("BUS_ID");
+        this.Enviado=false;
         tbToolBar=(Toolbar)findViewById(R.id.miBarra);
         setSupportActionBar(tbToolBar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        FragmentManager fragmentManager = getFragmentManager();
+        android.support.v4.app.FragmentTransaction fragmentTransaction =getSupportFragmentManager().beginTransaction();
+        android.support.v4.app.Fragment fragment = new RecyclerviewEnvioTarjetaFragment();
+        fragmentTransaction.add(R.id.your_placeholder, fragment);
+        fragmentTransaction.commit();
+
+
     }
 
     public void Sincronizar(View view) {

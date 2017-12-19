@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.godared.controlbusmovil.SettingActivity">
+    tools:context="com.godared.controlbusmovil.vista.SettingActivity">
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -14,11 +14,17 @@
             layout="@layout/actionbar">
         </include>
         </android.support.design.widget.AppBarLayout>
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rvTarjeta"
-            android:layout_height="match_parent"
+
+        <FrameLayout
+            android:id="@+id/your_placeholder"
             android:layout_width="match_parent"
-            android:layout_below="@+id/miBarra"/>
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        >
+
+        </FrameLayout>
+
+
 
 </android.support.design.widget.CoordinatorLayout>
 

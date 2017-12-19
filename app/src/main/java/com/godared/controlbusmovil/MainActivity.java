@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.mSetting:
                 Intent intent= new Intent(this, SettingActivity.class);
-                intent.putExtra("BUS_ID",BuId);
+                //intent.putExtra("BUS_ID",BuId);
                 this.startActivity(intent);
                 break;
 

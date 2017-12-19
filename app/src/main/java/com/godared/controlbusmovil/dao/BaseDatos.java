@@ -176,7 +176,20 @@ public class BaseDatos extends SQLiteOpenHelper{
     public ArrayList<TarjetaControl> ObtenerTarjetasEnviado(Boolean enviado){
         ArrayList<TarjetaControl> tarjetasActual=new ArrayList<>();
         String query="SELECT taco.* FROM TarjetaControl taco inner join " +
-                "TarjetaBitacoraMovil tabimo on taco.TaCoId=tabimo.TaCoId where TaBiMoEnviado="+enviado;
+                "TarjetaBitacoraMovil tabimo on taco.TaCoId=tabimo.TaCoId where TaBiMoEnviado=0";//+enviado;
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor registros=db.rawQuery(query,null);
+        while(registros.moveToNext()) {
+            TarjetaControl tarjetaActual = new TarjetaControl();
+            tarjetaActual.setTaCoId(registros.getInt(0));
+            tarjetaActual.setPuCoId(registros.getInt(1));
+            tarjetaActual.setRuId(registros.getInt(2));
+            tarjetaActual.setBuId(registros.getInt(3));
+            tarjetaActual.setTaCoFecha(registros.getString(4));
+            tarjetaActual.setTaCoCuota(registros.getFloat(6));
+            tarjetaActual.setUsId(registros.getInt(7));
+            tarjetasActual.add(tarjetaActual);
+        }
         return tarjetasActual;
     }
     public ArrayList<TarjetaControlDetalle> ObtenerTarjetasDetalle(int taCoId){
