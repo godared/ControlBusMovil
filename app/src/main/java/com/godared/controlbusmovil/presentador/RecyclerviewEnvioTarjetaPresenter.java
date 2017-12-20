@@ -20,13 +20,13 @@ public class RecyclerviewEnvioTarjetaPresenter implements IRecyclerviewEnvioTarj
     private Context context;
     private ArrayList<TarjetaControl> tarjetasControl;
 
-    public RecyclerviewEnvioTarjetaPresenter(IRecyclerviewEnvioTarjetaFragment iRecyclerviewEnvioTarjetaFragment,Context context,Boolean enviado) {
+    public RecyclerviewEnvioTarjetaPresenter(IRecyclerviewEnvioTarjetaFragment iRecyclerviewEnvioTarjetaFragment,Context context,int enviado) {
         this.iRecyclerviewEnvioTarjetaFragment = iRecyclerviewEnvioTarjetaFragment;
         this.context=context;
         obtenerEnvioTarjetasBD(enviado);
     }
 
-    public void obtenerEnvioTarjetasBD(Boolean enviado){
+    public void obtenerEnvioTarjetasBD(int enviado){
         ITarjetaService tarjetaService=new TarjetaService(context);
         tarjetasControl=tarjetaService.GetTarjetaControlBDEnviados(enviado);
         mostrarEnvioTarjetasRV();

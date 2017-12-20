@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 
 import com.godared.controlbusmovil.R;
 import com.godared.controlbusmovil.adapter.EnvioTarjetaAdaptadorRV;
-import com.godared.controlbusmovil.pojo.TarjetaBitacoraMovil;
 import com.godared.controlbusmovil.pojo.TarjetaControl;
 import com.godared.controlbusmovil.presentador.IRecyclerviewEnvioTarjetaPresenter;
 import com.godared.controlbusmovil.presentador.RecyclerviewEnvioTarjetaPresenter;
@@ -26,7 +25,7 @@ import java.util.ArrayList;
 public class RecyclerviewEnvioTarjetaFragment extends Fragment implements IRecyclerviewEnvioTarjetaFragment {
     RecyclerView listaEnvioTarjetas;
     IRecyclerviewEnvioTarjetaPresenter iRecyclerviewEnvioTarjetaPresenter;
-    Boolean enviado;
+    int enviado;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

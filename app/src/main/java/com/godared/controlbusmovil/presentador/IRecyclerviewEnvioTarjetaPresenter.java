@@ -5,6 +5,6 @@ package com.godared.controlbusmovil.presentador;
  */
 
 public interface IRecyclerviewEnvioTarjetaPresenter {
-    void obtenerEnvioTarjetasBD(Boolean enviado);
+    void obtenerEnvioTarjetasBD(int enviado);
     void mostrarEnvioTarjetasRV();
 }

@@ -6,7 +6,7 @@
         android:title="Visible"
         android:orderInCategory="101"
         app:showAsAction="always"
-        android:icon="@drawable/icons8_visible_48"
+        android:icon="@drawable/icons8_invisible_48"
         ></item>
     <item
         android:id="@+id/mSubida"
