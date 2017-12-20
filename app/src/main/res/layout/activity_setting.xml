@@ -16,10 +16,12 @@
         </android.support.design.widget.AppBarLayout>
 
         <FrameLayout
-            android:id="@+id/your_placeholder"
+            android:id="@+id/flEnvioTarjeta"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_alignParentRight="true"
+
         >
 
         </FrameLayout>

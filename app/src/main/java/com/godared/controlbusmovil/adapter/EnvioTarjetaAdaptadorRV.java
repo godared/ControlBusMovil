@@ -11,6 +11,7 @@ import com.godared.controlbusmovil.R;
 import com.godared.controlbusmovil.pojo.TarjetaBitacoraMovil;
 import com.godared.controlbusmovil.pojo.TarjetaControl;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 
 /**
@@ -27,7 +28,7 @@ public class EnvioTarjetaAdaptadorRV extends RecyclerView.Adapter<EnvioTarjetaAd
     }
 
     @Override
-    public EnvioTarjetaAdaptadorRV.EnvioTarjetaViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public EnvioTarjetaViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_enviotarjeta,parent,false);
         return new EnvioTarjetaViewHolder(v);
     }
@@ -35,12 +36,13 @@ public class EnvioTarjetaAdaptadorRV extends RecyclerView.Adapter<EnvioTarjetaAd
     @Override
     public void onBindViewHolder(EnvioTarjetaAdaptadorRV.EnvioTarjetaViewHolder holder, int position) {
         TarjetaControl _tarjetaControl= tarjetasControl.get(position);
-        holder.txtDescripcion.setText(_tarjetaControl.getTaCoId());
+
+        holder.txtDescripcion.setText(((String.valueOf(_tarjetaControl.getTaCoId()))));
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return tarjetasControl.size();
     }
     public static class EnvioTarjetaViewHolder extends RecyclerView.ViewHolder{
         private TextView txtDescripcion;

@@ -48,13 +48,12 @@ public class SettingActivity extends AppCompatActivity{
         setSupportActionBar(tbToolBar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        FragmentManager fragmentManager = getFragmentManager();
-        android.support.v4.app.FragmentTransaction fragmentTransaction =getSupportFragmentManager().beginTransaction();
+//Cargamos el Fragment
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();//getFragmentManager();
+        android.support.v4.app.FragmentTransaction fragmentTransaction =fragmentManager.beginTransaction();
         android.support.v4.app.Fragment fragment = new RecyclerviewEnvioTarjetaFragment();
-        fragmentTransaction.add(R.id.your_placeholder, fragment);
+        fragmentTransaction.add(R.id.flEnvioTarjeta, fragment);
         fragmentTransaction.commit();
-
 
     }
 
