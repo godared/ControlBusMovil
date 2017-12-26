@@ -147,25 +147,26 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
         final TarjetaControlDetalle  tarjetaControlDetalle2=tarjetaControlDetalle;
         RestApiAdapter restApiAdapter = new RestApiAdapter();
         IEndpointApi endpointApi = restApiAdapter.establecerConexionRestApi();
-        Call<Boolean> tarjetaControlDetalleSend = endpointApi.updateTarjetaControlDetalle(tarjetaControlDetalle);
-        tarjetaControlDetalleSend.enqueue(new Callback<Boolean>() {
+        Call<Integer> tarjetaControlDetalleSend = endpointApi.updateTarjetaControlDetalle(tarjetaControlDetalle);
+        tarjetaControlDetalleSend.enqueue(new Callback<Integer>() {
             @Override
-            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
                 //Aqui debe guardar el codigo remoto
-                Boolean val=response.body();
+                Integer codEnvio=response.body();
                 Toast.makeText(context, "Se actualizo correctamento", Toast.LENGTH_SHORT).show();
 
-                if(val){
+                if(codEnvio>0){
                     //Actualizamos el envio
                     TarjetaDetalleBitacoraMovil tarjetaDetalleBitacoraMovil;
                     tarjetaDetalleBitacoraMovil=db.ObtenerTarjetaDetalleBitacoraMovilByTaCoDe(tarjetaControlDetalle2.getTaCoDeId());
                     tarjetaDetalleBitacoraMovil.setTaDeBiMoEnviado(1);
+                    tarjetaDetalleBitacoraMovil.setTaDeBiMoRemotoId(codEnvio);
                     actualizarTarjetaDetalleBitacoraMovilBD(tarjetaControlDetalle2.getTaCoDeId(),tarjetaDetalleBitacoraMovil);
                 }
             }
 
             @Override
-            public void onFailure(Call<Boolean> call, Throwable t) {
+            public void onFailure(Call<Integer> call, Throwable t) {
                 Toast.makeText(context, "Algo paso en la conexion", Toast.LENGTH_SHORT).show();
                 Log.e("Fallo la conexion", t.toString());
             }
@@ -251,7 +252,18 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
         contentValues.put("TaCoHoraSalida", tarjetaControl.getTaCoHoraSalida());
         contentValues.put("TaCoCuota", tarjetaControl.getTaCoCuota());
         contentValues.put("UsId", tarjetaControl.getUsId());
-        contentValues.put("UsFechaReg", tarjetaControl.getUsFechaReg());
+        contentValues.put("TaCoNroVuelta", tarjetaControl.getTaCoNroVuelta());
+        contentValues.put("PrId", tarjetaControl.getPrId());
+        contentValues.put("TiSaId", tarjetaControl.getTiSaId());
+        contentValues.put("TaCoAsignado", tarjetaControl.getTaCoAsignado());
+        contentValues.put("TaCoTipoHoraSalida", tarjetaControl.getTaCoTipoHoraSalida());
+        contentValues.put("ReDiDeId", tarjetaControl.getReDiDeId());
+        contentValues.put("TaCoFinish", tarjetaControl.getTaCoFinish());
+        contentValues.put("TaCoMultiple", tarjetaControl.getTaCoMultiple());
+        contentValues.put("TaCoCodEnvioMovil", tarjetaControl.getTaCoCodEnvioMovil());
+        contentValues.put("TaCoCountMultiple", tarjetaControl.getTaCoCountMultiple());
+        contentValues.put("CoId", tarjetaControl.getCoId());
+
         baseDatos.insertarTarjeta(contentValues);
     }
     public void actualizarTarjetaBD(BaseDatos baseDatos, TarjetaControl tarjetaControl){

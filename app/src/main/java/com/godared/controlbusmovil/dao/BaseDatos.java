@@ -41,7 +41,11 @@ public class BaseDatos extends SQLiteOpenHelper{
         //Tarjeta de Control
         String queryCrearTablaTarjetaControl="CREATE TABLE TarjetaControl(TaCoId INTEGER PRIMARY KEY,"+
                 "PuCoId INTEGER, RuId INTEGER, BuId INTEGER, TaCoFecha TEXT, TaCoHoraSalida TEXT,"+
-                "TaCoCuota REAL, UsId INTEGER, UsFechaReg TEXT) ";
+                "TaCoCuota REAL, UsId INTEGER, UsFechaReg TEXT,INTEGER TaCoNroVuelta,INTEGER PrId," +
+                "INTEGER TiSaId, TEXT TaCoAsignado, INTEGER TaCoTipoHoraSalida, INTEGER ReDiDeId," +
+                "INTEGER TaCoFinish, INTEGER TaCoMultiple, INTEGER TaCoCodEnvioMovil, INTEGER TaCoCountMultiple," +
+                "INTEGER CoId) ";
+              
         String queryCrearTablaTarjetaControlDetalle="CREATE TABLE TarjetaControlDetalle(TaCoDeId INTEGER,"+
                 "TaCoId INTEGER, PuCoDeId INTEGER, TaCoDeFecha TEXT, TaCoDeHora TEXT,"+
                 "TaCoDeLatitud REAL,TaCoDeLongitud REAL,TaCoDeTiempo TEXT,TaCoDeDescripcion TEXT,"+
@@ -123,11 +127,13 @@ public class BaseDatos extends SQLiteOpenHelper{
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String formatted = sdf.format(new Date(fecha));
             tarjetaActual.setTaCoFecha(formatted);*/
+            tarjetaActual.setTaCoFecha(registros.getString(4));
             //Formateando Hora
             /*String hora=registros.getString(5);
             SimpleDateFormat sdf2 = new SimpleDateFormat("HH:m:ss");//"HH:m:ss dd-MM-yyyy"
             String formatted2 = sdf2.format(new Date(hora));
             tarjetaActual.setTaCoFecha(formatted2);*/
+            tarjetaActual.setTaCoHoraSalida(registros.getString(5));
             tarjetaActual.setTaCoCuota(registros.getFloat(6));
             tarjetaActual.setUsId(registros.getInt(7));
             //Formateando Fecha y Hora
@@ -135,7 +141,19 @@ public class BaseDatos extends SQLiteOpenHelper{
             SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd HH:m:ss");
             String formatted3 = sdf3.format(new Date(fecha3));
             tarjetaActual.setUsFechaReg(formatted3);*/
+            tarjetaActual.setUsFechaReg(registros.getString(8));
            // tarjetas.add(tarjetaActual);
+            tarjetaActual.setTaCoNroVuelta(registros.getInt(9));
+            tarjetaActual.setPrId(registros.getInt(10));
+            tarjetaActual.setTiSaId(registros.getInt(11));
+            tarjetaActual.setTaCoAsignado(registros.getString(12));
+            tarjetaActual.setTaCoTipoHoraSalida(registros.getInt(13));
+            tarjetaActual.setReDiDeId(registros.getInt(14));
+            tarjetaActual.setTaCoFinish(registros.getInt(15));
+            tarjetaActual.setTaCoMultiple(registros.getInt(16));
+            tarjetaActual.setTaCoCodEnvioMovil(registros.getInt(17));
+            tarjetaActual.setTaCoCountMultiple(registros.getInt(18));
+            tarjetaActual.setCoId(registros.getInt(19));
         }
         db.close();
         return tarjetaActual;
@@ -167,6 +185,18 @@ public class BaseDatos extends SQLiteOpenHelper{
             tarjetaActual.setTaCoFecha(registros.getString(4));
             tarjetaActual.setTaCoCuota(registros.getFloat(6));
             tarjetaActual.setUsId(registros.getInt(7));
+            tarjetaActual.setUsFechaReg(registros.getString(8));
+            tarjetaActual.setTaCoNroVuelta(registros.getInt(9));
+            tarjetaActual.setPrId(registros.getInt(10));
+            tarjetaActual.setTiSaId(registros.getInt(11));
+            tarjetaActual.setTaCoAsignado(registros.getString(12));
+            tarjetaActual.setTaCoTipoHoraSalida(registros.getInt(13));
+            tarjetaActual.setReDiDeId(registros.getInt(14));
+            tarjetaActual.setTaCoFinish(registros.getInt(15));
+            tarjetaActual.setTaCoMultiple(registros.getInt(16));
+            tarjetaActual.setTaCoCodEnvioMovil(registros.getInt(17));
+            tarjetaActual.setTaCoCountMultiple(registros.getInt(18));
+            tarjetaActual.setCoId(registros.getInt(19));
             tarjetasActual.add(tarjetaActual);
         }
         db.close();
@@ -188,6 +218,18 @@ public class BaseDatos extends SQLiteOpenHelper{
             tarjetaActual.setTaCoFecha(registros.getString(4));
             tarjetaActual.setTaCoCuota(registros.getFloat(6));
             tarjetaActual.setUsId(registros.getInt(7));
+            tarjetaActual.setUsFechaReg(registros.getString(8));
+            tarjetaActual.setTaCoNroVuelta(registros.getInt(9));
+            tarjetaActual.setPrId(registros.getInt(10));
+            tarjetaActual.setTiSaId(registros.getInt(11));
+            tarjetaActual.setTaCoAsignado(registros.getString(12));
+            tarjetaActual.setTaCoTipoHoraSalida(registros.getInt(13));
+            tarjetaActual.setReDiDeId(registros.getInt(14));
+            tarjetaActual.setTaCoFinish(registros.getInt(15));
+            tarjetaActual.setTaCoMultiple(registros.getInt(16));
+            tarjetaActual.setTaCoCodEnvioMovil(registros.getInt(17));
+            tarjetaActual.setTaCoCountMultiple(registros.getInt(18));
+            tarjetaActual.setCoId(registros.getInt(19));
             tarjetasActual.add(tarjetaActual);
         }
         return tarjetasActual;

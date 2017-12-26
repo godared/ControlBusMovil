@@ -34,7 +34,7 @@ public interface IEndpointApi {
     Call<List<TarjetaControlDetalle>> getTarjetaControlDetalle(@Path("taCoId") int taCoId);//
 
     @POST(ConstantesRestApi.URL_TARJETA_CONTROL_DETALLE+"saveone")
-    Call<Boolean> updateTarjetaControlDetalle(@Body TarjetaControlDetalle tarjetaControlDetalle);//
+    Call<Integer> updateTarjetaControlDetalle(@Body TarjetaControlDetalle tarjetaControlDetalle);//
 
     //PuntoCOntrol
     @GET(ConstantesRestApi.URL_PUNTO_CONTROL+"{puCoId}")
