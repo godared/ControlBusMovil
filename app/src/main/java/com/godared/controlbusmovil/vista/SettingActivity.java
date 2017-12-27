@@ -32,7 +32,8 @@ public class SettingActivity extends AppCompatActivity{
     ITarjetaService iTarjetaService;
     private ArrayList<TarjetaControlDetalle> tarjetasDetalle;
     private ArrayList<TarjetaControl> tarjetasControl;
-    int BuId;
+    public int BuId;
+    public String TaCoFecha;
     public int Enviado;
     private Toolbar tbToolBar;
     private Menu menu;
@@ -44,7 +45,8 @@ public class SettingActivity extends AppCompatActivity{
 
        // DigitalClock dc = (DigitalClock)findViewById(R.id.fragment_clock_digital);
         Bundle bu=getIntent().getExtras();
-       // BuId=bu.getInt("BUS_ID");
+        BuId=bu.getInt("BUS_ID");
+        TaCoFecha=bu.getString("TACO_FECHA");
         //Esta variable inciamos en 0 para que somalente visualice los no enviados
         this.Enviado=0;
         tbToolBar=(Toolbar)findViewById(R.id.miBarra);
@@ -73,9 +75,7 @@ public class SettingActivity extends AppCompatActivity{
     public void Sincronizar(View view) {
         iTarjetaService=new TarjetaService(view.getContext());
         //MainActivity _actividadPrincipal = (MainActivity)getActivity();//getCallingActivity();
-        String dateNow = DateFormat.format("dd-MM-yyyy",
-                new Date()).toString();
-        iTarjetaService.obtenerTarjetasRest(BuId,dateNow);//"16-08-2017"
+        iTarjetaService.obtenerTarjetasRest(BuId,TaCoFecha);//"16-08-2017"
        // tarjetasControl=iTarjetaService.getTarjetasControl();
         if(tarjetasDetalle!=null) {
 

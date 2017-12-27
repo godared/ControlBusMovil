@@ -115,6 +115,7 @@ public class TelefonoService implements  ITelefonoService {
     }
     @Override
     public void InsertarTelefonoImeiBD(BaseDatos baseDatos, List<TelefonoImei> telefonosImei){
+        TelefonoImei _telefonoImei=null;
         for(TelefonoImei telefonoImei:telefonosImei) {
             ContentValues contentValues = new ContentValues();
             contentValues.put("TeId", telefonoImei.getTeId());
@@ -125,7 +126,12 @@ public class TelefonoService implements  ITelefonoService {
             contentValues.put("TeMarca", telefonoImei.getTeMarca());
             contentValues.put("TeImei", telefonoImei.getTeImei());
             contentValues.put("EmConsorcio", telefonoImei.getEmConsorcio());
-            baseDatos.InsertarTelefonoImei(contentValues);
+            _telefonoImei=baseDatos.ObtenerTelefonoImei(telefonoImei.getTeId());
+            if(_telefonoImei.getTeId()<1)
+                baseDatos.InsertarTelefonoImei(contentValues);
+            else
+                baseDatos.ActualizarTelefonoImei(contentValues,telefonoImei.getTeId());
+
         }
     }
     @Override

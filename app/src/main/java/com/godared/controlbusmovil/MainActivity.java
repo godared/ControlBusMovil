@@ -141,7 +141,10 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.mSetting:
                 Intent intent= new Intent(this, SettingActivity.class);
-                //intent.putExtra("BUS_ID",BuId);
+                intent.putExtra("BUS_ID",BuId);
+                String dateNow = DateFormat.format("dd-MM-yyyy",
+                        new Date()).toString();
+                intent.putExtra("TACO_FECHA",dateNow);
                 this.startActivity(intent);
                 break;
 

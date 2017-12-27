@@ -41,10 +41,10 @@ public class BaseDatos extends SQLiteOpenHelper{
         //Tarjeta de Control
         String queryCrearTablaTarjetaControl="CREATE TABLE TarjetaControl(TaCoId INTEGER PRIMARY KEY,"+
                 "PuCoId INTEGER, RuId INTEGER, BuId INTEGER, TaCoFecha TEXT, TaCoHoraSalida TEXT,"+
-                "TaCoCuota REAL, UsId INTEGER, UsFechaReg TEXT,INTEGER TaCoNroVuelta,INTEGER PrId," +
-                "INTEGER TiSaId, TEXT TaCoAsignado, INTEGER TaCoTipoHoraSalida, INTEGER ReDiDeId," +
-                "INTEGER TaCoFinish, INTEGER TaCoMultiple, INTEGER TaCoCodEnvioMovil, INTEGER TaCoCountMultiple," +
-                "INTEGER CoId) ";
+                "TaCoCuota REAL, UsId INTEGER, UsFechaReg TEXT,TaCoNroVuelta INTEGER, PrId INTEGER," +
+                "TiSaId INTEGER, TaCoAsignado TEXT, TaCoTipoHoraSalida INTEGER, ReDiDeId INTEGER," +
+                "TaCoFinish INTEGER, TaCoMultiple INTEGER, TaCoCodEnvioMovil INTEGER, TaCoCountMultiple INTEGER," +
+                "CoId INTEGER) ";
               
         String queryCrearTablaTarjetaControlDetalle="CREATE TABLE TarjetaControlDetalle(TaCoDeId INTEGER,"+
                 "TaCoId INTEGER, PuCoDeId INTEGER, TaCoDeFecha TEXT, TaCoDeHora TEXT,"+
@@ -147,10 +147,10 @@ public class BaseDatos extends SQLiteOpenHelper{
             tarjetaActual.setPrId(registros.getInt(10));
             tarjetaActual.setTiSaId(registros.getInt(11));
             tarjetaActual.setTaCoAsignado(registros.getString(12));
-            tarjetaActual.setTaCoTipoHoraSalida(registros.getInt(13));
+            tarjetaActual.setTaCoTipoHoraSalida(registros.getInt(13)==1?true:false);
             tarjetaActual.setReDiDeId(registros.getInt(14));
-            tarjetaActual.setTaCoFinish(registros.getInt(15));
-            tarjetaActual.setTaCoMultiple(registros.getInt(16));
+            tarjetaActual.setTaCoFinish(registros.getInt(15)==1?true:false);
+            tarjetaActual.setTaCoMultiple(registros.getInt(16)==1?true:false);
             tarjetaActual.setTaCoCodEnvioMovil(registros.getInt(17));
             tarjetaActual.setTaCoCountMultiple(registros.getInt(18));
             tarjetaActual.setCoId(registros.getInt(19));
@@ -190,10 +190,10 @@ public class BaseDatos extends SQLiteOpenHelper{
             tarjetaActual.setPrId(registros.getInt(10));
             tarjetaActual.setTiSaId(registros.getInt(11));
             tarjetaActual.setTaCoAsignado(registros.getString(12));
-            tarjetaActual.setTaCoTipoHoraSalida(registros.getInt(13));
+            tarjetaActual.setTaCoTipoHoraSalida(registros.getInt(13)==1?true:false);
             tarjetaActual.setReDiDeId(registros.getInt(14));
-            tarjetaActual.setTaCoFinish(registros.getInt(15));
-            tarjetaActual.setTaCoMultiple(registros.getInt(16));
+            tarjetaActual.setTaCoFinish(registros.getInt(15)==1?true:false);
+            tarjetaActual.setTaCoMultiple(registros.getInt(16)==1?true:false);
             tarjetaActual.setTaCoCodEnvioMovil(registros.getInt(17));
             tarjetaActual.setTaCoCountMultiple(registros.getInt(18));
             tarjetaActual.setCoId(registros.getInt(19));
@@ -203,10 +203,10 @@ public class BaseDatos extends SQLiteOpenHelper{
         return tarjetasActual;
 
     }
-    public ArrayList<TarjetaControl> ObtenerTarjetasEnviado(int enviado){
+    public ArrayList<TarjetaControl> ObtenerTarjetasEnviado(int taCoId,int enviado){
         ArrayList<TarjetaControl> tarjetasActual=new ArrayList<>();
         String query="SELECT taco.* FROM TarjetaControl taco inner join " +
-                "TarjetaBitacoraMovil tabimo on taco.TaCoId=tabimo.TaCoId where TaBiMoEnviado="+enviado;
+                "TarjetaBitacoraMovil tabimo on taco.TaCoId=tabimo.TaCoId where taco.TaCoId<="+taCoId+" and  TaBiMoEnviado="+enviado;
         SQLiteDatabase db=this.getWritableDatabase();
         Cursor registros=db.rawQuery(query,null);
         while(registros.moveToNext()) {
@@ -223,10 +223,10 @@ public class BaseDatos extends SQLiteOpenHelper{
             tarjetaActual.setPrId(registros.getInt(10));
             tarjetaActual.setTiSaId(registros.getInt(11));
             tarjetaActual.setTaCoAsignado(registros.getString(12));
-            tarjetaActual.setTaCoTipoHoraSalida(registros.getInt(13));
+            tarjetaActual.setTaCoTipoHoraSalida(registros.getInt(13)==1?true:false);
             tarjetaActual.setReDiDeId(registros.getInt(14));
-            tarjetaActual.setTaCoFinish(registros.getInt(15));
-            tarjetaActual.setTaCoMultiple(registros.getInt(16));
+            tarjetaActual.setTaCoFinish(registros.getInt(15)==1?true:false);
+            tarjetaActual.setTaCoMultiple(registros.getInt(16)==1?true:false);
             tarjetaActual.setTaCoCodEnvioMovil(registros.getInt(17));
             tarjetaActual.setTaCoCountMultiple(registros.getInt(18));
             tarjetaActual.setCoId(registros.getInt(19));

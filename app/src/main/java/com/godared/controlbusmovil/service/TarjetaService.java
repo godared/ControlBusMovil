@@ -205,8 +205,15 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
         _tarjetaControl=GetTarjetaControlActivo(buId, taCoFecha);
         return db.ObtenerTarjetasDetalle(_tarjetaControl.getTaCoId());
     }
-    public ArrayList<TarjetaControl> GetTarjetaControlBDEnviados(int enviado){
-        return db.ObtenerTarjetasEnviado(enviado);
+    public ArrayList<TarjetaControl> GetTarjetaControlBDEnviados(int buId, String taCoFecha, int enviado){
+        //Primero obtenemos la posicion del registro activo,
+        // y solamente obtendremos los anteriores a este y no los posteriores
+        TarjetaControl _tarjetaControl=null;
+        _tarjetaControl=GetTarjetaControlActivo(buId, taCoFecha);
+        ArrayList<TarjetaControl> _tarjetaControls=null;
+        //Obtenemos las tarjetas de control enviados y por enviar
+        _tarjetaControls=db.ObtenerTarjetasEnviado(_tarjetaControl.getTaCoId(),enviado);
+        return db.ObtenerTarjetasEnviado(_tarjetaControl.getTaCoId(),enviado);
     }
     public Boolean VerificarTarjetaDetalleBDByTaCoDeRegistradoEnviado(int taCoDeId){
         //TarjetaControlDetalle tarjetaControlDetalle;
@@ -256,10 +263,10 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
         contentValues.put("PrId", tarjetaControl.getPrId());
         contentValues.put("TiSaId", tarjetaControl.getTiSaId());
         contentValues.put("TaCoAsignado", tarjetaControl.getTaCoAsignado());
-        contentValues.put("TaCoTipoHoraSalida", tarjetaControl.getTaCoTipoHoraSalida());
+        contentValues.put("TaCoTipoHoraSalida", tarjetaControl.getTaCoTipoHoraSalida()==true?1:0);
         contentValues.put("ReDiDeId", tarjetaControl.getReDiDeId());
-        contentValues.put("TaCoFinish", tarjetaControl.getTaCoFinish());
-        contentValues.put("TaCoMultiple", tarjetaControl.getTaCoMultiple());
+        contentValues.put("TaCoFinish", tarjetaControl.getTaCoFinish()==true?1:0);
+        contentValues.put("TaCoMultiple", tarjetaControl.getTaCoMultiple()==true?1:0);
         contentValues.put("TaCoCodEnvioMovil", tarjetaControl.getTaCoCodEnvioMovil());
         contentValues.put("TaCoCountMultiple", tarjetaControl.getTaCoCountMultiple());
         contentValues.put("CoId", tarjetaControl.getCoId());

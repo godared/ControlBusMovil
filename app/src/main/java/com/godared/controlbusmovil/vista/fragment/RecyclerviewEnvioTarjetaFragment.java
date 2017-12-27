@@ -26,6 +26,8 @@ public class RecyclerviewEnvioTarjetaFragment extends Fragment implements IRecyc
     RecyclerView listaEnvioTarjetas;
     IRecyclerviewEnvioTarjetaPresenter iRecyclerviewEnvioTarjetaPresenter;
     int enviado;
+    int buId;
+    String taCoFecha;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -34,7 +36,9 @@ public class RecyclerviewEnvioTarjetaFragment extends Fragment implements IRecyc
         listaEnvioTarjetas=(RecyclerView)v.findViewById(R.id.rvEnvioTarjeta);
         SettingActivity _settingActivity= (SettingActivity)getActivity();
         enviado=_settingActivity.Enviado;
-        iRecyclerviewEnvioTarjetaPresenter=new RecyclerviewEnvioTarjetaPresenter(this,getContext(),enviado);
+        buId=_settingActivity.BuId;
+        taCoFecha=_settingActivity.TaCoFecha;
+        iRecyclerviewEnvioTarjetaPresenter=new RecyclerviewEnvioTarjetaPresenter(this,getContext(),buId,taCoFecha,enviado);
         return v;
     }
 

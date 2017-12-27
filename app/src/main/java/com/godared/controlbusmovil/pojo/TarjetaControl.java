@@ -44,10 +44,10 @@ public class TarjetaControl {
     private int PrId;
     private int TiSaId;
     private String TaCoAsignado;
-    private int TaCoTipoHoraSalida;
+    private Boolean TaCoTipoHoraSalida;
     private int ReDiDeId;
-    private int TaCoFinish;
-    private int TaCoMultiple;
+    private Boolean TaCoFinish;
+    private Boolean TaCoMultiple;
     private int TaCoCodEnvioMovil;
     private int TaCoCountMultiple;
     private int CoId;
@@ -58,7 +58,7 @@ public class TarjetaControl {
     public TarjetaControl(int taCoId, int puCoId, int ruId, int buId, String taCoFecha,
                           String taCoHoraSalida, float taCoCuota, int usId, String usFechaReg,
                           int taCoNroVuelta,int prId,int tiSaId,String taCoAsignado,
-                          int taCoTipoHoraSalida,int reDiDeId,int taCoFinish,int taCoMultiple,
+                          Boolean taCoTipoHoraSalida,int reDiDeId,Boolean taCoFinish,Boolean taCoMultiple,
                           int taCoCodEnvioMovil,int taCoCountMultiple,int coId) {
         TaCoId = taCoId;
         PuCoId = puCoId;
@@ -186,11 +186,11 @@ public class TarjetaControl {
         TaCoAsignado = taCoAsignado;
     }
 
-    public int getTaCoTipoHoraSalida() {
+    public Boolean getTaCoTipoHoraSalida() {
         return TaCoTipoHoraSalida;
     }
 
-    public void setTaCoTipoHoraSalida(int taCoTipoHoraSalida) {
+    public void setTaCoTipoHoraSalida(Boolean taCoTipoHoraSalida) {
         TaCoTipoHoraSalida = taCoTipoHoraSalida;
     }
 
@@ -202,19 +202,19 @@ public class TarjetaControl {
         ReDiDeId = reDiDeId;
     }
 
-    public int getTaCoFinish() {
+    public Boolean getTaCoFinish() {
         return TaCoFinish;
     }
 
-    public void setTaCoFinish(int taCoFinish) {
+    public void setTaCoFinish(Boolean taCoFinish) {
         TaCoFinish = taCoFinish;
     }
 
-    public int getTaCoMultiple() {
+    public Boolean getTaCoMultiple() {
         return TaCoMultiple;
     }
 
-    public void setTaCoMultiple(int taCoMultiple) {
+    public void setTaCoMultiple(Boolean taCoMultiple) {
         TaCoMultiple = taCoMultiple;
     }
 
