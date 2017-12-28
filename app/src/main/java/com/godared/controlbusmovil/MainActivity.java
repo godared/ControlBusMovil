@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     public int TaCoId;
     public String BuPlaca;
     public String EmConsorcio;
+    public String FechaActual;
     ITarjetaService iTarjetaService;
 
     @Override
@@ -74,7 +75,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //tbToolBar=(Toolbar)findViewById(R.id.tbToolBar);
-
+        String dateNow = DateFormat.format("dd-MM-yyyy",
+                new Date()).toString();
+        this.FechaActual=dateNow;
         tbToolBar=(Toolbar)findViewById(R.id.miBarra);
 
         setSupportActionBar(tbToolBar);
@@ -98,9 +101,8 @@ public class MainActivity extends AppCompatActivity {
         //obteniendo la tarejacontrol activo
         ITarjetaService tarjetaService=new TarjetaService(this);
         TarjetaControl _tarjetaControl=null;
-        String dateNow = DateFormat.format("dd-MM-yyyy",
-                new Date()).toString();
-        _tarjetaControl =tarjetaService.GetTarjetaControlActivo(BuId,dateNow);//"16-08-2017"
+
+        _tarjetaControl =tarjetaService.GetTarjetaControlActivo(BuId,this.FechaActual);//"16-08-2017"
         this.TaCoId=_tarjetaControl.getTaCoId();
         Intent i=new Intent(this, GeolocationService.class);
         i.putExtra("BUS_ID",BuId);
@@ -142,9 +144,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.mSetting:
                 Intent intent= new Intent(this, SettingActivity.class);
                 intent.putExtra("BUS_ID",BuId);
-                String dateNow = DateFormat.format("dd-MM-yyyy",
-                        new Date()).toString();
-                intent.putExtra("TACO_FECHA",dateNow);
+
+                intent.putExtra("TACO_FECHA",this.FechaActual);
                 this.startActivity(intent);
                 break;
 
@@ -154,9 +155,8 @@ public class MainActivity extends AppCompatActivity {
     public void Sincronizar(Context context) {
         iTarjetaService=new TarjetaService(context);
         //MainActivity _actividadPrincipal = (MainActivity)getActivity();//getCallingActivity();
-        String dateNow = DateFormat.format("dd-MM-yyyy",
-                new Date()).toString();
-        iTarjetaService.obtenerTarjetasRest(BuId,dateNow);//"16-08-2017"
+
+        iTarjetaService.obtenerTarjetasRest(BuId,this.FechaActual);//"16-08-2017"
         // tarjetasControl=iTarjetaService.getTarjetasControl();
         if(tarjetasDetalle!=null) {
 

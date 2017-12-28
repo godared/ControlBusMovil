@@ -657,21 +657,6 @@ public class BaseDatos extends SQLiteOpenHelper{
           //  return tarjetaBitacoraMovil;
     }
     //TarjetaDetalleBitacoraMovil
-    public void insertarTarjetaDetalleBitacoraMovil(ContentValues contentValues){
-        SQLiteDatabase db=this.getWritableDatabase();
-        db.insert("TarjetaDetalleBitacoraMovil",null,contentValues);
-        db.close();
-    }
-    public void eliminarTarjetaDetalleBitacoraMovilByTaCo(int taCoId){
-        SQLiteDatabase db=this.getWritableDatabase();
-        db.delete("TarjetaDetalleBitacoraMovil","TaCoId="+taCoId, null);
-        db.close();
-    }
-    public void actualizarTarjetaDetalleBitacoraMovil(ContentValues contentValues,int taCoDeId){
-        SQLiteDatabase db=this.getWritableDatabase();
-        db.update("TarjetaDetalleBitacoraMovil",contentValues,"TaCoDeId="+taCoDeId,null);
-        db.close();
-    }
     public TarjetaDetalleBitacoraMovil ObtenerTarjetaDetalleBitacoraMovilByTaCoDe(int taCoDeId) {
         List<TarjetaDetalleBitacoraMovil> tarjetasDetalleBitacoraMovil = new ArrayList<>();
         String query = "SELECT * FROM TarjetaDetalleBitacoraMovil where TaCoDeId=" + taCoDeId;
@@ -693,4 +678,20 @@ public class BaseDatos extends SQLiteOpenHelper{
         //else
         //  return tarjetaBitacoraMovil;
     }
+    public void insertarTarjetaDetalleBitacoraMovil(ContentValues contentValues){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.insert("TarjetaDetalleBitacoraMovil",null,contentValues);
+        db.close();
+    }
+    public void eliminarTarjetaDetalleBitacoraMovilByTaCo(int taCoId){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.delete("TarjetaDetalleBitacoraMovil","TaCoId="+taCoId, null);
+        db.close();
+    }
+    public void actualizarTarjetaDetalleBitacoraMovil(ContentValues contentValues,int taCoDeId){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.update("TarjetaDetalleBitacoraMovil",contentValues,"TaCoDeId="+taCoDeId,null);
+        db.close();
+    }
+
 }

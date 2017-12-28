@@ -6,10 +6,10 @@ package com.godared.controlbusmovil.pojo;
 
 public class TarjetaBitacoraMovil {
     private int TaCoId;
-    private int TaBiMoRemotoId;
-    private int TaBiMoEnviado;
-    private int TaBiMoActivo;
-    private int TaBiMoFinalDetalle;
+    private int TaBiMoRemotoId; //Codigo de registro del server
+    private int TaBiMoEnviado; //indicador de si esta enviado
+    private int TaBiMoActivo; //indicador de cual tarjeta esta activo
+    private int TaBiMoFinalDetalle; //indicador si se ha finalizado el detalle(0:no finalizado, 1:finalizado por estar completo el detalle, 2: finalizado por la fuerza
 
     public int getTaCoId() {
         return TaCoId;

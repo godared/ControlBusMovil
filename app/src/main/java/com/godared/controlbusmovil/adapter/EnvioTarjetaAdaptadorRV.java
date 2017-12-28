@@ -45,12 +45,13 @@ public class EnvioTarjetaAdaptadorRV extends RecyclerView.Adapter<EnvioTarjetaAd
         Calendar cal=Calendar.getInstance(timeZone2);
         cal.setTimeInMillis(Long.parseLong(fecha));
 
-        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");//"yyyy-MM-dd HH:mm:ss"
+        SimpleDateFormat sdf2 = new SimpleDateFormat("dd-MM-yyyy");//"yyyy-MM-dd HH:mm:ss"
         sdf2.setTimeZone(cal.getTimeZone());
         String formatted2 = sdf2.format(cal.getTime());
         holder.txtFecha.setText(formatted2);
         holder.txtNroVuelta.setText(String.valueOf(_tarjetaControl.getTaCoNroVuelta()));
-        holder.txtRegistro.setText(String.valueOf(_tarjetaControl.getTaCoNroVuelta()));
+        holder.txtEstado.setText(_tarjetaControl.getUsFechaReg());
+        holder.txtRegistro.setText(String.valueOf(_tarjetaControl.getTaCoCodEnvioMovil()));
     }
 
     @Override

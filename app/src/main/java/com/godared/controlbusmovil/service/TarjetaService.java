@@ -208,12 +208,64 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
     public ArrayList<TarjetaControl> GetTarjetaControlBDEnviados(int buId, String taCoFecha, int enviado){
         //Primero obtenemos la posicion del registro activo,
         // y solamente obtendremos los anteriores a este y no los posteriores
+
         TarjetaControl _tarjetaControl=null;
         _tarjetaControl=GetTarjetaControlActivo(buId, taCoFecha);
         ArrayList<TarjetaControl> _tarjetaControls=null;
         //Obtenemos las tarjetas de control enviados y por enviar
         _tarjetaControls=db.ObtenerTarjetasEnviado(_tarjetaControl.getTaCoId(),enviado);
-        return db.ObtenerTarjetasEnviado(_tarjetaControl.getTaCoId(),enviado);
+        ArrayList<TarjetaControl> tarjetaControls=new ArrayList<>();
+        TarjetaControl _tarjetaControl1;
+        TarjetaBitacoraMovil _tarjetaBitacoraMovil;
+        for(TarjetaControl tarjetaControl:_tarjetaControls){
+            _tarjetaControl1=new TarjetaControl();
+            _tarjetaControl1.setTaCoId(tarjetaControl.getTaCoId());
+            _tarjetaControl1.setPuCoId(tarjetaControl.getPuCoId());
+            _tarjetaControl1.setRuId(tarjetaControl.getRuId());
+            _tarjetaControl1.setBuId(tarjetaControl.getBuId());
+            _tarjetaControl1.setTaCoFecha(tarjetaControl.getTaCoFecha());
+            _tarjetaControl1.setTaCoHoraSalida(tarjetaControl.getTaCoHoraSalida());
+            _tarjetaControl1.setTaCoCuota(tarjetaControl.getTaCoCuota());
+            _tarjetaControl1.setUsId(tarjetaControl.getUsId());
+            //_tarjetaControl1.setUsFechaReg(tarjetaControl.getUsFechaReg());
+            _tarjetaControl1.setTaCoNroVuelta(tarjetaControl.getTaCoNroVuelta());
+            _tarjetaControl1.setPrId(tarjetaControl.getPrId());
+            _tarjetaControl1.setTiSaId(tarjetaControl.getTiSaId());
+            _tarjetaControl1.setTaCoAsignado(tarjetaControl.getTaCoAsignado());
+            _tarjetaControl1.setTaCoTipoHoraSalida(tarjetaControl.getTaCoTipoHoraSalida());
+            _tarjetaControl1.setReDiDeId(tarjetaControl.getReDiDeId());
+            _tarjetaControl1.setTaCoFinish(tarjetaControl.getTaCoFinish());
+            _tarjetaControl1.setTaCoMultiple(tarjetaControl.getTaCoMultiple());
+            _tarjetaControl1.setTaCoCodEnvioMovil(tarjetaControl.getTaCoCodEnvioMovil());
+            _tarjetaControl1.setTaCoCountMultiple(tarjetaControl.getTaCoCountMultiple());
+            _tarjetaControl1.setCoId(tarjetaControl.getCoId());
+            //Verificamos y Actualizamos para finalizardetalle
+            this.VerificarActualizaTarjetaFinaliza(tarjetaControl.getTaCoId());
+
+            //Obtenemos la tarjeta ControlMovil, para obtener el estado
+            _tarjetaBitacoraMovil=db.ObtenerTarjetaBitacoraMovilByTaCo(tarjetaControl.getTaCoId());
+            if(_tarjetaBitacoraMovil.getTaBiMoEnviado()==1){
+                //vamos a usar el campo setUsFechaReg para el estado
+                _tarjetaControl1.setUsFechaReg("ENVIADO");
+            }else{
+                if(_tarjetaBitacoraMovil.getTaBiMoFinalDetalle()==0) {
+                    _tarjetaControl1.setUsFechaReg("INCOMPLETO");
+                }
+                else {
+                    if (_tarjetaBitacoraMovil.getTaBiMoFinalDetalle()==1) {
+                        _tarjetaControl1.setUsFechaReg("COMPLETO");
+                    }else{
+                        _tarjetaControl1.setUsFechaReg("FINALIZADO");
+                    }
+                }
+
+
+            }
+
+            tarjetaControls.add(_tarjetaControl1);
+
+        }
+        return tarjetaControls;
     }
     public Boolean VerificarTarjetaDetalleBDByTaCoDeRegistradoEnviado(int taCoDeId){
         //TarjetaControlDetalle tarjetaControlDetalle;
@@ -245,6 +297,14 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
 
             actualizarTarjetaBitacoraMovilBD(tarjetaBitacoraMovil);
         }
+    }
+    public void FinalizarTarjetaIncompleta(int taCoId){
+        TarjetaBitacoraMovil tarjetaBitacoraMovil;
+        tarjetaBitacoraMovil=db.ObtenerTarjetaBitacoraMovilByTaCo(taCoId);
+        tarjetaBitacoraMovil.setTaBiMoFinalDetalle(2);
+
+        actualizarTarjetaBitacoraMovilBD(tarjetaBitacoraMovil);
+
     }
     public TarjetaControlDetalle GetTarjetaDetalleByPuCoDe(int puCoDeId){
         return db.ObtenerTarjetaDetalleByPuCoDe(puCoDeId);
