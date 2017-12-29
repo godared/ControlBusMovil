@@ -40,7 +40,7 @@
                 android:orientation="horizontal"
                 android:layout_alignParentRight="true">
                 <ImageButton
-                    android:id="@+id/btnTerminar"
+                    android:id="@+id/btnFinalizar"
                     android:layout_width="38dp"
                     android:layout_height="38dp"
                     android:background="@drawable/tiempo_48"

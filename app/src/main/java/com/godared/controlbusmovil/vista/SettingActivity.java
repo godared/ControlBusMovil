@@ -32,7 +32,7 @@ public class SettingActivity extends AppCompatActivity{
     ITarjetaService iTarjetaService;
     private ArrayList<TarjetaControlDetalle> tarjetasDetalle;
     private ArrayList<TarjetaControl> tarjetasControl;
-    public int BuId;
+    public int BuId=0;
     public String TaCoFecha;
     public int Enviado;
     private Toolbar tbToolBar;
@@ -42,11 +42,16 @@ public class SettingActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
-
+        if(savedInstanceState != null){
+            BuId=savedInstanceState.getInt("BUS_ID");
+            TaCoFecha=savedInstanceState.getString("TACO_FECHA");
+        }
        // DigitalClock dc = (DigitalClock)findViewById(R.id.fragment_clock_digital);
         Bundle bu=getIntent().getExtras();
-        BuId=bu.getInt("BUS_ID");
-        TaCoFecha=bu.getString("TACO_FECHA");
+        if(BuId==0) {
+            BuId = bu.getInt("BUS_ID");
+            TaCoFecha = bu.getString("TACO_FECHA");
+        }
         //Esta variable inciamos en 0 para que somalente visualice los no enviados
         this.Enviado=0;
         tbToolBar=(Toolbar)findViewById(R.id.miBarra);
@@ -61,6 +66,22 @@ public class SettingActivity extends AppCompatActivity{
         fragmentTransaction.commit();
 
     }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        //super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putInt("BUS_ID", BuId);
+        savedInstanceState.putString("TACO_FECHA", TaCoFecha);
+        super.onSaveInstanceState(savedInstanceState);
+
+    }
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        BuId=savedInstanceState.getInt("BUS_ID");
+        TaCoFecha=savedInstanceState.getString("TACO_FECHA");
+    }
+
     public void VisualizarEnviados(){
         if (this.Enviado==1) {
             this.Enviado = 0;

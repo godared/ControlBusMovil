@@ -111,6 +111,12 @@ public class MainActivity extends AppCompatActivity {
         //startService(new Intent(this, GeolocationService.class));
     }
     @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        savedInstanceState.putInt("BUS_ID", BuId);
+        savedInstanceState.putInt("TACO_ID", TaCoId);
+    }
+    @Override
     protected void onStart(){
         super.onStart();
         //vpViewPager.setAdapter(new PageAdapterVP(getSupportFragmentManager(),fragmets));

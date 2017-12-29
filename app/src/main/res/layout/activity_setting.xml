@@ -10,9 +10,9 @@
             android:layout_height="wrap_content"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             >
-        <include android:id="@+id/miBarra"
-            layout="@layout/actionbar">
-        </include>
+                <include android:id="@+id/miBarra"
+                    layout="@layout/actionbar">
+                </include>
         </android.support.design.widget.AppBarLayout>
 
         <FrameLayout
