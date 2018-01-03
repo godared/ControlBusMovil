@@ -3,6 +3,7 @@ package com.godared.controlbusmovil.vista;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -37,28 +38,32 @@ public class SettingActivity extends AppCompatActivity{
     public int Enviado;
     private Toolbar tbToolBar;
     private Menu menu;
-
+    private Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
+        //esto es para controlar cuando gira la pantalla
         if(savedInstanceState != null){
+            //cuando gira entonces recuperado el estado
             BuId=savedInstanceState.getInt("BUS_ID");
             TaCoFecha=savedInstanceState.getString("TACO_FECHA");
-        }
-       // DigitalClock dc = (DigitalClock)findViewById(R.id.fragment_clock_digital);
-        Bundle bu=getIntent().getExtras();
-        if(BuId==0) {
+        }else{
+            //cuando se crea una nueva instancia
+            Bundle bu=getIntent().getExtras();
             BuId = bu.getInt("BUS_ID");
             TaCoFecha = bu.getString("TACO_FECHA");
         }
-        //Esta variable inciamos en 0 para que somalente visualice los no enviados
+
+       // DigitalClock dc = (DigitalClock)findViewById(R.id.fragment_clock_digital);
+        context=this.getApplicationContext();
+       //Esta variable inciamos en 0 para que somalente visualice los no enviados
         this.Enviado=0;
         tbToolBar=(Toolbar)findViewById(R.id.miBarra);
         setSupportActionBar(tbToolBar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//Cargamos el Fragment
+        //Cargamos el Fragment
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();//getFragmentManager();
         android.support.v4.app.FragmentTransaction fragmentTransaction =fragmentManager.beginTransaction();
         android.support.v4.app.Fragment fragment = new RecyclerviewEnvioTarjetaFragment();
@@ -93,10 +98,10 @@ public class SettingActivity extends AppCompatActivity{
         }
 
     }
-    public void Sincronizar(View view) {
-        iTarjetaService=new TarjetaService(view.getContext());
+    public void EnviarTodo() {
+        iTarjetaService=new TarjetaService(context);
         //MainActivity _actividadPrincipal = (MainActivity)getActivity();//getCallingActivity();
-        iTarjetaService.obtenerTarjetasRest(BuId,TaCoFecha);//"16-08-2017"
+        iTarjetaService.EnviarTodo(BuId,TaCoFecha,0);//"16-08-2017"
        // tarjetasControl=iTarjetaService.getTarjetasControl();
         if(tarjetasDetalle!=null) {
 
@@ -111,7 +116,7 @@ public class SettingActivity extends AppCompatActivity{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.mSubida:
-
+                this.EnviarTodo();
                 break;
             case R.id.mVisible:
 

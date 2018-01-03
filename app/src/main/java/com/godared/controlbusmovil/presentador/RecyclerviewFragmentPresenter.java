@@ -34,10 +34,17 @@ public class RecyclerviewFragmentPresenter implements IRecyclerviewFragmentPrese
     private ConstructorTarjetas constructorTarjetas;
     private ArrayList<TarjetaControlDetalle> tarjetasDetalle;
     int BuId;
-    public RecyclerviewFragmentPresenter(IRecyclerviewFragment iRecyclerviewFragment, Context context, int buId) {
+    int TaCoId;
+    String TaCoFecha;
+    Boolean IndicaGetDetalleActivo;
+    public RecyclerviewFragmentPresenter(IRecyclerviewFragment iRecyclerviewFragment, Context context,
+                                         int buId,int taCoId,String taCoFecha,Boolean indicaGetDetalleActivo) {
         this.iRecyclerviewFragment=iRecyclerviewFragment;
         this.context=context;
         this.BuId=buId;
+        TaCoId=taCoId;
+        TaCoFecha=taCoFecha;
+        IndicaGetDetalleActivo=indicaGetDetalleActivo;
         obtenerTarjetasDetalleBD();
        // obtenerTarjetasDetalleRest();
     }
@@ -47,9 +54,12 @@ public class RecyclerviewFragmentPresenter implements IRecyclerviewFragmentPrese
         //tarjetasDetalle = constructorTarjetas.ObtenerDatosTarjetasDetalle();
 
         ITarjetaService tarjetaService=new TarjetaService(context);
-        String dateNow = DateFormat.format("dd-MM-yyyy",
-                new Date()).toString();
-        tarjetasDetalle =tarjetaService.GetAllTarjetaDetalleBDByTaCoActivo(BuId,dateNow);//"16-08-2017"
+        // String dateNow = DateFormat.format("dd-MM-yyyy",
+        //        new Date()).toString();
+        if(IndicaGetDetalleActivo) //llamado desde el main prindipal
+            tarjetasDetalle =tarjetaService.GetAllTarjetaDetalleBDByTaCoActivo(BuId,TaCoFecha);//"16-08-2017"
+        else //llamado desde el detalle
+            tarjetasDetalle=tarjetaService.GetAllTarjetaDetalleBD(TaCoId);
         mostrarTarjetasDetalleRV();
     }
 

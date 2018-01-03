@@ -1,7 +1,6 @@
 package com.godared.controlbusmovil.service;
 
 import android.content.Context;
-
 import com.godared.controlbusmovil.dao.BaseDatos;
 import com.godared.controlbusmovil.pojo.TarjetaControl;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
@@ -17,6 +16,7 @@ public interface ITarjetaService {
 
     void obtenerTarjetasDetalleRest( int taCoId);
     ArrayList<TarjetaControl> obtenerTarjetasRest(int buId, String taCoFecha );
+    void UpdateTarjetaRest(TarjetaControl tarjetaControl);
     void UpdateTarjetaDetalleRest(TarjetaControlDetalle tarjetaControlDetalle);
     ArrayList<TarjetaControlDetalle> GetAllTarjetaDetalleBD(int taCoId);
     TarjetaControl GetTarjetaControlBD(int taCoId);
@@ -25,7 +25,8 @@ public interface ITarjetaService {
     ArrayList<TarjetaControl> GetTarjetaControlBDEnviados(int buId, String taCoFecha,int enviado);
     Boolean VerificarTarjetaDetalleBDByTaCoDeRegistradoEnviado(int taCoDeId);
     void VerificarActualizaTarjetaFinaliza(int taCoId);
-    void FinalizarTarjetaIncompleta(int taCoId);
+    void FinalizarTarjetaIncompleta(int taCoId,int buId,String taCoFecha);
+    void EnviarTodo(int buId, String taCoFecha, int enviado);
     TarjetaControlDetalle GetTarjetaDetalleByPuCoDe(int puCoDeId);
     void insertarTarjetaBD(BaseDatos baseDatos,  TarjetaControl tarjetaControl);
     void actualizarTarjetaBD(BaseDatos baseDatos, TarjetaControl tarjetaControl);

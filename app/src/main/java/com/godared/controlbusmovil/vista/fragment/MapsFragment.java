@@ -77,21 +77,30 @@ public class MapsFragment extends Fragment implements IMapsFragment {
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setRetainInstance(true);
         setHasOptionsMenu(true);
         if (savedInstanceState != null) { //para guardar el estado en caso la pantalla cambia de orientacion
             BuId = savedInstanceState.getInt("busId");
         }
-        super.onCreate(savedInstanceState);
+
         MainActivity _actividadPrincipal = (MainActivity)getActivity();
         BuId=_actividadPrincipal.BuId;
 
     }
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(savedInstanceState != null) {
+            BuId = savedInstanceState.getInt("BUS_ID");
+        }
+    }
+    @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putInt("busId", BuId);
+        savedInstanceState.putInt("BUS_ID", BuId);
         //savedInstanceState.putBoolean("running", running);
         //savedInstanceState.putBoolean("wasRunning", wasRunning);
+        super.onSaveInstanceState(savedInstanceState);
     }
     @Nullable
     @Override
@@ -160,20 +169,20 @@ public class MapsFragment extends Fragment implements IMapsFragment {
             List<LatLng> val2=new ArrayList();
             rutasDetalle=rutaService.GetAllRutaDetalleBD(_ruId);
             for (RutaDetalle rutaDetalle:rutasDetalle) {
-               /* PolylineOptions polylineOptions=new PolylineOptions()
+                PolylineOptions polylineOptions=new PolylineOptions()
                         .add(new LatLng(rutaDetalle.getRuDeLatitud(), rutaDetalle.getRuDeLongitud()))
                         .color(0x500000ff)
                         .width(12);
-                map.addPolyline(polylineOptions);*/
-                LatLng val=new LatLng(rutaDetalle.getRuDeLatitud(), rutaDetalle.getRuDeLongitud());
-                val2.add(val);
+                map.addPolyline(polylineOptions);
+               // LatLng val=new LatLng(rutaDetalle.getRuDeLatitud(), rutaDetalle.getRuDeLongitud());
+               // val2.add(val);
 
             }
-                Polyline line = map.addPolyline(new PolylineOptions()
+                /*Polyline line = map.addPolyline(new PolylineOptions()
                     .addAll(val2) //new LatLng(51.5, -0.1), new LatLng(40.7, -74.0)
                     //.width(5)
                         .geodesic(true)
-                    .color(Color.rgb(58,115,14)));
+                    .color(Color.rgb(58,115,14)));*/
         }
     }
     protected void createMarker(Double latitude, Double longitude) {

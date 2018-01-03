@@ -58,8 +58,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        //recuperamos los datos de la listview cuando gira la pantalla
         if (savedInstanceState != null) { //para guardar el estado en caso la pantalla cambia de orientacion
+            BuId=savedInstanceState.getInt("BUS_ID");
+            TaCoId=savedInstanceState.getInt("TACO_ID");
+
             LocationManager locMan = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
@@ -90,9 +93,16 @@ public class MainActivity extends AppCompatActivity {
         tlTablaLayout=(TabLayout)findViewById(R.id.tlTablaLayout);
         vpViewPager=(ViewPager) findViewById(R.id.vpViewPager);
 
+        Bundle args = new Bundle();
+        args.putInt("BUS_ID",BuId);
+        args.putInt("TACO_ID",0);
+        args.putString("TACO_FECHA",FechaActual);
+        args.putBoolean("INDICA_GETDETALLEACTIVO",true);
+
         ArrayList<Fragment> fragmets=new ArrayList<>();
         fragmets.add(new RecyclerviewFragment());
         fragmets.add(new MapsFragment());
+        fragmets.get(0).setArguments(args);
         //agremaos los fragments al viewPager
         vpViewPager.setAdapter(new PageAdapterVP(getSupportFragmentManager(),fragmets));
         tlTablaLayout.setupWithViewPager(vpViewPager);
@@ -110,11 +120,13 @@ public class MainActivity extends AppCompatActivity {
         startService(i);
         //startService(new Intent(this, GeolocationService.class));
     }
+    //guardamos el estado de los controles(posicion de la grilla
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the user's current game state
         savedInstanceState.putInt("BUS_ID", BuId);
         savedInstanceState.putInt("TACO_ID", TaCoId);
+        super.onSaveInstanceState(savedInstanceState);
     }
     @Override
     protected void onStart(){

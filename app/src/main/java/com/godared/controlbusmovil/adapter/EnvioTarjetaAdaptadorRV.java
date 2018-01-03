@@ -30,12 +30,16 @@ public class EnvioTarjetaAdaptadorRV extends RecyclerView.Adapter<EnvioTarjetaAd
     Activity activity;
     ArrayList<TarjetaControl> tarjetasControl;
     TarjetaService tarjetaService;
-    TarjetaControl _tarjetaControl;
 
-    public EnvioTarjetaAdaptadorRV(ArrayList<TarjetaControl> tarjetasControl, Activity activity) {
+    int BuId;
+    String TaCoFecha;
+
+    public EnvioTarjetaAdaptadorRV(ArrayList<TarjetaControl> tarjetasControl, Activity activity,int buId,String taCoFecha) {
         this.tarjetasControl =tarjetasControl;
         this.activity = activity;
         tarjetaService=new TarjetaService(activity.getBaseContext());
+        this.BuId=buId;
+        this.TaCoFecha=taCoFecha;
     }
 
     @Override
@@ -46,7 +50,7 @@ public class EnvioTarjetaAdaptadorRV extends RecyclerView.Adapter<EnvioTarjetaAd
 
     @Override
     public void onBindViewHolder(EnvioTarjetaAdaptadorRV.EnvioTarjetaViewHolder holder, int position) {
-         _tarjetaControl= tarjetasControl.get(position);
+        final  TarjetaControl _tarjetaControl= tarjetasControl.get(position);
         String zona="America/Lima";
         TimeZone timeZone2 = TimeZone.getTimeZone(zona);
         String fecha=_tarjetaControl.getTaCoFecha();//
@@ -64,7 +68,7 @@ public class EnvioTarjetaAdaptadorRV extends RecyclerView.Adapter<EnvioTarjetaAd
             @Override
             public void onClick(View v) {
                 //Procedimiento llamar al metodo finalizar
-                tarjetaService.FinalizarTarjetaIncompleta(_tarjetaControl.getTaCoId());
+                tarjetaService.FinalizarTarjetaIncompleta(_tarjetaControl.getTaCoId(),BuId,TaCoFecha);
             }
         });
         holder.btnDetalle.setOnClickListener(new View.OnClickListener() {
@@ -72,8 +76,9 @@ public class EnvioTarjetaAdaptadorRV extends RecyclerView.Adapter<EnvioTarjetaAd
             public void onClick(View v) {
                 //llamar al fragment tarjetas de control
                 Intent intent= new Intent(activity, DetalleActivity.class);
-                //intent.putExtra("BUS_ID",BuId);
-
+                intent.putExtra("TACO_ID",_tarjetaControl.getTaCoId());
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.setClassName(activity,"com.godared.controlbusmovil.vista.DetalleActivity");
                // intent.putExtra("TACO_FECHA",this.FechaActual);
                 activity.startActivity(intent);
             }

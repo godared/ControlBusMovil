@@ -24,7 +24,7 @@ import retrofit2.Response;
 public class GeoreferenciaService implements IGeoreferenciaService {
     private Context context;
     BaseDatos db;
-    private Georeferencia georeferencia;
+    //private Georeferencia georeferencia;
     ITarjetaService tarjetaService;
 
     public GeoreferenciaService(Context context){
@@ -33,7 +33,7 @@ public class GeoreferenciaService implements IGeoreferenciaService {
         tarjetaService=new TarjetaService(context);
     }
     public void SaveGeoreferenciaRest(Georeferencia georeferencia1){
-        georeferencia=georeferencia1;
+        final Georeferencia georeferencia=georeferencia1;
         RestApiAdapter restApiAdapter = new RestApiAdapter();
         IEndpointApi endpointApi = restApiAdapter.establecerConexionRestApi();
         Call<Integer> georeferenciaSend = endpointApi.saveGeoreferenciaOne(georeferencia);

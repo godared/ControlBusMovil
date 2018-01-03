@@ -26,13 +26,22 @@
         </activity>
         <activity
             android:name=".vista.SettingActivity"
-            android:parentActivityName=".MainActivity">
+            android:label="SettingActivity"
+            android:parentActivityName=".MainActivity"
+            android:alwaysRetainTaskState="true"
+            android:noHistory="false">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity"></meta-data>
         </activity>
         <activity android:name=".vista.DetalleActivity"
-            android:parentActivityName=".vista.SettingActivity">
+            android:label="DetalleActivity"
+            android:parentActivityName=".vista.SettingActivity"
+            android:alwaysRetainTaskState="true"
+            android:noHistory="false"
+            android:launchMode="singleTop"
+            >
+            <!-- alwaysRetainTaskState conserva el estado actual de la tareaa_-->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".vista.SettingActivity"></meta-data>

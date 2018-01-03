@@ -205,8 +205,14 @@ public class BaseDatos extends SQLiteOpenHelper{
     }
     public ArrayList<TarjetaControl> ObtenerTarjetasEnviado(int taCoId,int enviado){
         ArrayList<TarjetaControl> tarjetasActual=new ArrayList<>();
-        String query="SELECT taco.* FROM TarjetaControl taco inner join " +
-                "TarjetaBitacoraMovil tabimo on taco.TaCoId=tabimo.TaCoId where taco.TaCoId<="+taCoId+" and  TaBiMoEnviado="+enviado;
+        String query;
+        if(taCoId>0) { // taCoId=0 entonces quiere decir que no hay activos
+            query = "SELECT taco.* FROM TarjetaControl taco inner join " +
+                    "TarjetaBitacoraMovil tabimo on taco.TaCoId=tabimo.TaCoId where taco.TaCoId<=" + taCoId + " and  TaBiMoEnviado=" + enviado;
+        }else{
+            query = "SELECT taco.* FROM TarjetaControl taco inner join " +
+                    "TarjetaBitacoraMovil tabimo on taco.TaCoId=tabimo.TaCoId where TaBiMoEnviado=" + enviado;
+        }
         SQLiteDatabase db=this.getWritableDatabase();
         Cursor registros=db.rawQuery(query,null);
         while(registros.moveToNext()) {

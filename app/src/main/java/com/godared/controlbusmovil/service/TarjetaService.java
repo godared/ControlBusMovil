@@ -33,6 +33,7 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
     private  ArrayList<TarjetaControl> tarjetasControl;
     private  ArrayList<TarjetaControlDetalle> tarjetasDetalle;
     PuntoControlService puntoControlService;
+    TarjetaControl tarjetaControl222;
 /*
     public ArrayList<TarjetaControlDetalle> getTarjetasDetalle() {
         return tarjetasDetalle;
@@ -143,6 +144,35 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
 
         return tarjetasControl;
     }
+    public void UpdateTarjetaRest(TarjetaControl tarjetaControl){
+        final TarjetaControl tarjetaControl1=tarjetaControl;
+        //tarjetaControl222=tarjetaControl;
+        tarjetaControl1.setUsFechaReg(null);
+        RestApiAdapter restApiAdapter = new RestApiAdapter();
+        IEndpointApi endpointApi = restApiAdapter.establecerConexionRestApi();
+        Call<Integer> tarjetaControlSend=endpointApi.updateTarjetaControl(tarjetaControl1);
+        tarjetaControlSend.enqueue(new Callback<Integer>() {
+            @Override
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                Integer codEnvio=(Integer)response.body();
+                Toast.makeText(context, "Se actualizo correctamento", Toast.LENGTH_SHORT).show();
+                if(codEnvio>0){
+                    //Actualizamos el envio
+                    TarjetaBitacoraMovil _tarjetaBitacoraMovil;
+                    _tarjetaBitacoraMovil=db.ObtenerTarjetaBitacoraMovilByTaCo(tarjetaControl1.getTaCoId());
+                    _tarjetaBitacoraMovil.setTaBiMoEnviado(1);
+                    _tarjetaBitacoraMovil.setTaBiMoRemotoId(codEnvio);
+                    actualizarTarjetaBitacoraMovilBD(_tarjetaBitacoraMovil);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Integer> call, Throwable t) {
+                Toast.makeText(context, "Algo paso en la conexion", Toast.LENGTH_SHORT).show();
+                Log.e("Fallo la conexion", t.toString());
+            }
+        });
+    }
     public void UpdateTarjetaDetalleRest(TarjetaControlDetalle tarjetaControlDetalle){
         final TarjetaControlDetalle  tarjetaControlDetalle2=tarjetaControlDetalle;
         RestApiAdapter restApiAdapter = new RestApiAdapter();
@@ -188,7 +218,7 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
         int _taCoId=0,sw=0;
         for(TarjetaControl tarjetaControl:tarjetasControl2 ) {
             tarjetaBitacoraMovil = db.ObtenerTarjetaBitacoraMovilByTaCo(tarjetaControl.getTaCoId());
-            if(tarjetaBitacoraMovil.getTaBiMoEnviado()==0 || tarjetaBitacoraMovil.getTaBiMoFinalDetalle()==0) {
+            if(tarjetaBitacoraMovil.getTaBiMoEnviado()==0 && tarjetaBitacoraMovil.getTaBiMoFinalDetalle()==0) {
                 if(tarjetaBitacoraMovil.getTaBiMoActivo()==1){
                     _taCoId=tarjetaBitacoraMovil.getTaCoId();
                     sw=1;
@@ -298,13 +328,36 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
             actualizarTarjetaBitacoraMovilBD(tarjetaBitacoraMovil);
         }
     }
-    public void FinalizarTarjetaIncompleta(int taCoId){
+    public void FinalizarTarjetaIncompleta(int taCoId,int buId,String taCoFecha){
         TarjetaBitacoraMovil tarjetaBitacoraMovil;
         tarjetaBitacoraMovil=db.ObtenerTarjetaBitacoraMovilByTaCo(taCoId);
         tarjetaBitacoraMovil.setTaBiMoFinalDetalle(2);
 
         actualizarTarjetaBitacoraMovilBD(tarjetaBitacoraMovil);
+        //actualizamos la tarjeta activa
+        List<TarjetaControl> tarjetasControl2;
+        tarjetasControl2 = db.ObtenerTarjetas(buId, taCoFecha);
 
+        actualizarActivoTarjetaBitacoraMovilBD(db,tarjetasControl2);
+
+    }
+    public void EnviarTodo(int buId, String taCoFecha, int enviado){
+        //primero obtenemos los registros no enviados
+        ArrayList<TarjetaControl> _tarjetaControls=null;
+        TarjetaBitacoraMovil _tarjetaBitacoraMovil;
+        _tarjetaControls=this.GetTarjetaControlBDEnviados(buId, taCoFecha, enviado);
+        for(TarjetaControl tarjetaControl:_tarjetaControls) {
+            //Verificamos el detalleTarjeta para actualizar el finaldetalle
+            VerificarActualizaTarjetaFinaliza(tarjetaControl.getTaCoId());
+            //Ahora verificamos los finalizados y completados
+            //Obtenemos la tarjeta ControlMovil, para obtener el estado
+            _tarjetaBitacoraMovil = db.ObtenerTarjetaBitacoraMovilByTaCo(tarjetaControl.getTaCoId());
+            //Solamente enviamos los que estan en estado completado y finalizado
+            if (_tarjetaBitacoraMovil.getTaBiMoFinalDetalle()==1 || _tarjetaBitacoraMovil.getTaBiMoFinalDetalle()==2){
+                //Actualizamos al servidor
+                this.UpdateTarjetaRest(tarjetaControl);
+            }
+        }
     }
     public TarjetaControlDetalle GetTarjetaDetalleByPuCoDe(int puCoDeId){
         return db.ObtenerTarjetaDetalleByPuCoDe(puCoDeId);
@@ -409,7 +462,7 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
         TarjetaBitacoraMovil tarjetaBitacoraMovil;
         for(TarjetaControl tarjetaControl:tarjetasControl ){
             tarjetaBitacoraMovil=db.ObtenerTarjetaBitacoraMovilByTaCo(tarjetaControl.getTaCoId());
-            if(tarjetaBitacoraMovil.getTaBiMoEnviado()==0 || tarjetaBitacoraMovil.getTaBiMoFinalDetalle()==0) {
+            if(tarjetaBitacoraMovil.getTaBiMoEnviado()==0 && tarjetaBitacoraMovil.getTaBiMoFinalDetalle()==0) {
                 sw=1;
                 ContentValues contentValues = new ContentValues();
                 contentValues.put("TaCoId", tarjetaControl.getTaCoId());

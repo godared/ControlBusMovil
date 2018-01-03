@@ -41,7 +41,21 @@ public class RecyclerviewEnvioTarjetaFragment extends Fragment implements IRecyc
         iRecyclerviewEnvioTarjetaPresenter=new RecyclerviewEnvioTarjetaPresenter(this,getContext(),buId,taCoFecha,enviado);
         return v;
     }
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(savedInstanceState != null){
+            buId=savedInstanceState.getInt("BUS_ID");
+            taCoFecha=savedInstanceState.getString("TACO_FECHA");
+        }
+    }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt("BUS_ID", buId);
+        savedInstanceState.putString("TACO_FECHA", taCoFecha);
+        super.onSaveInstanceState(savedInstanceState);
 
+    }
     @Override
     public void generarLinearLayoutVertical(){
         LinearLayoutManager lLM=new LinearLayoutManager(getActivity());
@@ -50,7 +64,7 @@ public class RecyclerviewEnvioTarjetaFragment extends Fragment implements IRecyc
     }
     @Override
     public EnvioTarjetaAdaptadorRV crearAdaptador(ArrayList<TarjetaControl> tarjetascontrol){
-        EnvioTarjetaAdaptadorRV _envioTarjetaAdaptadorRV= new EnvioTarjetaAdaptadorRV(tarjetascontrol,getActivity());
+        EnvioTarjetaAdaptadorRV _envioTarjetaAdaptadorRV= new EnvioTarjetaAdaptadorRV(tarjetascontrol,getActivity(),buId,taCoFecha);
         return _envioTarjetaAdaptadorRV;
     }
     @Override

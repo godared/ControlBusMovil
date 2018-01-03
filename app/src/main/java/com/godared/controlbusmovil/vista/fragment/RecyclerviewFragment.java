@@ -29,7 +29,9 @@ public class RecyclerviewFragment extends Fragment implements  IRecyclerviewFrag
     RecyclerView listaTarjetasDetalle;
     IRecyclerviewFragmentPresenter recyclerviewFragmentPresenter;
     int BuId;
-
+    int TaCoId;
+    String TaCoFecha;
+    Boolean IndicaGetDetalleActivo;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -37,10 +39,26 @@ public class RecyclerviewFragment extends Fragment implements  IRecyclerviewFrag
         View v=inflater.inflate(R.layout.fragment_recyclerview,container,false); //asignamos un layout
         listaTarjetasDetalle=(RecyclerView)v.findViewById(R.id.rvTarjeta);
         //Obteniendo dato del main
-        MainActivity _actividadPrincipal = (MainActivity)getActivity();
-        BuId=_actividadPrincipal.BuId;
-        recyclerviewFragmentPresenter =new RecyclerviewFragmentPresenter(this,getContext(),BuId);
+        //MainActivity _actividadPrincipal = (MainActivity)getActivity();
+        BuId=getArguments().getInt("BUS_ID");
+        TaCoId=getArguments().getInt("TACO_ID");
+        TaCoFecha=getArguments().getString("TACO_FECHA");
+        IndicaGetDetalleActivo=getArguments().getBoolean("INDICA_GETDETALLEACTIVO");
+        //BuId=_actividadPrincipal.BuId;
+        recyclerviewFragmentPresenter =new RecyclerviewFragmentPresenter(this,getContext(),BuId,TaCoId,TaCoFecha,IndicaGetDetalleActivo);
         return v;
+    }
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(savedInstanceState != null) {
+            BuId = savedInstanceState.getInt("BUS_ID");
+        }
+    }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt("BUS_ID", BuId);
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
