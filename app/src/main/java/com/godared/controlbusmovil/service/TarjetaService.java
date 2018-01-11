@@ -53,7 +53,6 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
         puntoControlService=new PuntoControlService(context);
     }
     public void obtenerTarjetasDetalleRest(int taCoId){
-
         RestApiAdapter restApiAdapter = new RestApiAdapter();
         IEndpointApi endpointApi = restApiAdapter.establecerConexionRestApi();
         Call<List<TarjetaControlDetalle>> tarjetaControlDetalleResponseCall = endpointApi.getTarjetaControlDetalle(taCoId);
@@ -197,6 +196,33 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
 
             @Override
             public void onFailure(Call<Integer> call, Throwable t) {
+                Toast.makeText(context, "Algo paso en la conexion", Toast.LENGTH_SHORT).show();
+                Log.e("Fallo la conexion", t.toString());
+            }
+        });
+    }
+    public void UpdateTarjetaDetallesRest(List<TarjetaControlDetalle> tarjetaControlDetalles){
+        RestApiAdapter restApiAdapter = new RestApiAdapter();
+        IEndpointApi endpointApi = restApiAdapter.establecerConexionRestApi();
+        Call<List<TarjetaControlDetalle>> tarjetaControlDetallesResponseCall = endpointApi.updateTarjetaControlDetalles(tarjetaControlDetalles);
+        tarjetaControlDetallesResponseCall.enqueue(new Callback<List<TarjetaControlDetalle>>() {
+            @Override
+            public void onResponse(Call<List<TarjetaControlDetalle>> call, Response<List<TarjetaControlDetalle>> response) {
+                ArrayList<TarjetaControlDetalle> tarjetaControlDetallesResponse;
+                tarjetaControlDetallesResponse = (ArrayList<TarjetaControlDetalle>) response.body();
+                for(TarjetaControlDetalle tarjetaControlDetalle:tarjetaControlDetallesResponse){
+                    if(tarjetaControlDetalle.getTaCoDeCodEnvioMovil()>0){
+                        //Actualizamos el envio
+                        TarjetaDetalleBitacoraMovil tarjetaDetalleBitacoraMovil;
+                        tarjetaDetalleBitacoraMovil=db.ObtenerTarjetaDetalleBitacoraMovilByTaCoDe(tarjetaControlDetalle.getTaCoDeId());
+                        tarjetaDetalleBitacoraMovil.setTaDeBiMoEnviado(1);
+                        tarjetaDetalleBitacoraMovil.setTaDeBiMoRemotoId(tarjetaControlDetalle.getTaCoDeCodEnvioMovil());
+                        actualizarTarjetaDetalleBitacoraMovilBD(tarjetaControlDetalle.getTaCoDeId(),tarjetaDetalleBitacoraMovil);
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<List<TarjetaControlDetalle>> call, Throwable t) {
                 Toast.makeText(context, "Algo paso en la conexion", Toast.LENGTH_SHORT).show();
                 Log.e("Fallo la conexion", t.toString());
             }
@@ -347,6 +373,7 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
         TarjetaBitacoraMovil _tarjetaBitacoraMovil;
         _tarjetaControls=this.GetTarjetaControlBDEnviados(buId, taCoFecha, enviado);
         for(TarjetaControl tarjetaControl:_tarjetaControls) {
+
             //Verificamos el detalleTarjeta para actualizar el finaldetalle
             VerificarActualizaTarjetaFinaliza(tarjetaControl.getTaCoId());
             //Ahora verificamos los finalizados y completados
@@ -399,7 +426,6 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
         contentValues.put("UsFechaReg", tarjetaControl.getUsFechaReg());
         baseDatos.actualizarTarjeta(contentValues, tarjetaControl.getTaCoId());
     }
-
     public void insertarTarjetasDetalleBD(BaseDatos baseDatos, ArrayList<TarjetaControlDetalle> tarjetaControlDetalles){
 
         for(TarjetaControlDetalle tarjetaControlDetalle:tarjetaControlDetalles) {
@@ -435,7 +461,6 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
             contentValues.put("UsFechaReg",tarjetaControlDetalle.getUsFechaReg());
             db.actualizarTarjetaDetalle(contentValues,tarjetaControlDetalle.getTaCoDeId());
     }
-
     ///Para controlar los registros de envio, activo y otros
     public void insertarTarjetaBitacoraMovilBD(BaseDatos baseDatos, TarjetaControl tarjetaControl){
         ContentValues contentValues = new ContentValues();

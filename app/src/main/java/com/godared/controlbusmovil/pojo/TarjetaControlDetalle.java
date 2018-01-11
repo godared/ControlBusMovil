@@ -43,13 +43,17 @@ public class TarjetaControlDetalle {
     @SerializedName("UsFechaReg")
     @Expose
     private String UsFechaReg;
+    @SerializedName("TaCoDeCodEnvioMovil")
+    @Expose
+    private int TaCoDeCodEnvioMovil;
 
     public TarjetaControlDetalle(){
 
     }
     public TarjetaControlDetalle(int taCoDeId, int taCoId, int puCoDeId, String taCoDeFecha,
                                  String taCoDeHora, double taCoDeLatitud, double taCoDeLongitud,
-                                 String taCoDeTiempo, String taCoDeDescripcion, int usId, String usFechaReg) {
+                                 String taCoDeTiempo, String taCoDeDescripcion, int usId, String usFechaReg,
+                                 int taCoDeCodEnvioMovil ) {
         TaCoDeId = taCoDeId;
         TaCoId = taCoId;
         PuCoDeId = puCoDeId;
@@ -61,6 +65,7 @@ public class TarjetaControlDetalle {
         TaCoDeDescripcion = taCoDeDescripcion;
         UsId = usId;
         UsFechaReg = usFechaReg;
+        TaCoDeCodEnvioMovil=taCoDeCodEnvioMovil;
     }
 
     public int getTaCoDeId() {
@@ -149,5 +154,13 @@ public class TarjetaControlDetalle {
 
     public void setUsFechaReg(String usFechaReg) {
         UsFechaReg = usFechaReg;
+    }
+
+    public int getTaCoDeCodEnvioMovil() {
+        return TaCoDeCodEnvioMovil;
+    }
+
+    public void setTaCoDeCodEnvioMovil(int taCoDeCodEnvioMovil) {
+        TaCoDeCodEnvioMovil = taCoDeCodEnvioMovil;
     }
 }

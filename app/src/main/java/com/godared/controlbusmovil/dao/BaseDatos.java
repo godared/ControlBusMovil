@@ -49,7 +49,7 @@ public class BaseDatos extends SQLiteOpenHelper{
         String queryCrearTablaTarjetaControlDetalle="CREATE TABLE TarjetaControlDetalle(TaCoDeId INTEGER,"+
                 "TaCoId INTEGER, PuCoDeId INTEGER, TaCoDeFecha TEXT, TaCoDeHora TEXT,"+
                 "TaCoDeLatitud REAL,TaCoDeLongitud REAL,TaCoDeTiempo TEXT,TaCoDeDescripcion TEXT,"+
-                "UsId INTEGER, UsFechaReg TEXT, FOREIGN KEY(TaCoId) REFERENCES TarjetaControl(TaCoId)) ";
+                "UsId INTEGER, UsFechaReg TEXT,TaCoDeCodEnvioMovil INTEGER, FOREIGN KEY(TaCoId) REFERENCES TarjetaControl(TaCoId)) ";
 
                 //Punto de Control
         String queryCrearTablaPuntoControl="CREATE TABLE PuntoControl(PuCoId INTEGER PRIMARY KEY,"+
@@ -270,6 +270,7 @@ public class BaseDatos extends SQLiteOpenHelper{
             SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd HH:m:ss");
             String formatted3 = sdf3.format(new Date(fecha3));*
             tarjetaDetalleActual.setUsFechaReg(formatted3);*/
+            tarjetaDetalleActual.setTaCoDeCodEnvioMovil(registros.getInt(11));
             tarjetasDetalle.add(tarjetaDetalleActual);
         }
         db.close();
@@ -292,6 +293,7 @@ public class BaseDatos extends SQLiteOpenHelper{
             tarjetaDetalleActual.setTaCoDeDescripcion(registros.getString(8));
             tarjetaDetalleActual.setUsId(registros.getInt(9));
             tarjetaDetalleActual.setUsFechaReg(registros.getString(10));
+            tarjetaDetalleActual.setTaCoDeCodEnvioMovil(registros.getInt(11));
         }
         db.close();
         return tarjetaDetalleActual;
@@ -313,6 +315,7 @@ public class BaseDatos extends SQLiteOpenHelper{
             tarjetaDetalleActual.setTaCoDeDescripcion(registros.getString(8));
             tarjetaDetalleActual.setUsId(registros.getInt(9));
             tarjetaDetalleActual.setUsFechaReg(registros.getString(10));
+            tarjetaDetalleActual.setTaCoDeCodEnvioMovil(registros.getInt(11));
         }
         db.close();
         return tarjetaDetalleActual;

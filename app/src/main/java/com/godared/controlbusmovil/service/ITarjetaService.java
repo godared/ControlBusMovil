@@ -7,6 +7,7 @@ import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
 import com.godared.controlbusmovil.pojo.TarjetaDetalleBitacoraMovil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Ronald on 04/05/2017.
@@ -18,6 +19,7 @@ public interface ITarjetaService {
     ArrayList<TarjetaControl> obtenerTarjetasRest(int buId, String taCoFecha );
     void UpdateTarjetaRest(TarjetaControl tarjetaControl);
     void UpdateTarjetaDetalleRest(TarjetaControlDetalle tarjetaControlDetalle);
+    void UpdateTarjetaDetallesRest(List<TarjetaControlDetalle> tarjetaControlDetalles);
     ArrayList<TarjetaControlDetalle> GetAllTarjetaDetalleBD(int taCoId);
     TarjetaControl GetTarjetaControlBD(int taCoId);
     TarjetaControl GetTarjetaControlActivo(int buId, String taCoFecha);
