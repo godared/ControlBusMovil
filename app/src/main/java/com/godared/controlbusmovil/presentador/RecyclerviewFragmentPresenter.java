@@ -1,23 +1,18 @@
 package com.godared.controlbusmovil.presentador;
 
 import android.content.Context;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.godared.controlbusmovil.MainActivity;
 import com.godared.controlbusmovil.dao.ConstructorTarjetas;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
 import com.godared.controlbusmovil.restApi.IEndpointApi;
 import com.godared.controlbusmovil.restApi.adapter.RestApiAdapter;
-import com.godared.controlbusmovil.restApi.model.TarjetaControlDetalleResponse;
 import com.godared.controlbusmovil.service.ITarjetaService;
 import com.godared.controlbusmovil.service.TarjetaService;
 import com.godared.controlbusmovil.vista.fragment.IRecyclerviewFragment;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -59,7 +54,7 @@ public class RecyclerviewFragmentPresenter implements IRecyclerviewFragmentPrese
         if(IndicaGetDetalleActivo) //llamado desde el main prindipal
             tarjetasDetalle =tarjetaService.GetAllTarjetaDetalleBDByTaCoActivo(BuId,TaCoFecha);//"16-08-2017"
         else //llamado desde el detalle
-            tarjetasDetalle=tarjetaService.GetAllTarjetaDetalleBD(TaCoId);
+            tarjetasDetalle=tarjetaService.GetAllTarjetaDetalleBDById(TaCoId);
         mostrarTarjetasDetalleRV();
     }
 

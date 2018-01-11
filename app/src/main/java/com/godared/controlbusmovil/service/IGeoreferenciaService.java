@@ -15,5 +15,7 @@ public interface IGeoreferenciaService {
     void ActualizarGeoreferenciaBD(BaseDatos baseDatos, Georeferencia georeferencia);
     int GetCountGeoreferenciadByTaCo(int taCoId);
     Georeferencia GetLastGeoreferenciaByTaCo(int taCoId);
+    Georeferencia GetAllGeoreferenciaById(int geId);
+    List<Georeferencia> GetAllGeoreferenciaByTaCoNoEnviado(int taCoId);
 
 }

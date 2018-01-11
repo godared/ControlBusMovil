@@ -20,7 +20,7 @@ public interface ITarjetaService {
     void UpdateTarjetaRest(TarjetaControl tarjetaControl);
     void UpdateTarjetaDetalleRest(TarjetaControlDetalle tarjetaControlDetalle);
     void UpdateTarjetaDetallesRest(List<TarjetaControlDetalle> tarjetaControlDetalles);
-    ArrayList<TarjetaControlDetalle> GetAllTarjetaDetalleBD(int taCoId);
+    ArrayList<TarjetaControlDetalle> GetAllTarjetaDetalleBDById(int taCoId);
     TarjetaControl GetTarjetaControlBD(int taCoId);
     TarjetaControl GetTarjetaControlActivo(int buId, String taCoFecha);
     ArrayList<TarjetaControlDetalle> GetAllTarjetaDetalleBDByTaCoActivo(int buId, String taCoFecha);

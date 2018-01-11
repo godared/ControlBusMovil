@@ -13,12 +13,13 @@ public class Georeferencia {
     private int UsId;
     private String UsFechaReg;
     private int GeOrden;
+    private Boolean GeEnviadoMovil;
 
     public Georeferencia(){
 
     }
     public Georeferencia(int geId, int taCoId, double geLatitud, double geLongitud, String geFechaHora,
-                         int usId, String usFechaReg, int geOrden){
+                         int usId, String usFechaReg, int geOrden, Boolean geEnviadoMovil){
         this.GeId=geId;
         this.TaCoId=taCoId;
         this.GeLatitud=geLatitud;
@@ -27,6 +28,7 @@ public class Georeferencia {
         this.UsId=usId;
         this.UsFechaReg=usFechaReg;
         this.GeOrden=geOrden;
+        this.GeEnviadoMovil=geEnviadoMovil;
     }
 
     public int getGeId() {
@@ -91,5 +93,13 @@ public class Georeferencia {
 
     public void setGeOrden(int geOrden) {
         GeOrden = geOrden;
+    }
+
+    public Boolean getGeEnviadoMovil() {
+        return GeEnviadoMovil;
+    }
+
+    public void setGeEnviadoMovil(Boolean geEnviadoMovil) {
+        GeEnviadoMovil = geEnviadoMovil;
     }
 }

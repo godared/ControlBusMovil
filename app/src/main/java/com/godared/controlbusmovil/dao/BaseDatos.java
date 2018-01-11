@@ -75,9 +75,9 @@ public class BaseDatos extends SQLiteOpenHelper{
                 "BuId INTEGER, EmId INTEGER, SuEmRSocial TEXT,BuPlaca TEXT,TeMarca TEXT,"+
                 "TeImei TEXT, EmConsorcio TEXT) ";
         //Georefercnia
-        String queryCrearTablaGeoreferencia="CREATE TABLE Georeferencia(GeId INTEGER PRIMARY KEY,"+
+        String queryCrearTablaGeoreferencia="CREATE TABLE Georeferencia(GeId INTEGER PRIMARY KEY AUTOINCREMENT,"+
                 "TaCoId INTEGER, GeLatitud REAL, GeLongitud REAL,GeFechaHora TEXT,"+
-                "UsId INTEGER, UsFechaReg TEXT,GeOrden INTEGER) ";
+                "UsId INTEGER, UsFechaReg TEXT,GeOrden INTEGER,GeEnviadoMovil INTEGER) ";
         //Bitacora, estas tablas es para el control de envios
         String queryCrearTablaTarjetaBitacoraMovil="CREATE TABLE TarjetaBitacoraMovil(TaCoId INTEGER,"+
                 "TaBiMoRemotoId INTEGER, TaBiMoEnviado INTEGER, TaBiMoActivo integer, TaBiMoFinalDetalle INTEGER) ";
@@ -612,6 +612,46 @@ public class BaseDatos extends SQLiteOpenHelper{
     public Georeferencia GetLastGeoreferenciaByTaCo(int taCoId){
         Georeferencia georeferenciaActual=new Georeferencia();
         String query="SELECT * FROM Georeferencia where TaCoId="+taCoId+" ORDER BY GeId DESC LIMIT 1";
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor registros=db.rawQuery(query,null);
+        while(registros.moveToNext()){
+            georeferenciaActual.setGeId(registros.getInt(0));
+            georeferenciaActual.setTaCoId(registros.getInt(1));
+            georeferenciaActual.setGeLatitud(registros.getDouble(2));
+            georeferenciaActual.setGeLongitud(registros.getDouble(3));
+            georeferenciaActual.setGeFechaHora(registros.getString(4));
+            georeferenciaActual.setUsId(registros.getInt(5));
+            georeferenciaActual.setUsFechaReg(registros.getString(6));
+            georeferenciaActual.setGeOrden(registros.getInt(7));
+            georeferenciaActual.setGeEnviadoMovil(registros.getInt(8)==1?true:false);
+        }
+        db.close();
+        return georeferenciaActual;
+    }
+    public List<Georeferencia> GetAllGeoreferenciaByTaCoNoEnviado(int taCoId){
+        ArrayList<Georeferencia> georeferencias=new ArrayList<>();
+        String query="SELECT * FROM Georeferencia where TaCoId="+taCoId+" and GeId=0";
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor registros=db.rawQuery(query,null);
+        while(registros.moveToNext()){
+            Georeferencia georeferenciaActual=new Georeferencia();
+            georeferenciaActual.setGeId(registros.getInt(0));
+            georeferenciaActual.setTaCoId(registros.getInt(1));
+            georeferenciaActual.setGeLatitud(registros.getDouble(2));
+            georeferenciaActual.setGeLongitud(registros.getDouble(3));
+            georeferenciaActual.setGeFechaHora(registros.getString(4));
+            georeferenciaActual.setUsId(registros.getInt(5));
+            georeferenciaActual.setUsFechaReg(registros.getString(6));
+            georeferenciaActual.setGeOrden(registros.getInt(7));
+            georeferenciaActual.setGeEnviadoMovil(registros.getInt(8)==1?true:false);
+            georeferencias.add(georeferenciaActual);
+        }
+        db.close();
+        return georeferencias;
+    }
+    public Georeferencia GetAllGeoreferenciaById(int geId){
+        Georeferencia georeferenciaActual=new Georeferencia();
+        String query="SELECT * FROM Georeferencia where GeId="+geId;
         SQLiteDatabase db=this.getWritableDatabase();
         Cursor registros=db.rawQuery(query,null);
         while(registros.moveToNext()){

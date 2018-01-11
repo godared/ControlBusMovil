@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.godared.controlbusmovil.dao.BaseDatos;
+import com.godared.controlbusmovil.pojo.Georeferencia;
 import com.godared.controlbusmovil.pojo.TarjetaBitacoraMovil;
 import com.godared.controlbusmovil.pojo.TarjetaControl;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
@@ -33,6 +34,7 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
     private  ArrayList<TarjetaControl> tarjetasControl;
     private  ArrayList<TarjetaControlDetalle> tarjetasDetalle;
     PuntoControlService puntoControlService;
+    IGeoreferenciaService georeferenciaService;
     TarjetaControl tarjetaControl222;
 /*
     public ArrayList<TarjetaControlDetalle> getTarjetasDetalle() {
@@ -45,12 +47,12 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
             super(base);
             //context=base;
         }*/
-    public TarjetaService(Context context){ //IMapsFragment iSettingFragment,
-       // this.iSettingFragment=iSettingFragment;
+    public TarjetaService(Context context){ //IMapsFragment iSettingFragment,this.iSettingFragment=iSettingFragment;
         this.context=context;
         //obtenerTarjetasDetalleRest(1);
         db=new BaseDatos(context);
         puntoControlService=new PuntoControlService(context);
+        georeferenciaService=new GeoreferenciaService(context);
     }
     public void obtenerTarjetasDetalleRest(int taCoId){
         RestApiAdapter restApiAdapter = new RestApiAdapter();
@@ -231,8 +233,7 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
     public TarjetaControl GetTarjetaControlBD(int taCoId){
         return db.ObtenerTarjeta(taCoId);
     }
-    public ArrayList<TarjetaControlDetalle> GetAllTarjetaDetalleBD(int taCoId){
-
+    public ArrayList<TarjetaControlDetalle> GetAllTarjetaDetalleBDById(int taCoId){
         return db.ObtenerTarjetasDetalle(taCoId);
     }
     public TarjetaControl GetTarjetaControlActivo(int buId, String taCoFecha){
@@ -370,12 +371,15 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
     public void EnviarTodo(int buId, String taCoFecha, int enviado){
         //primero obtenemos los registros no enviados
         ArrayList<TarjetaControl> _tarjetaControls=null;
+        ArrayList<TarjetaControlDetalle> _tarjetaControlDetalles=null;
         TarjetaBitacoraMovil _tarjetaBitacoraMovil;
         _tarjetaControls=this.GetTarjetaControlBDEnviados(buId, taCoFecha, enviado);
         for(TarjetaControl tarjetaControl:_tarjetaControls) {
-
             //Verificamos el detalleTarjeta para actualizar el finaldetalle
             VerificarActualizaTarjetaFinaliza(tarjetaControl.getTaCoId());
+            //enviamos la tarjetaDetalle
+            _tarjetaControlDetalles=GetAllTarjetaDetalleBDById(tarjetaControl.getTaCoId());
+            UpdateTarjetaDetallesRest(_tarjetaControlDetalles);
             //Ahora verificamos los finalizados y completados
             //Obtenemos la tarjeta ControlMovil, para obtener el estado
             _tarjetaBitacoraMovil = db.ObtenerTarjetaBitacoraMovilByTaCo(tarjetaControl.getTaCoId());
@@ -384,6 +388,14 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
                 //Actualizamos al servidor
                 this.UpdateTarjetaRest(tarjetaControl);
             }
+            //Ahora si enviamos la georeferencia
+            List<Georeferencia> georeferencias=null;
+            georeferencias=georeferenciaService.GetAllGeoreferenciaByTaCoNoEnviado(tarjetaControl.getTaCoId());
+            georeferenciaService.SaveGeoreferenciaRest(georeferencias);
+            for(Georeferencia georeferencia:georeferencias){
+
+            }
+
         }
     }
     public TarjetaControlDetalle GetTarjetaDetalleByPuCoDe(int puCoDeId){

@@ -36,20 +36,20 @@ public class GeoreferenciaService implements IGeoreferenciaService {
         final Georeferencia georeferencia=georeferencia1;
         RestApiAdapter restApiAdapter = new RestApiAdapter();
         IEndpointApi endpointApi = restApiAdapter.establecerConexionRestApi();
-        Call<Integer> georeferenciaSend = endpointApi.saveGeoreferenciaOne(georeferencia);
-        georeferenciaSend.enqueue(new Callback<Integer>() {
+        Call<Boolean> georeferenciaSend = endpointApi.saveGeoreferenciaOne(georeferencia);
+        georeferenciaSend.enqueue(new Callback<Boolean>() {
             @Override
-            public void onResponse(Call<Integer> call, Response<Integer> response) {
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                 //se registra en la nube
-                Integer _getId=(Integer)response.body();
-                if (_getId>0){
+                Boolean _enviado=(Boolean)response.body();
+                if (_enviado){
                     Toast.makeText(context, "Se envio correctamento", Toast.LENGTH_SHORT).show();
-                    georeferencia.setGeId(_getId);
+                    georeferencia.setGeEnviadoMovil(_enviado);
                     InsertarGeoreferenciaBD(db,georeferencia);
                 }
             }
             @Override
-            public void onFailure(Call<Integer> call, Throwable t) {
+            public void onFailure(Call<Boolean> call, Throwable t) {
                 Toast.makeText(context, "Algo paso en la conexion", Toast.LENGTH_SHORT).show();
                 //asi falle igual tiene que guardar
                 InsertarGeoreferenciaBD(db,georeferencia);
@@ -89,6 +89,7 @@ public class GeoreferenciaService implements IGeoreferenciaService {
         contentValues.put("UsId", georeferencia.getUsId());
         contentValues.put("UsFechaReg", georeferencia.getUsFechaReg());
         contentValues.put("GeOrden", georeferencia.getGeOrden());
+        contentValues.put("GeEnviadoMovil", georeferencia.getGeEnviadoMovil()==true?1:0);
         baseDatos.InsertarGeoreferencia(contentValues);
     }
     public void ActualizarGeoreferenciaBD(BaseDatos baseDatos, Georeferencia georeferencia){
@@ -100,5 +101,11 @@ public class GeoreferenciaService implements IGeoreferenciaService {
     }
     public Georeferencia GetLastGeoreferenciaByTaCo(int taCoId){
         return db.GetLastGeoreferenciaByTaCo(taCoId);
+    }
+    public Georeferencia GetAllGeoreferenciaById(int geId){
+        return db.GetAllGeoreferenciaById(geId);
+    }
+    public List<Georeferencia> GetAllGeoreferenciaByTaCoNoEnviado(int taCoId){
+        return db.GetAllGeoreferenciaByTaCoNoEnviado(taCoId);
     }
 }
