@@ -34,7 +34,7 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
     private  ArrayList<TarjetaControl> tarjetasControl;
     private  ArrayList<TarjetaControlDetalle> tarjetasDetalle;
     PuntoControlService puntoControlService;
-    IGeoreferenciaService georeferenciaService;
+    GeoreferenciaService georeferenciaService;
     TarjetaControl tarjetaControl222;
 /*
     public ArrayList<TarjetaControlDetalle> getTarjetasDetalle() {
@@ -392,9 +392,7 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
             List<Georeferencia> georeferencias=null;
             georeferencias=georeferenciaService.GetAllGeoreferenciaByTaCoNoEnviado(tarjetaControl.getTaCoId());
             georeferenciaService.SaveGeoreferenciaRest(georeferencias);
-            for(Georeferencia georeferencia:georeferencias){
 
-            }
 
         }
     }
@@ -436,6 +434,17 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
         contentValues.put("TaCoCuota", tarjetaControl.getTaCoCuota());
         contentValues.put("UsId", tarjetaControl.getUsId());
         contentValues.put("UsFechaReg", tarjetaControl.getUsFechaReg());
+        contentValues.put("TaCoNroVuelta", tarjetaControl.getTaCoNroVuelta());
+        contentValues.put("PrId", tarjetaControl.getPrId());
+        contentValues.put("TiSaId", tarjetaControl.getTiSaId());
+        contentValues.put("TaCoAsignado", tarjetaControl.getTaCoAsignado());
+        contentValues.put("TaCoTipoHoraSalida", tarjetaControl.getTaCoTipoHoraSalida()==true?1:0);
+        contentValues.put("ReDiDeId", tarjetaControl.getReDiDeId());
+        contentValues.put("TaCoFinish", tarjetaControl.getTaCoFinish()==true?1:0);
+        contentValues.put("TaCoMultiple", tarjetaControl.getTaCoMultiple()==true?1:0);
+        contentValues.put("TaCoCodEnvioMovil", tarjetaControl.getTaCoCodEnvioMovil());
+        contentValues.put("TaCoCountMultiple", tarjetaControl.getTaCoCountMultiple());
+        contentValues.put("CoId", tarjetaControl.getCoId());
         baseDatos.actualizarTarjeta(contentValues, tarjetaControl.getTaCoId());
     }
     public void insertarTarjetasDetalleBD(BaseDatos baseDatos, ArrayList<TarjetaControlDetalle> tarjetaControlDetalles){

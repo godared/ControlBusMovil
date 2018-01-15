@@ -25,12 +25,12 @@ public class GeoreferenciaService implements IGeoreferenciaService {
     private Context context;
     BaseDatos db;
     //private Georeferencia georeferencia;
-    ITarjetaService tarjetaService;
+    //ITarjetaService tarjetaService;
 
     public GeoreferenciaService(Context context){
         this.context=context;
         db=new BaseDatos(context);
-        tarjetaService=new TarjetaService(context);
+        //tarjetaService=new TarjetaService(context);
     }
     public void SaveGeoreferenciaRest(Georeferencia georeferencia1){
         final Georeferencia georeferencia=georeferencia1;
@@ -58,7 +58,7 @@ public class GeoreferenciaService implements IGeoreferenciaService {
         });
     }
     public void SaveGeoreferenciaRest(List<Georeferencia> georeferencias){
-
+        final List<Georeferencia> _georeferencias=georeferencias;
         RestApiAdapter restApiAdapter = new RestApiAdapter();
         IEndpointApi endpointApi = restApiAdapter.establecerConexionRestApi();
         Call<Boolean> georeferenciaSend = endpointApi.saveGeoreferencia(georeferencias);
@@ -68,6 +68,10 @@ public class GeoreferenciaService implements IGeoreferenciaService {
                 Boolean val=response.body();
                 if (val){
                     Toast.makeText(context, "Georeferencia se envio correctamento", Toast.LENGTH_SHORT).show();
+                    for(Georeferencia georeferencia:_georeferencias){
+                        georeferencia.setGeEnviadoMovil(true);
+                        ActualizarGeoreferenciaBD(db,georeferencia);
+                    }
                 }
             }
 
@@ -93,7 +97,17 @@ public class GeoreferenciaService implements IGeoreferenciaService {
         baseDatos.InsertarGeoreferencia(contentValues);
     }
     public void ActualizarGeoreferenciaBD(BaseDatos baseDatos, Georeferencia georeferencia){
-
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("GeId", georeferencia.getGeId());
+        contentValues.put("TaCoId", georeferencia.getTaCoId());
+        contentValues.put("GeLatitud", georeferencia.getGeLatitud());
+        contentValues.put("GeLongitud", georeferencia.getGeLongitud());
+        contentValues.put("GeFechaHora", georeferencia.getGeFechaHora());
+        contentValues.put("UsId", georeferencia.getUsId());
+        contentValues.put("UsFechaReg", georeferencia.getUsFechaReg());
+        contentValues.put("GeOrden", georeferencia.getGeOrden());
+        contentValues.put("GeEnviadoMovil", georeferencia.getGeEnviadoMovil()==true?1:0);
+        baseDatos.ActualizarGeoreferencia(contentValues,georeferencia.getGeId());
     }
     public int GetCountGeoreferenciadByTaCo(int taCoId){
         int count= db.GetCountGeoreferenciadByTaCo(taCoId);
