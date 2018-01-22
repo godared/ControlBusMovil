@@ -63,6 +63,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
 
     }
 
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -224,6 +225,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
         _georeferencia.setGeFechaHora(dateNow);
         int cantidad=_georeferenciaService.GetCountGeoreferenciadByTaCo(this.TaCoId);
         _georeferencia.setGeOrden(cantidad+1);
+        _georeferencia.setGeEnviadoMovil(false);
         _georeferencia.setUsId(1);
         if (this.TaCoId>0){
             //Verificamos si el ultimo registro no ha variado con respecto al actual

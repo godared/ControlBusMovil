@@ -42,10 +42,12 @@ public class GeoreferenciaService implements IGeoreferenciaService {
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                 //se registra en la nube
                 Boolean _enviado=(Boolean)response.body();
-                if (_enviado){
-                    Toast.makeText(context, "Se envio correctamento", Toast.LENGTH_SHORT).show();
-                    georeferencia.setGeEnviadoMovil(_enviado);
-                    InsertarGeoreferenciaBD(db,georeferencia);
+                if(_enviado!=null){
+                    if (_enviado){
+                        Toast.makeText(context, "Se envio correctamento", Toast.LENGTH_SHORT).show();
+                        georeferencia.setGeEnviadoMovil(_enviado);
+                        InsertarGeoreferenciaBD(db,georeferencia);
+                    }
                 }
             }
             @Override
