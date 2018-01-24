@@ -119,9 +119,13 @@ public class SettingActivity extends AppCompatActivity{
                 this.EnviarTodo();
                 break;
             case R.id.mVisible:
-
                 this.VisualizarEnviados();
-
+                //Cargamos el Fragment
+                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();//getFragmentManager();
+                android.support.v4.app.FragmentTransaction fragmentTransaction =fragmentManager.beginTransaction();
+                android.support.v4.app.Fragment fragment = new RecyclerviewEnvioTarjetaFragment();
+                fragmentTransaction.add(R.id.flEnvioTarjeta, fragment);
+                fragmentTransaction.commit();
                 break;
         }
         return super.onOptionsItemSelected(item);

@@ -392,8 +392,6 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
             List<Georeferencia> georeferencias=null;
             georeferencias=georeferenciaService.GetAllGeoreferenciaByTaCoNoEnviado(tarjetaControl.getTaCoId());
             georeferenciaService.SaveGeoreferenciaRest(georeferencias);
-
-
         }
     }
     public TarjetaControlDetalle GetTarjetaDetalleByPuCoDe(int puCoDeId){
