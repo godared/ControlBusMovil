@@ -56,7 +56,6 @@ public class MapsFragment extends Fragment implements IMapsFragment {
     int BuId;
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             //Captutra lo que esta en Geolocationservice intent
@@ -81,7 +80,7 @@ public class MapsFragment extends Fragment implements IMapsFragment {
         setRetainInstance(true);
         setHasOptionsMenu(true);
         if (savedInstanceState != null) { //para guardar el estado en caso la pantalla cambia de orientacion
-            BuId = savedInstanceState.getInt("busId");
+            BuId = savedInstanceState.getInt("BUS_ID");
         }
 
         MainActivity _actividadPrincipal = (MainActivity)getActivity();
@@ -109,6 +108,9 @@ public class MapsFragment extends Fragment implements IMapsFragment {
         // Inflate the layout for this fragment
         //iTarjetaService=new TarjetaService(this,context);
         //return inflater.inflate(R.layout.fragment_maps, container, false);
+        if (savedInstanceState != null) { //para guardar el estado en caso la pantalla cambia de orientacion
+            BuId = savedInstanceState.getInt("BUS_ID");
+        }
         context=this.getActivity().getApplicationContext();
         View rootView = inflater.inflate(R.layout.fragment_maps, container, false);
         mapFragment = SupportMapFragment.newInstance();
@@ -141,9 +143,10 @@ public class MapsFragment extends Fragment implements IMapsFragment {
                 }
             });
         }
-
+        // El tonbre de intentFilter lo toma de GeolocationService.broadcastLocationFound(Location location),
+        // de donde recibe los datos
         getActivity().registerReceiver(receiver,
-                new IntentFilter("me.hoen.geofence_21.geolocation.service"));
+                new IntentFilter("com.godared.controlbusmovil.service.geofence"));
     }
     protected void displayGeofences() {
         HashMap<String, SimpleGeofence> geofences = SimpleGeofenceStore

@@ -81,57 +81,58 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
     }
     int _buId=0;
     String _taCoFecha=null;
-    public ArrayList<TarjetaControl> obtenerTarjetasRest(int buId, String taCoFecha ){
+    public ArrayList<TarjetaControl> obtenerTarjetasRest(int emId,int buId, String taCoFecha ){
         _buId=buId;_taCoFecha=taCoFecha;
         RestApiAdapter restApiAdapter = new RestApiAdapter();
         IEndpointApi endpointApi = restApiAdapter.establecerConexionRestApi();
-        Call<List<TarjetaControl>> tarjetasControlCall = endpointApi.getTarjetaControl(buId,taCoFecha);
+        Call<List<TarjetaControl>> tarjetasControlCall = endpointApi.getTarjetaControl(emId,buId,taCoFecha);
         tarjetasControlCall.enqueue(new Callback<List<TarjetaControl>>() {
             @Override
             public void onResponse(Call<List<TarjetaControl>> call, Response<List<TarjetaControl>> response) {
-                ArrayList<TarjetaControl> _tarjetaControl;
+                ArrayList<TarjetaControl> _tarjetaControl=null;
                 _tarjetaControl=(ArrayList<TarjetaControl>) response.body();
                 tarjetasControl=_tarjetaControl;
                 //insertarTarjetasBD(db,tarjetasControl);
-                for (TarjetaControl tarjetaControl : tarjetasControl){
-                    TarjetaControl tarjetaControl2 = null;
-                    tarjetaControl2 = db.ObtenerTarjeta(tarjetaControl.getTaCoId());
-                    if (tarjetaControl2.getTaCoId() <1) {
-                        insertarTarjetaBD(db,tarjetaControl);
-                        insertarTarjetaBitacoraMovilBD(db,tarjetaControl);
-                       puntoControlService.ObtenerPuntoControlRest(tarjetaControl.getPuCoId());
-                        obtenerTarjetasDetalleRest(tarjetaControl.getTaCoId());
-                    }else {
-                        actualizarTarjetaBD(db,tarjetaControl);
+                if(tarjetasControl!=null) { // a veces no se porque devuelve null
+                    for (TarjetaControl tarjetaControl : tarjetasControl) {
+                        TarjetaControl tarjetaControl2 = null;
+                        tarjetaControl2 = db.ObtenerTarjeta(tarjetaControl.getTaCoId());
+                        if (tarjetaControl2.getTaCoId() < 1) {
+                            insertarTarjetaBD(db, tarjetaControl);
+                            insertarTarjetaBitacoraMovilBD(db, tarjetaControl);
+                            puntoControlService.ObtenerPuntoControlRest(tarjetaControl.getPuCoId());
+                            obtenerTarjetasDetalleRest(tarjetaControl.getTaCoId());
+                        } else {
+                            actualizarTarjetaBD(db, tarjetaControl);
+                        }
                     }
-                }
 
-                //verificamos en la base de datos para  los reg q se han eliminado en el server.
-                if (tarjetasControl.size()>0) {
-                    List<TarjetaControl> tarjetasControl2;
-                    tarjetasControl2 = db.ObtenerTarjetas(_buId, _taCoFecha);
-                    for (TarjetaControl tarjetaControl : tarjetasControl2) {
-                        int sw=0;
-                        for (TarjetaControl tarjetaControl2 : tarjetasControl) {
-                            if (tarjetaControl.getTaCoId()==tarjetaControl2.getTaCoId()){
-                                sw=1;
+                    //verificamos en la base de datos para  los reg q se han eliminado en el server.
+                    if (tarjetasControl.size() > 0) {
+                        List<TarjetaControl> tarjetasControl2;
+                        tarjetasControl2 = db.ObtenerTarjetas(_buId, _taCoFecha);
+                        for (TarjetaControl tarjetaControl : tarjetasControl2) {
+                            int sw = 0;
+                            for (TarjetaControl tarjetaControl2 : tarjetasControl) {
+                                if (tarjetaControl.getTaCoId() == tarjetaControl2.getTaCoId()) {
+                                    sw = 1;
+                                }
                             }
-                        }
-                        //entonces no esta y se elimina
-                        if (sw==0){
-                            //LLamaar eliminar cabecera y detalle
-                            db.eliminarTarjetaDetalleByTaCo(tarjetaControl.getTaCoId());
-                            db.eliminarTarjeta(tarjetaControl.getTaCoId());
-                            db.eliminarTarjetaBitacoraMovilByTaCo(tarjetaControl.getTaCoId());
-                            db.eliminarTarjetaDetalleBitacoraMovilByTaCo(tarjetaControl.getTaCoId());
-                        }
+                            //entonces no esta y se elimina
+                            if (sw == 0) {
+                                //LLamaar eliminar cabecera y detalle
+                                db.eliminarTarjetaDetalleByTaCo(tarjetaControl.getTaCoId());
+                                db.eliminarTarjeta(tarjetaControl.getTaCoId());
+                                db.eliminarTarjetaBitacoraMovilByTaCo(tarjetaControl.getTaCoId());
+                                db.eliminarTarjetaDetalleBitacoraMovilByTaCo(tarjetaControl.getTaCoId());
+                            }
 
+                        }
+                        ///activamos el primer registro como activo.
+                        actualizarActivoTarjetaBitacoraMovilBD(db, tarjetasControl);
                     }
-                    ///activamos el primer registro como activo.
-                    actualizarActivoTarjetaBitacoraMovilBD(db,tarjetasControl);
+
                 }
-
-
             }
 
             @Override

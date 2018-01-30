@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(tbToolBar);
         obtenerImeiRest();
-        validarImei();
+        validarImei(); // aqui obtenemos el BuId  y EmId
         tlTablaLayout=(TabLayout)findViewById(R.id.tlTablaLayout);
         //Cargando el Reloj digital
         DigitalClock dc = (DigitalClock)findViewById(R.id.fragment_clock_digital);
@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
         iTarjetaService=new TarjetaService(context);
         //MainActivity _actividadPrincipal = (MainActivity)getActivity();//getCallingActivity();
 
-        iTarjetaService.obtenerTarjetasRest(BuId,this.FechaActual);//"16-08-2017"
+        iTarjetaService.obtenerTarjetasRest(EmId,BuId,this.FechaActual);//"16-08-2017"
         // tarjetasControl=iTarjetaService.getTarjetasControl();
         if(tarjetasDetalle!=null) {
 

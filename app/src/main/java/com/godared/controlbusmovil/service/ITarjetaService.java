@@ -16,7 +16,7 @@ import java.util.List;
 public interface ITarjetaService {
 
     void obtenerTarjetasDetalleRest( int taCoId);
-    ArrayList<TarjetaControl> obtenerTarjetasRest(int buId, String taCoFecha );
+    ArrayList<TarjetaControl> obtenerTarjetasRest(int emId,int buId, String taCoFecha );
     void UpdateTarjetaRest(TarjetaControl tarjetaControl);
     void UpdateTarjetaDetalleRest(TarjetaControlDetalle tarjetaControlDetalle);
     void UpdateTarjetaDetallesRest(List<TarjetaControlDetalle> tarjetaControlDetalles);

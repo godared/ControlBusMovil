@@ -59,6 +59,8 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
         Bundle extra_buId=intent.getExtras();
         BuId=extra_buId.getInt("BUS_ID");
         TaCoId=extra_buId.getInt("TACO_ID");
+        //BuId=11;
+        //TaCoId=5238;
         mGoogleApiClient.connect();
 
     }
@@ -120,6 +122,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
         } else {
 
             Intent intent = new Intent(this, GeofenceReceiver.class);
+            intent.putExtra("BUS_ID",BuId);
             return PendingIntent.getService(this, 0, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -127,11 +130,12 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
     }
 
     public void broadcastLocationFound(Location location) {
+
         Intent intent = new Intent("com.godared.controlbusmovil.service.geofence");//me.hoen.geofence_21.geolocation.service
         intent.putExtra("latitude", location.getLatitude());
         intent.putExtra("longitude", location.getLongitude());
         intent.putExtra("done", 1);
-
+        //Esto envia un bradcast al MasPsFragment tener en cuenta la ruta del intent
         sendBroadcast(intent);
     }
 

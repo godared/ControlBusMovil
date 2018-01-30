@@ -28,7 +28,7 @@ import retrofit2.http.Query;
 public interface IEndpointApi {
     //getalltarjetacontrolbybuidfecha?buId=1&taCoFecha=31-12-2016
     @GET(ConstantesRestApi.URL_TARJETA_CONTROL)
-    Call<List<TarjetaControl>> getTarjetaControl(@Query("buId") int buId,@Query("taCoFecha") String taCoFecha);
+    Call<List<TarjetaControl>> getTarjetaControl(@Query("emId") int emId,@Query("buId") int buId,@Query("taCoFecha") String taCoFecha);
 
     @POST(ConstantesRestApi.URL_TARJETA_CONTROL2+"savemovil")
     Call<Integer> updateTarjetaControl(@Body TarjetaControl tarjetaControl);
