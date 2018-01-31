@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.Toast;
@@ -64,8 +65,18 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
         mGoogleApiClient.connect();
 
     }
-
-
+   /* @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (isLocationPermissionGranted() && intent != null) {
+            registerGeofences();
+        } else {
+            this.stopSelf(startId);
+        }
+        return START_REDELIVER_INTENT;
+    }*/
+    private boolean isLocationPermissionGranted() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -73,7 +84,6 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
-
     }
 
     protected void registerGeofences() {
@@ -113,7 +123,19 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
             MainActivity.geofencesAlreadyRegistered = true;
 
     }
-
+    private void removeGeoFences() {
+        mPendingIntent = requestPendingIntent();
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            try {
+                LocationServices.GeofencingApi.removeGeofences(
+                        mGoogleApiClient,
+                        mPendingIntent
+                ).setResultCallback(this);
+            } catch (SecurityException securityException) {
+                Log.e("fallo", securityException.toString());
+            }
+        }
+    }
     private PendingIntent requestPendingIntent() {
 
         if (null != mPendingIntent) {
@@ -205,9 +227,13 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
                         + location.getLongitude() + ". "
                         + location.getAccuracy());
         broadcastLocationFound(location);
-
-        if (!MainActivity.geofencesAlreadyRegistered) {
-            registerGeofences();
+        if (this.TaCoId>0) {
+            if (!MainActivity.geofencesAlreadyRegistered) {
+                registerGeofences();
+            }
+        }
+        else{
+            removeGeoFences();
         }
         //es aqui que vamos a guardar la georeferencia(movimientos del bus
         GuardarGeoreferenciaRest(this,location);
@@ -219,19 +245,19 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
     private void GuardarGeoreferenciaRest(Context context,Location location){
         IGeoreferenciaService _georeferenciaService=new GeoreferenciaService(context);
         Georeferencia _georeferencia=new Georeferencia();
-
-        _georeferencia.setGeId(0);
-        _georeferencia.setTaCoId(this.TaCoId);
-        _georeferencia.setGeLatitud(location.getLatitude());
-        _georeferencia.setGeLongitud(location.getLongitude());
-        String dateNow = DateFormat.format("yyyy-dd-MM",
-                new Date()).toString();
-        _georeferencia.setGeFechaHora(dateNow);
-        int cantidad=_georeferenciaService.GetCountGeoreferenciadByTaCo(this.TaCoId);
-        _georeferencia.setGeOrden(cantidad+1);
-        _georeferencia.setGeEnviadoMovil(false);
-        _georeferencia.setUsId(1);
         if (this.TaCoId>0){
+            //_georeferencia.setGeId(0);
+            _georeferencia.setTaCoId(this.TaCoId);
+            _georeferencia.setGeLatitud(location.getLatitude());
+            _georeferencia.setGeLongitud(location.getLongitude());
+            String dateNow = DateFormat.format("yyyy-dd-MM",
+                    new Date()).toString();
+            _georeferencia.setGeFechaHora(dateNow);
+            int cantidad=_georeferenciaService.GetCountGeoreferenciadByTaCo(this.TaCoId);
+            _georeferencia.setGeOrden(cantidad+1);
+            _georeferencia.setGeEnviadoMovil(false);
+            _georeferencia.setUsId(1);
+
             //Verificamos si el ultimo registro no ha variado con respecto al actual
             //primero obtenemos el ultimo registro
             Georeferencia georeferencia=null;
