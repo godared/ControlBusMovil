@@ -602,9 +602,11 @@ public class BaseDatos extends SQLiteOpenHelper{
         db.close();
     }
     public int GetCountGeoreferenciadByTaCo(int taCoId){
-        String query="SELECT * FROM Georeferencia where TaCoId="+taCoId;
+        String query="SELECT count(*) FROM Georeferencia where TaCoId="+taCoId;
         SQLiteDatabase db=this.getWritableDatabase();
-        int cantidad=db.rawQuery(query,null).getCount();
+        Cursor cursor=db.rawQuery(query,null);
+        cursor.moveToFirst();
+        int cantidad=cursor.getInt(0);
         db.close();
         return cantidad;
     }

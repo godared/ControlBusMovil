@@ -87,7 +87,7 @@ public class GeoreferenciaService implements IGeoreferenciaService {
 
     public void InsertarGeoreferenciaBD(BaseDatos baseDatos, Georeferencia georeferencia){
         ContentValues contentValues = new ContentValues();
-        contentValues.put("GeId", georeferencia.getGeId());
+        //contentValues.put("GeId", georeferencia.getGeId());
         contentValues.put("TaCoId", georeferencia.getTaCoId());
         contentValues.put("GeLatitud", georeferencia.getGeLatitud());
         contentValues.put("GeLongitud", georeferencia.getGeLongitud());
