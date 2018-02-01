@@ -2,6 +2,7 @@ package com.godared.controlbusmovil.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +16,8 @@ import com.godared.controlbusmovil.pojo.TarjetaControl;
 import com.godared.controlbusmovil.service.TarjetaService;
 import com.godared.controlbusmovil.vista.DetalleActivity;
 import com.godared.controlbusmovil.vista.SettingActivity;
-
+import com.godared.controlbusmovil.vista.fragment.FinalizaTarjetaDialogFragment;
+import android.support.v4.app.FragmentManager.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,13 +35,18 @@ public class EnvioTarjetaAdaptadorRV extends RecyclerView.Adapter<EnvioTarjetaAd
 
     int BuId;
     String TaCoFecha;
+    private OnItemClickListener listener;
+    public interface OnItemClickListener {
+        void onItemClicked(View v, int taCoId);
+    }
 
-    public EnvioTarjetaAdaptadorRV(ArrayList<TarjetaControl> tarjetasControl, Activity activity,int buId,String taCoFecha) {
+    public EnvioTarjetaAdaptadorRV(OnItemClickListener listener,ArrayList<TarjetaControl> tarjetasControl, Activity activity,int buId,String taCoFecha) {
         this.tarjetasControl =tarjetasControl;
         this.activity = activity;
         tarjetaService=new TarjetaService(activity.getBaseContext());
         this.BuId=buId;
         this.TaCoFecha=taCoFecha;
+        this.listener=listener;
     }
 
     @Override
@@ -68,7 +75,11 @@ public class EnvioTarjetaAdaptadorRV extends RecyclerView.Adapter<EnvioTarjetaAd
             @Override
             public void onClick(View v) {
                 //Procedimiento llamar al metodo finalizar
-                tarjetaService.FinalizarTarjetaIncompleta(_tarjetaControl.getTaCoId(),BuId,TaCoFecha);
+                //tarjetaService.FinalizarTarjetaIncompleta(_tarjetaControl.getTaCoId(),BuId,TaCoFecha);
+                //aqui llamano al cuadro de dialogo, esta interfaz esta enlazado con el fragmento RecyclerEncioTarjetaFragment,
+                //que es de donde llamo al cuadro de dialogo FinalizaTarjetaDialogFragment
+                listener.onItemClicked(v,_tarjetaControl.getTaCoId());
+
             }
         });
         holder.btnDetalle.setOnClickListener(new View.OnClickListener() {

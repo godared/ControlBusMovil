@@ -43,13 +43,13 @@
                     android:id="@+id/btnFinalizar"
                     android:layout_width="38dp"
                     android:layout_height="38dp"
-                    android:background="@drawable/tiempo_48"
+                    android:background="@drawable/icons8_identificaci_n_verificada_48"
                     card_view:layout_centerVertical="true" />
                 <ImageButton
                     android:id="@+id/btnDetalle"
                     android:layout_width="38dp"
                     android:layout_height="38dp"
-                    android:background="@drawable/tiempo_48"
+                    android:background="@drawable/icons8_factura_48"
                     card_view:layout_centerVertical="true" />
             </LinearLayout>
         </RelativeLayout>
