@@ -31,6 +31,10 @@ public class TarjetaAdaptadorRV extends RecyclerView.Adapter<TarjetaAdaptadorRV.
         this.tarjetasDetalle = tarjetasDetalle;
         this.activity = activity;
     }
+    public void UpdateTarjetaAdaptadorRV(ArrayList<TarjetaControlDetalle> tarjetasDetalle){
+        this.tarjetasDetalle = tarjetasDetalle;
+        notifyDataSetChanged();
+    }
     //Se genera de forma automatica al implementar RecyclerView.Adapter
     //va a inflar el layout y lo pasara al viewholder para que obtenga los view
     @Override

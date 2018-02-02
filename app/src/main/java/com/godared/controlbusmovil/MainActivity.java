@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.godared.controlbusmovil.adapter.PageAdapterVP;
+import com.godared.controlbusmovil.adapter.TarjetaAdaptadorRV;
 import com.godared.controlbusmovil.pojo.TelefonoImei;
 import com.godared.controlbusmovil.service.DigitalClock;
 import com.godared.controlbusmovil.service.ITarjetaService;
@@ -158,6 +159,9 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.mDescarga:
                 Sincronizar(this.getBaseContext());
+                iTarjetaService=new TarjetaService(this.getBaseContext());
+
+
                 break;
             case R.id.mSetting:
                 Intent intent= new Intent(this, SettingActivity.class);

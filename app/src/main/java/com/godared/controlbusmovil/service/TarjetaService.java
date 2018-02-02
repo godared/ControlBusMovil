@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.godared.controlbusmovil.adapter.TarjetaAdaptadorRV;
 import com.godared.controlbusmovil.dao.BaseDatos;
 import com.godared.controlbusmovil.pojo.Georeferencia;
 import com.godared.controlbusmovil.pojo.TarjetaBitacoraMovil;
@@ -69,6 +70,17 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
 
                     insertarTarjetasDetalleBD(db,tarjetasDetalle);
                     insertarTarjetaDetalleBitacoraMovilBD(tarjetasDetalle);
+
+                    //////
+
+                    ArrayList<TarjetaControlDetalle> tarjetaControls;
+                    tarjetaControls=GetAllTarjetaDetalleBDById(tarjetasDetalle.get(0).getTaCoId());
+
+                    TarjetaAdaptadorRV mBusinessAdapter;
+                    mBusinessAdapter=new TarjetaAdaptadorRV(tarjetaControls,null);
+                    mBusinessAdapter.UpdateTarjetaAdaptadorRV(tarjetaControls);
+                    mBusinessAdapter.notifyDataSetChanged();
+
 
                 }
             @Override

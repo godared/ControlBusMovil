@@ -6,8 +6,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.View;
 
 import com.godared.controlbusmovil.MainActivity;
+import com.godared.controlbusmovil.R;
+import com.godared.controlbusmovil.adapter.TarjetaAdaptadorRV;
+import com.godared.controlbusmovil.pojo.TarjetaControl;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
 import com.godared.controlbusmovil.pojo.TarjetaDetalleBitacoraMovil;
 import com.godared.controlbusmovil.service.ITarjetaService;
@@ -17,6 +21,7 @@ import com.google.android.gms.location.GeofencingEvent;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -101,6 +106,7 @@ public class GeofenceReceiver extends IntentService {
                         }
                         value = cal.getTimeInMillis();
                         tarjetaControlDetalle.setTaCoDeTiempo(value.toString());
+                        //actualizamos en la base de datos local
                         tarjetaService.actualizarTarjetaDetalleBD(tarjetaControlDetalle);
                         //Actualizamos el Registro
                         TarjetaDetalleBitacoraMovil tarjetaDetalleBitacoraMovil;
@@ -116,6 +122,13 @@ public class GeofenceReceiver extends IntentService {
                     GeofenceNotification geofenceNotification = new GeofenceNotification(
                             this);
                     geofenceNotification.displayNotification(sg, transitionType);
+                    //////
+                    ArrayList<TarjetaControlDetalle> tarjetaControls;
+                    tarjetaControls=tarjetaService.GetAllTarjetaDetalleBDById(tarjetaControlDetalle.getTaCoId());
+
+                    TarjetaAdaptadorRV mBusinessAdapter;
+                    mBusinessAdapter=new TarjetaAdaptadorRV(tarjetaControls,null);
+                    mBusinessAdapter.notifyDataSetChanged();
                 }
             }
         }
