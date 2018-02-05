@@ -27,7 +27,7 @@ import java.util.ArrayList;
 public class RecyclerviewFragment extends Fragment implements  IRecyclerviewFragment {
     //ArrayList<TarjetaControl> tarjetas;
     RecyclerView listaTarjetasDetalle;
-    IRecyclerviewFragmentPresenter recyclerviewFragmentPresenter;
+    public IRecyclerviewFragmentPresenter recyclerviewFragmentPresenter;
     int BuId;
     int TaCoId;
     String TaCoFecha;

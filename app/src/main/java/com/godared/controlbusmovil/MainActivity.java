@@ -37,10 +37,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TarjetaService.TarjetaServiceListener {
     private Toolbar tbToolBar;
     private TabLayout tlTablaLayout;
     private ViewPager vpViewPager;
+    ArrayList<Fragment> fragmets;
     private ArrayList<TarjetaControlDetalle> tarjetasDetalle;
 
     public static String TAG = "lstech.aos.debug";
@@ -100,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         args.putString("TACO_FECHA",FechaActual);
         args.putBoolean("INDICA_GETDETALLEACTIVO",true);
 
-        ArrayList<Fragment> fragmets=new ArrayList<>();
+        fragmets=new ArrayList<>();
         fragmets.add(new RecyclerviewFragment());
         fragmets.add(new MapsFragment());
         fragmets.get(0).setArguments(args);
@@ -175,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
     public void Sincronizar(Context context) {
-        iTarjetaService=new TarjetaService(context);
+        iTarjetaService=new TarjetaService(this,context);
         //MainActivity _actividadPrincipal = (MainActivity)getActivity();//getCallingActivity();
 
         iTarjetaService.obtenerTarjetasRest(EmId,BuId,this.FechaActual);//"16-08-2017"
@@ -222,5 +223,16 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Equipo IMEI no registrado", Toast.LENGTH_SHORT).show();
             finish();
         }
+    }
+    public void listenObtenerTarjetasDetalleRest(){
+        TarjetaAdaptadorRV mBusinessAdapter;
+        RecyclerviewFragment recyclerviewFragment;
+        recyclerviewFragment=(RecyclerviewFragment)fragmets.get(0);
+        recyclerviewFragment.recyclerviewFragmentPresenter.obtenerTarjetasDetalleBD();
+
+        //mBusinessAdapter=new TarjetaAdaptadorRV(tarjetaControls,null);
+        //mBusinessAdapter.UpdateTarjetaAdaptadorRV(tarjetaControls);
+
+        //mBusinessAdapter.notifyDataSetChanged();
     }
 }

@@ -37,6 +37,11 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
     PuntoControlService puntoControlService;
     GeoreferenciaService georeferenciaService;
     TarjetaControl tarjetaControl222;
+    public interface TarjetaServiceListener {
+        public void listenObtenerTarjetasDetalleRest();
+        //public void onDialogNegativeClick();
+    }
+    TarjetaServiceListener mListener;
 /*
     public ArrayList<TarjetaControlDetalle> getTarjetasDetalle() {
         return tarjetasDetalle;
@@ -48,6 +53,13 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
             super(base);
             //context=base;
         }*/
+    public TarjetaService(TarjetaServiceListener mListener,Context context){
+        this.context=context;
+        this.mListener=mListener;
+        db=new BaseDatos(context);
+        puntoControlService=new PuntoControlService(context);
+        georeferenciaService=new GeoreferenciaService(context);
+    }
     public TarjetaService(Context context){ //IMapsFragment iSettingFragment,this.iSettingFragment=iSettingFragment;
         this.context=context;
         //obtenerTarjetasDetalleRest(1);
@@ -76,11 +88,8 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
                     ArrayList<TarjetaControlDetalle> tarjetaControls;
                     tarjetaControls=GetAllTarjetaDetalleBDById(tarjetasDetalle.get(0).getTaCoId());
 
-                    TarjetaAdaptadorRV mBusinessAdapter;
-                    mBusinessAdapter=new TarjetaAdaptadorRV(tarjetaControls,null);
-                    mBusinessAdapter.UpdateTarjetaAdaptadorRV(tarjetaControls);
-                    mBusinessAdapter.notifyDataSetChanged();
 
+                    mListener.listenObtenerTarjetasDetalleRest();
 
                 }
             @Override
