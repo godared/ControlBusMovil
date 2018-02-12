@@ -1,6 +1,7 @@
 package com.godared.controlbusmovil.vista;
 
 import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
 import com.godared.controlbusmovil.service.ITarjetaService;
 import com.godared.controlbusmovil.service.TarjetaService;
 import com.godared.controlbusmovil.vista.fragment.RecyclerviewEnvioTarjetaFragment;
+import com.godared.controlbusmovil.vista.fragment.RecyclerviewFragment;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,6 +38,7 @@ public class SettingActivity extends AppCompatActivity{
     private Toolbar tbToolBar;
     private Menu menu;
     private Context context;
+    android.support.v4.app.Fragment fragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +66,7 @@ public class SettingActivity extends AppCompatActivity{
         //Cargamos el Fragment
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();//getFragmentManager();
         android.support.v4.app.FragmentTransaction fragmentTransaction =fragmentManager.beginTransaction();
-        android.support.v4.app.Fragment fragment = new RecyclerviewEnvioTarjetaFragment();
+        fragment = new RecyclerviewEnvioTarjetaFragment();
         fragmentTransaction.add(R.id.flEnvioTarjeta, fragment);
         fragmentTransaction.commit();
 
@@ -85,6 +88,9 @@ public class SettingActivity extends AppCompatActivity{
     }
 
     public void VisualizarEnviados(){
+        RecyclerviewEnvioTarjetaFragment recyclerviewEnvioTarjetaFragment;
+        recyclerviewEnvioTarjetaFragment=(RecyclerviewEnvioTarjetaFragment)fragment;
+        recyclerviewEnvioTarjetaFragment.iRecyclerviewEnvioTarjetaPresenter.obtenerEnvioTarjetasBD(this.BuId,this.TaCoFecha,this.Enviado);
         if (this.Enviado==1) {
             this.Enviado = 0;
             menu.getItem(0).setIcon(ContextCompat.getDrawable(this, R.drawable.icons8_invisible_48));
@@ -93,7 +99,6 @@ public class SettingActivity extends AppCompatActivity{
             this.Enviado=1;
             menu.getItem(0).setIcon(ContextCompat.getDrawable(this, R.drawable.icons8_visible_48));
         }
-
     }
     public void EnviarTodo() {
         iTarjetaService=new TarjetaService(context);
@@ -117,12 +122,7 @@ public class SettingActivity extends AppCompatActivity{
                 break;
             case R.id.mVisible:
                 this.VisualizarEnviados();
-                //Cargamos el Fragment
-                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();//getFragmentManager();
-                android.support.v4.app.FragmentTransaction fragmentTransaction =fragmentManager.beginTransaction();
-                android.support.v4.app.Fragment fragment = new RecyclerviewEnvioTarjetaFragment();
-                fragmentTransaction.add(R.id.flEnvioTarjeta, fragment);
-                fragmentTransaction.commit();
+
                 break;
         }
         return super.onOptionsItemSelected(item);

@@ -125,10 +125,6 @@ public class GeofenceReceiver extends IntentService {
                     //////
                     ArrayList<TarjetaControlDetalle> tarjetaControls;
                     tarjetaControls=tarjetaService.GetAllTarjetaDetalleBDById(tarjetaControlDetalle.getTaCoId());
-
-                    TarjetaAdaptadorRV mBusinessAdapter;
-                    mBusinessAdapter=new TarjetaAdaptadorRV(tarjetaControls,null);
-                    mBusinessAdapter.notifyDataSetChanged();
                 }
             }
         }

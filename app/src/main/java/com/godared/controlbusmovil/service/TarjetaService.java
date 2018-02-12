@@ -186,6 +186,10 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
                     _tarjetaBitacoraMovil.setTaBiMoEnviado(1);
                     _tarjetaBitacoraMovil.setTaBiMoRemotoId(codEnvio);
                     actualizarTarjetaBitacoraMovilBD(_tarjetaBitacoraMovil);
+                    //Ahora Actualizamos el Codigo de envio en la Tarjeta Control
+                    tarjetaControl1.setTaCoCodEnvioMovil(codEnvio);
+                    actualizarTarjetaBD(db,tarjetaControl1);
+
                 }
             }
 

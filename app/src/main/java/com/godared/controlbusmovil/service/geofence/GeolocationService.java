@@ -43,8 +43,8 @@ import java.util.Map;
 
 public class GeolocationService extends Service implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<Status> {
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 30000; //1000 es un segundo
-    public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 5;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000; //1000 es un segundo
+    public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 3;
     protected GoogleApiClient mGoogleApiClient;
     protected LocationRequest mLocationRequest;
     int BuId;
@@ -270,7 +270,11 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
             double _longitudActual=Double.valueOf(df.format(location.getLongitude()));
             double _latitudLastBD=Double.valueOf(df.format(georeferencia.getGeLatitud()));
             double _longitudLastBD=Double.valueOf(df.format(georeferencia.getGeLongitud()));
-            if(_latitudActual!=_latitudLastBD || _longitudActual!=_longitudLastBD)
+            //if(_latitudActual!=_latitudLastBD || _longitudActual!=_longitudLastBD)
+            //Calculamos la distancia en metros
+            double diferencia;
+            diferencia=Math.sqrt(Math.pow(_latitudLastBD-_latitudActual,2)+Math.pow(_longitudLastBD-_longitudActual,2));
+            if(diferencia>150 |_latitudLastBD==0)
                 _georeferenciaService.SaveGeoreferenciaRest(_georeferencia);
         }
     }

@@ -225,14 +225,9 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         }
     }
     public void listenObtenerTarjetasDetalleRest(){
-        TarjetaAdaptadorRV mBusinessAdapter;
+
         RecyclerviewFragment recyclerviewFragment;
         recyclerviewFragment=(RecyclerviewFragment)fragmets.get(0);
         recyclerviewFragment.recyclerviewFragmentPresenter.obtenerTarjetasDetalleBD();
-
-        //mBusinessAdapter=new TarjetaAdaptadorRV(tarjetaControls,null);
-        //mBusinessAdapter.UpdateTarjetaAdaptadorRV(tarjetaControls);
-
-        //mBusinessAdapter.notifyDataSetChanged();
     }
 }
