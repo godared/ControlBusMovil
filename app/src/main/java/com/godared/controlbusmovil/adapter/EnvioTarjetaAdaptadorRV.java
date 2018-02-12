@@ -74,7 +74,7 @@ public class EnvioTarjetaAdaptadorRV extends RecyclerView.Adapter<EnvioTarjetaAd
         holder.btnFinalizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Procedimiento llamar al metodo finalizar
+                //Procedimiento llamar al metodo finalizarg
                 //tarjetaService.FinalizarTarjetaIncompleta(_tarjetaControl.getTaCoId(),BuId,TaCoFecha);
                 //aqui llamano al cuadro de dialogo, esta interfaz esta enlazado con el fragmento RecyclerEncioTarjetaFragment,
                 //que es de donde llamo al cuadro de dialogo FinalizaTarjetaDialogFragment
