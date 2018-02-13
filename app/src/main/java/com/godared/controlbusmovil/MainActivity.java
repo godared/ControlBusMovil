@@ -30,6 +30,7 @@ import com.godared.controlbusmovil.adapter.PageAdapterVP;
 import com.godared.controlbusmovil.adapter.TarjetaAdaptadorRV;
 import com.godared.controlbusmovil.pojo.TelefonoImei;
 import com.godared.controlbusmovil.service.DigitalClock;
+import com.godared.controlbusmovil.service.GeoreferenciaService;
 import com.godared.controlbusmovil.service.ITarjetaService;
 import com.godared.controlbusmovil.service.ITelefonoService;
 import com.godared.controlbusmovil.service.TarjetaService;
@@ -72,10 +73,10 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case MyService.MSG_SET_INT_VALUE:
+                case GeoreferenciaService.MSG_SET_INT_VALUE:
                     //textIntValue.setText("Int Message: " + msg.arg1);
                     break;
-                case MyService.MSG_SET_STRING_VALUE:
+                case GeoreferenciaService.MSG_SET_STRING_VALUE:
                     String str1 = msg.getData().getString("str1");
                     //textStrValue.setText("Str Message: " + str1);
                     break;
@@ -89,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             mService = new Messenger(service);
             //textStatus.setText("Attached.");
             try {
-                Message msg = Message.obtain(null, MyService.MSG_REGISTER_CLIENT);
+                Message msg = Message.obtain(null, GeoreferenciaService.MSG_REGISTER_CLIENT);
                 msg.replyTo = mMessenger;
                 mService.send(msg);
             }
@@ -280,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     }
     //meotod ara enlazar el servicio
     void doBindService() {
-        bindService(new Intent(this, MyService.class), mConnection, Context.BIND_AUTO_CREATE);
+        bindService(new Intent(this, GeoreferenciaService.class), mConnection, Context.BIND_AUTO_CREATE);
         mIsBound = true;
         //textStatus.setText("Binding.");
     }
@@ -289,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             // If we have received the service, and hence registered with it, then now is the time to unregister.
             if (mService != null) {
                 try {
-                    Message msg = Message.obtain(null, MyService.MSG_UNREGISTER_CLIENT);
+                    Message msg = Message.obtain(null, GeoreferenciaService.MSG_UNREGISTER_CLIENT);
                     msg.replyTo = mMessenger;
                     mService.send(msg);
                 }

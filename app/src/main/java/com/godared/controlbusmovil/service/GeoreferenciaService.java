@@ -2,6 +2,9 @@ package com.godared.controlbusmovil.service;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Messenger;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -11,6 +14,7 @@ import com.godared.controlbusmovil.pojo.TarjetaControl;
 import com.godared.controlbusmovil.restApi.IEndpointApi;
 import com.godared.controlbusmovil.restApi.adapter.RestApiAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -25,7 +29,7 @@ public class GeoreferenciaService implements IGeoreferenciaService {
     private Context context;
     BaseDatos db;
     //private Georeferencia georeferencia;
-    //ITarjetaService tarjetaService;
+
 
     public GeoreferenciaService(Context context){
         this.context=context;
