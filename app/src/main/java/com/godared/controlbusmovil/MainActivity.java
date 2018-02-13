@@ -73,12 +73,14 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case GeoreferenciaService.MSG_SET_INT_VALUE:
+                case GeolocationService.MSG_SET_INT_VALUE:
                     //textIntValue.setText("Int Message: " + msg.arg1);
+                    Toast.makeText(getBaseContext(), "integer messaje:"+msg.arg1, Toast.LENGTH_SHORT).show();
                     break;
-                case GeoreferenciaService.MSG_SET_STRING_VALUE:
+                case GeolocationService.MSG_SET_STRING_VALUE:
                     String str1 = msg.getData().getString("str1");
                     //textStrValue.setText("Str Message: " + str1);
+                    Toast.makeText(getBaseContext(), "String Message:"+str1, Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     super.handleMessage(msg);
@@ -90,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             mService = new Messenger(service);
             //textStatus.setText("Attached.");
             try {
-                Message msg = Message.obtain(null, GeoreferenciaService.MSG_REGISTER_CLIENT);
+                Message msg = Message.obtain(null, GeolocationService.MSG_REGISTER_CLIENT);
                 msg.replyTo = mMessenger;
                 mService.send(msg);
             }
@@ -290,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             // If we have received the service, and hence registered with it, then now is the time to unregister.
             if (mService != null) {
                 try {
-                    Message msg = Message.obtain(null, GeoreferenciaService.MSG_UNREGISTER_CLIENT);
+                    Message msg = Message.obtain(null, GeolocationService.MSG_UNREGISTER_CLIENT);
                     msg.replyTo = mMessenger;
                     mService.send(msg);
                 }

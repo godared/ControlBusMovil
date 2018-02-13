@@ -114,15 +114,18 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
                 _tarjetaControl=(ArrayList<TarjetaControl>) response.body();
                 tarjetasControl=_tarjetaControl;
                 //insertarTarjetasBD(db,tarjetasControl);
-                if(tarjetasControl!=null) { // a veces no se porque devuelve null
+                if(tarjetasControl!=null ) { // a veces no se porque devuelve null
                     for (TarjetaControl tarjetaControl : tarjetasControl) {
                         TarjetaControl tarjetaControl2 = null;
                         tarjetaControl2 = db.ObtenerTarjeta(tarjetaControl.getTaCoId());
                         if (tarjetaControl2.getTaCoId() < 1) {
-                            insertarTarjetaBD(db, tarjetaControl);
-                            insertarTarjetaBitacoraMovilBD(db, tarjetaControl);
-                            puntoControlService.ObtenerPuntoControlRest(tarjetaControl.getPuCoId());
-                            obtenerTarjetasDetalleRest(tarjetaControl.getTaCoId());
+                            //verificamos que no sea ausente o castigado
+                            if (tarjetaControl.getTaCoAsignado().compareTo("1")==0) {
+                                insertarTarjetaBD(db, tarjetaControl);
+                                insertarTarjetaBitacoraMovilBD(db, tarjetaControl);
+                                puntoControlService.ObtenerPuntoControlRest(tarjetaControl.getPuCoId());
+                                obtenerTarjetasDetalleRest(tarjetaControl.getTaCoId());
+                            }
                         } else {
                             actualizarTarjetaBD(db, tarjetaControl);
                         }
@@ -135,8 +138,11 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
                         for (TarjetaControl tarjetaControl : tarjetasControl2) {
                             int sw = 0;
                             for (TarjetaControl tarjetaControl2 : tarjetasControl) {
-                                if (tarjetaControl.getTaCoId() == tarjetaControl2.getTaCoId()) {
-                                    sw = 1;
+                                //verificamos que no sea ausente o castigado
+                                if (tarjetaControl2.getTaCoAsignado().compareTo("1")==0) {
+                                    if (tarjetaControl.getTaCoId() == tarjetaControl2.getTaCoId()) {
+                                        sw = 1;
+                                    }
                                 }
                             }
                             //entonces no esta y se elimina

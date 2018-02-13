@@ -61,10 +61,10 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
 
     ArrayList<Messenger> mClients = new ArrayList<Messenger>(); // Keeps track of all current registered clients.
     int mValue = 0; // Holds last value set by a client.
-    static final int MSG_REGISTER_CLIENT = 1;
-    static final int MSG_UNREGISTER_CLIENT = 2;
-    static final int MSG_SET_INT_VALUE = 3;
-    static final int MSG_SET_STRING_VALUE = 4;
+    public static final int MSG_REGISTER_CLIENT = 1;
+    public static final int MSG_UNREGISTER_CLIENT = 2;
+    public static final int MSG_SET_INT_VALUE = 3;
+    public static final int MSG_SET_STRING_VALUE = 4;
     final Messenger mMessenger = new Messenger(new IncomingHandler()); // Target we publish for clients to send messages to IncomingHandler.
     class IncomingHandler extends Handler { // Handler of incoming messages from clients.
         @Override
@@ -188,9 +188,11 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
 
             Intent intent = new Intent(this, GeofenceReceiver.class);
             intent.putExtra("BUS_ID",BuId);
-            return PendingIntent.getService(this, 0, intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-
+            //return PendingIntent.getService(this, 0, intent,
+                   // PendingIntent.FLAG_UPDATE_CURRENT);
+            sendMessageToUI(counter);
+            PendingIntent pendingIntent=PendingIntent.getService(this, 0, intent,PendingIntent.FLAG_UPDATE_CURRENT);
+            return pendingIntent;
         }
     }
 
@@ -313,7 +315,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
             //Calculamos la distancia en metros
             double diferencia;
             diferencia=Math.sqrt(Math.pow(_latitudLastBD-_latitudActual,2)+Math.pow(_longitudLastBD-_longitudActual,2));
-            if(diferencia>150 |_latitudLastBD==0)
+            if(diferencia>100 |_latitudLastBD==0)
                 _georeferenciaService.SaveGeoreferenciaRest(_georeferencia);
         }
     }
