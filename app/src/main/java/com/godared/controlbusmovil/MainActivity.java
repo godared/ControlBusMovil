@@ -171,7 +171,8 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         i.putExtra("BUS_ID",BuId);
         i.putExtra("TACO_ID",TaCoId);
         startService(i);
-        //startService(new Intent(this, GeolocationService.class));
+        //startService(new Intent(this, GeolocationService.class));}
+        CheckIfServiceIsRunning();
     }
     //guardamos el estado de los controles(posicion de la grilla
     @Override
@@ -282,6 +283,12 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         recyclerviewFragment.recyclerviewFragmentPresenter.obtenerTarjetasDetalleBD();
     }
     //meotod ara enlazar el servicio
+    private void CheckIfServiceIsRunning() {
+        //If the service is running when the activity starts, we want to automatically bind to it.
+        if (GeolocationService.isRunning()) {
+            doBindService();
+        }
+    }
     void doBindService() {
         bindService(new Intent(this, GeoreferenciaService.class), mConnection, Context.BIND_AUTO_CREATE);
         mIsBound = true;
