@@ -47,7 +47,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements TarjetaService.TarjetaServiceListener {
+public class MainActivity extends AppCompatActivity implements TarjetaService.TarjetaServiceListener,GeolocationService.Callbacks {
     private Toolbar tbToolBar;
     private TabLayout tlTablaLayout;
     private ViewPager vpViewPager;
@@ -65,48 +65,32 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     public String EmConsorcio;
     public String FechaActual;
     ITarjetaService iTarjetaService;
-    //Variables para manejar el service
-    Messenger mService = null;
-    boolean mIsBound;
-    final Messenger mMessenger = new Messenger(new IncomingHandler());
-    class IncomingHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case GeolocationService.MSG_SET_INT_VALUE:
-                    //textIntValue.setText("Int Message: " + msg.arg1);
-                    Toast.makeText(getBaseContext(), "integer messaje:"+msg.arg1, Toast.LENGTH_SHORT).show();
-                    break;
-                case GeolocationService.MSG_SET_STRING_VALUE:
-                    String str1 = msg.getData().getString("str1");
-                    //textStrValue.setText("Str Message: " + str1);
-                    Toast.makeText(getBaseContext(), "String Message:"+str1, Toast.LENGTH_SHORT).show();
-                    break;
-                default:
-                    super.handleMessage(msg);
-            }
-        }
-    }
+    //variablea para el servicio Geolocation
+    Intent geolocationServiceIntent;
+    GeolocationService geolocationService;
+
     private ServiceConnection mConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            mService = new Messenger(service);
-            //textStatus.setText("Attached.");
-            try {
-                Message msg = Message.obtain(null, GeolocationService.MSG_REGISTER_CLIENT);
-                msg.replyTo = mMessenger;
-                mService.send(msg);
-            }
-            catch (RemoteException e) {
-                // In this case the service has crashed before we could even do anything with it
-            }
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            Toast.makeText(MainActivity.this, "onServiceConnected called", Toast.LENGTH_SHORT).show();
+            // We've binded to LocalService, cast the IBinder and get LocalService instance
+            GeolocationService.LocalBinder binder = (GeolocationService.LocalBinder) service;
+            geolocationService = binder.getServiceInstance(); //Get instance of your service!
+            geolocationService.registerClient(MainActivity.this); //Activity register in the service as client for callabcks!
+            Toast.makeText(MainActivity.this, "Connected to service...", Toast.LENGTH_SHORT).show();
+            //tvServiceState.setText("Connected to service...");
+            //tbStartTask.setEnabled(true);
         }
 
-        public void onServiceDisconnected(ComponentName className) {
-            // This is called when the connection with the service has been unexpectedly disconnected - process crashed.
-            mService = null;
-            //textStatus.setText("Disconnected.");
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Toast.makeText(MainActivity.this, "onServiceDisconnected called", Toast.LENGTH_SHORT).show();
+            //tvServiceState.setText("Service disconnected");
+            //tbStartTask.setEnabled(false);
         }
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -167,12 +151,14 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
 
         _tarjetaControl =tarjetaService.GetTarjetaControlActivo(BuId,this.FechaActual);//"16-08-2017"
         this.TaCoId=_tarjetaControl.getTaCoId();
-        Intent i=new Intent(this, GeolocationService.class);
-        i.putExtra("BUS_ID",BuId);
-        i.putExtra("TACO_ID",TaCoId);
-        startService(i);
+        geolocationServiceIntent=new Intent(this, GeolocationService.class);
+        geolocationServiceIntent.putExtra("BUS_ID",BuId);
+        geolocationServiceIntent.putExtra("TACO_ID",TaCoId);
+        startService(geolocationServiceIntent);
+        bindService(geolocationServiceIntent, mConnection, Context.BIND_AUTO_CREATE); //Binding to the service!
         //startService(new Intent(this, GeolocationService.class));}
-        CheckIfServiceIsRunning();
+
+
     }
     //guardamos el estado de los controles(posicion de la grilla
     @Override
@@ -182,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         savedInstanceState.putInt("TACO_ID", TaCoId);
         super.onSaveInstanceState(savedInstanceState);
     }
+
     @Override
     protected void onStart(){
         super.onStart();
@@ -189,20 +176,15 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
        // Context context = parent.getContext();
         //LayoutInflater inflater = LayoutInflater.from(context);
 
-        IRecyclerviewFragment rf=new RecyclerviewFragment();
-        ArrayList<TarjetaControlDetalle> tarjetasDetalle=new ArrayList<>();
-        rf.crearAdaptador(tarjetasDetalle);
+       // IRecyclerviewFragment rf=new RecyclerviewFragment();
+       // ArrayList<TarjetaControlDetalle> tarjetasDetalle=new ArrayList<>();
+       // rf.crearAdaptador(tarjetasDetalle);
 
-      /*  RecyclerView listaTarjetasDetalle;
-        listaTarjetasDetalle=(RecyclerView)findViewById(R.id.rvTarjeta);
-        IRecyclerviewFragmentPresenter recyclerviewFragmentPresenter;
-        recyclerviewFragmentPresenter =new RecyclerviewFragmentPresenter(rf,getApplicationContext());
-        recyclerviewFragmentPresenter.mostrarTarjetasDetalleRV();*/
+          }
 
-    }
 
     /* sobrescribimos para agregar el menu, estos metodos vienes ya
-    para implementar implementar o agragr a otra clase*/
+        para implementar implementar o agragr a otra clase*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_inicial,menu);
@@ -282,46 +264,29 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         recyclerviewFragment=(RecyclerviewFragment)fragmets.get(0);
         recyclerviewFragment.recyclerviewFragmentPresenter.obtenerTarjetasDetalleBD();
     }
-    //meotod ara enlazar el servicio
-    private void CheckIfServiceIsRunning() {
-        //If the service is running when the activity starts, we want to automatically bind to it.
-        if (GeolocationService.isRunning()) {
-            doBindService();
-        }
-    }
-    void doBindService() {
-        bindService(new Intent(this, GeoreferenciaService.class), mConnection, Context.BIND_AUTO_CREATE);
-        mIsBound = true;
-        //textStatus.setText("Binding.");
-    }
-    void doUnbindService() {
-        if (mIsBound) {
-            // If we have received the service, and hence registered with it, then now is the time to unregister.
-            if (mService != null) {
-                try {
-                    Message msg = Message.obtain(null, GeolocationService.MSG_UNREGISTER_CLIENT);
-                    msg.replyTo = mMessenger;
-                    mService.send(msg);
-                }
-                catch (RemoteException e) {
-                    // There is nothing special we need to do if the service has crashed.
-                }
-            }
-            // Detach our existing connection.
-            unbindService(mConnection);
-            mIsBound = false;
-            //textStatus.setText("Unbinding.");
-        }
-    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         try {
-            doUnbindService();
+            unbindService(mConnection);
+            stopService(geolocationServiceIntent);
         }
         catch (Throwable t) {
             Log.e("MainActivity", "Failed to unbind from the service", t);
         }
+    }
+
+    //Esto son metos para conectar con el service GeolocationService
+    @Override
+    public void updateClient(long millis) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                listenObtenerTarjetasDetalleRest();
+            }
+        });
+
+        Toast.makeText(MainActivity.this, "Valor de retorno de servicio"+ millis, Toast.LENGTH_SHORT).show();
     }
 }

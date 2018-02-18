@@ -1,13 +1,17 @@
 package com.godared.controlbusmovil.service.geofence;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.location.Location;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -47,7 +51,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GeolocationService extends Service implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<Status> {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<Status>,GeofenceReceiver.Callbacks {
     public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000; //1000 es un segundo
     public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 3;
     protected GoogleApiClient mGoogleApiClient;
@@ -56,36 +60,36 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
     int TaCoId;
     private PendingIntent mPendingIntent;
     //Variable para enlazar con la atividad
-    private int counter = 0, incrementby = 1;
-    private static boolean isRunning = false;
-
-    ArrayList<Messenger> mClients = new ArrayList<Messenger>(); // Keeps track of all current registered clients.
-    int mValue = 0; // Holds last value set by a client.
-    public static final int MSG_REGISTER_CLIENT = 1;
-    public static final int MSG_UNREGISTER_CLIENT = 2;
-    public static final int MSG_SET_INT_VALUE = 3;
-    public static final int MSG_SET_STRING_VALUE = 4;
-    final Messenger mMessenger = new Messenger(new IncomingHandler()); // Target we publish for clients to send messages to IncomingHandler.
-    class IncomingHandler extends Handler { // Handler of incoming messages from clients.
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MSG_REGISTER_CLIENT:
-                    mClients.add(msg.replyTo);
-                    break;
-                case MSG_UNREGISTER_CLIENT:
-                    mClients.remove(msg.replyTo);
-                    break;
-                case MSG_SET_INT_VALUE:
-                    incrementby = msg.arg1;
-                    break;
-                default:
-                    super.handleMessage(msg);
-            }
-        }
+    private final IBinder mBinder = new LocalBinder();
+    Callbacks activity;
+    //callbacks interface for communication with service clients MainActivity!
+    public interface Callbacks{
+        public void updateClient(long data);
     }
+    //esto es para enlazar al otro servicio gefencereceive
+    Intent geolocationServiceIntent2;
+    GeofenceReceiver geofenceReceiver;
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            Toast.makeText(GeolocationService.this, "onServiceConnected called", Toast.LENGTH_SHORT).show();
+            // We've binded to LocalService, cast the IBinder and get LocalService instance
+            GeofenceReceiver.LocalBinder binder = (GeofenceReceiver.LocalBinder) service;
+            geofenceReceiver = binder.getServiceInstance(); //Get instance of your service!
+            geofenceReceiver.registerClient(GeolocationService.this); //Activity register in the service as client for callabcks!
+            Toast.makeText(GeolocationService.this, "Connected to service GeofenceReceiver...", Toast.LENGTH_SHORT).show();
+            //tvServiceState.setText("Connected to service...");
+            //tbStartTask.setEnabled(true);
+        }
 
-
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Toast.makeText(GeolocationService.this, "onServiceDisconnected GefenceReceive", Toast.LENGTH_SHORT).show();
+            //tvServiceState.setText("Service disconnected");
+            //tbStartTask.setEnabled(false);
+        }
+    };
     public GeolocationService() {
     }
 
@@ -112,12 +116,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
     private boolean isLocationPermissionGranted() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Log.i("MyService", "Service Started.");
-        isRunning = true;
-    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -125,8 +124,13 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
-        Log.i("MyService", "Service Stopped.");
-        isRunning = false;
+
+    }
+    //esto tambien de para comunicar con la MainActivity
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
     }
 
     protected void registerGeofences() {
@@ -162,6 +166,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
             }
             LocationServices.GeofencingApi.addGeofences(mGoogleApiClient,
                     geofencingRequest, mPendingIntent).setResultCallback(this);
+
         }
             MainActivity.geofencesAlreadyRegistered = true;
 
@@ -186,12 +191,12 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
             return mPendingIntent;
         } else {
 
-            Intent intent = new Intent(this, GeofenceReceiver.class);
-            intent.putExtra("BUS_ID",BuId);
+            geolocationServiceIntent2 = new Intent(this, GeofenceReceiver.class);
+            geolocationServiceIntent2.putExtra("BUS_ID",BuId);
             //return PendingIntent.getService(this, 0, intent,
                    // PendingIntent.FLAG_UPDATE_CURRENT);
-            sendMessageToUI(counter);
-            PendingIntent pendingIntent=PendingIntent.getService(this, 0, intent,PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pendingIntent=PendingIntent.getService(this, 0, geolocationServiceIntent2,PendingIntent.FLAG_UPDATE_CURRENT);
+            bindService(geolocationServiceIntent2, mConnection, Context.BIND_AUTO_CREATE);
             return pendingIntent;
         }
     }
@@ -317,6 +322,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
             diferencia=Math.sqrt(Math.pow(_latitudLastBD-_latitudActual,2)+Math.pow(_longitudLastBD-_longitudActual,2));
             if(diferencia>100 |_latitudLastBD==0)
                 _georeferenciaService.SaveGeoreferenciaRest(_georeferencia);
+
         }
     }
     protected synchronized void buildGoogleApiClient() {
@@ -349,36 +355,22 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
                 return mResources.getString(R.string.unknown_geofence_error);
         }
     }
-//estos metodos son lapar enlazar el service con la actividad
-private void sendMessageToUI(int intvaluetosend) {
-    for (int i=mClients.size()-1; i>=0; i--) {
-        try {
-            // Send data as an Integer
-            mClients.get(i).send(Message.obtain(null, MSG_SET_INT_VALUE, intvaluetosend, 0));
 
-            //Send data as a String
-            Bundle b = new Bundle();
-            b.putString("str1", "ab" + intvaluetosend + "cd");
-            Message msg = Message.obtain(null, MSG_SET_STRING_VALUE);
-            msg.setData(b);
-            mClients.get(i).send(msg);
+    //esto es para conectar con la actividad y devolver un valor
 
-        }
-        catch (RemoteException e) {
-            // The client is dead. Remove it from the list; we are going through the list from back to front so this is safe to do inside the loop.
-            mClients.remove(i);
+    //Here Activity register to the service as Callbacks client
+    public void registerClient(Activity activity){
+        this.activity = (Callbacks)activity;
+    }
+    //returns the instance of the service
+    public class LocalBinder extends Binder {
+        public GeolocationService getServiceInstance(){
+            return GeolocationService.this;
         }
     }
-}
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        //para en lazar con la actividad
-        return mMessenger.getBinder();
-    }
-    public static boolean isRunning()
-    {
-        return isRunning;
-    }
+    //viene desde el GeofenceReceive
+    public void updateOrigen(long data){
 
+        activity.updateClient(1);
+    }
 }

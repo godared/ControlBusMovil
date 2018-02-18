@@ -1,9 +1,14 @@
 package com.godared.controlbusmovil.service.geofence;
 
+import android.app.Activity;
 import android.app.IntentService;
+import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +37,11 @@ public class GeofenceReceiver extends IntentService {
     public static final int NOTIFICATION_ID = 1;
     ITarjetaService tarjetaService;
     int BuId;
+    private final IBinder mBinder = new LocalBinder();
+    Callbacks listenerOrigen;
+    public interface Callbacks{
+        public void updateOrigen(long data);
+    }
     public GeofenceReceiver() {
         super("GeofenceReceiver");
 
@@ -125,8 +135,26 @@ public class GeofenceReceiver extends IntentService {
                     //////
                     ArrayList<TarjetaControlDetalle> tarjetaControls;
                     tarjetaControls=tarjetaService.GetAllTarjetaDetalleBDById(tarjetaControlDetalle.getTaCoId());
+                    listenerOrigen.updateOrigen(tarjetaControlDetalle.getTaCoId());
                 }
             }
         }
+    }
+    //esto es para conectar con la actividad y devolver un valor
+
+    //Here Activity register to the service as Callbacks client
+    public void registerClient(Service activity){
+        this.listenerOrigen = (Callbacks)activity;
+    }
+    //returns the instance of the service
+    public class LocalBinder extends Binder {
+        public GeofenceReceiver getServiceInstance(){
+            return GeofenceReceiver.this;
+        }
+    }
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
     }
 }
