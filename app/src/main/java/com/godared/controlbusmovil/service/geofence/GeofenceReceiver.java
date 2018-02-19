@@ -40,7 +40,7 @@ public class GeofenceReceiver extends IntentService {
     private final IBinder mBinder = new LocalBinder();
     Callbacks listenerOrigen;
     public interface Callbacks{
-        public void updateOrigen(long data);
+        public void updateOrigen(int taCoDeId);
     }
     public GeofenceReceiver() {
         super("GeofenceReceiver");

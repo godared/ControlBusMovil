@@ -25,9 +25,16 @@ import retrofit2.Response;
 public class TelefonoService implements  ITelefonoService {
     BaseDatos db;
     private Context context;
-    public TelefonoService(Context context){
+    public interface TelefonoServiceListener {
+        public void listenObtenerTelefonoImeiRest();
+        //public void onDialogNegativeClick();
+    }
+    TelefonoServiceListener mListener;
+
+    public TelefonoService(TelefonoServiceListener mListener,Context context){
         this.context=context;
         db=new BaseDatos(context);
+        this.mListener=mListener;
     }
     @Override
     public ArrayList<Telefono> ObtenerTelefonoRest(int teId){
@@ -100,6 +107,8 @@ public class TelefonoService implements  ITelefonoService {
                 telefonosImeiResponse = (ArrayList<TelefonoImei>) response.body();
                 telefonosImeiDetalle=telefonosImeiResponse;
                 InsertarTelefonoImeiBD(db,telefonosImeiDetalle);
+                //aqui devuelve la escucha en a clase que implementa esta interfaz
+                mListener.listenObtenerTelefonoImeiRest();
             }
 
             @Override

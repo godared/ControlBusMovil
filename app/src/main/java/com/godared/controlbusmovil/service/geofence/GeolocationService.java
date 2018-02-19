@@ -64,7 +64,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
     Callbacks activity;
     //callbacks interface for communication with service clients MainActivity!
     public interface Callbacks{
-        public void updateClient(long data);
+        public void updateClient(int taCoDeId );
     }
     //esto es para enlazar al otro servicio gefencereceive
     Intent geolocationServiceIntent2;
@@ -124,6 +124,14 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
+        //esto es para parar el servicio geolocationService si este se detruye
+        try {
+            unbindService(mConnection);
+            stopService(geolocationServiceIntent2);
+        }
+        catch (Throwable t) {
+            Log.e("MainActivity", "Failed to unbind from the service", t);
+        }
 
     }
     //esto tambien de para comunicar con la MainActivity
@@ -167,8 +175,9 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
             LocationServices.GeofencingApi.addGeofences(mGoogleApiClient,
                     geofencingRequest, mPendingIntent).setResultCallback(this);
 
-        }
             MainActivity.geofencesAlreadyRegistered = true;
+        }
+
 
     }
     private void removeGeoFences() {
@@ -368,9 +377,9 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
             return GeolocationService.this;
         }
     }
-    //viene desde el GeofenceReceive
-    public void updateOrigen(long data){
+    //viene desde el GeofenceReceive, implementando su interfaz
+    public void updateOrigen(int taCoDeId){
 
-        activity.updateClient(1);
+        activity.updateClient(taCoDeId);
     }
 }

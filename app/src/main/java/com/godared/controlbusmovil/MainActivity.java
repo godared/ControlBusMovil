@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements TarjetaService.TarjetaServiceListener,GeolocationService.Callbacks {
+public class MainActivity extends AppCompatActivity implements TarjetaService.TarjetaServiceListener,
+        GeolocationService.Callbacks, TelefonoService.TelefonoServiceListener {
     private Toolbar tbToolBar;
     private TabLayout tlTablaLayout;
     private ViewPager vpViewPager;
@@ -121,8 +122,9 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         tbToolBar=(Toolbar)findViewById(R.id.miBarra);
 
         setSupportActionBar(tbToolBar);
+        //obtiene el IMEI desde el servidor
         obtenerImeiRest();
-        validarImei(); // aqui obtenemos el BuId  y EmId
+
         tlTablaLayout=(TabLayout)findViewById(R.id.tlTablaLayout);
         //Cargando el Reloj digital
         DigitalClock dc = (DigitalClock)findViewById(R.id.fragment_clock_digital);
@@ -224,23 +226,20 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         int i=0;
         String imei =telephonyManager.getDeviceId();
 
-        ITelefonoService telefonoService=new TelefonoService(getApplicationContext());
+        ITelefonoService telefonoService=new TelefonoService(this,getApplicationContext());
         telefonoService.ObtenerTelefonoImeiRest(imei);
         i=i+1;
-     /*   for(TarjetaControl tarjetaControl:tarjetasControl){
-            tarjetaService.insertarTarjetasBD(db,tarjetaControl);
-            //Obteniendo y guardando el tarjetaControldetalle*/
+        // aqui llama listenObtenerTelefonoImeiRest, devido a que implementa la interfzar
+        //TelefonoService.TelefonoServiceListener, y cuando lla al metodo ObtenerTelefonoImeiRest esta actividad escucha
+        // ahi en el servicio esta enlazado
 
-       //  tarjetasDetalle=iTarjetaService.obtenerTarjetasDetalleRest(1);//tarjetaControl.getTaCoId()
-        /*    tarjetaService.insertarTarjetasDetalleBD(db,tarjetasDetalle);
-        }*/
 
     }
     public void validarImei() {
         TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
         Boolean valido=false;
         String imei =telephonyManager.getDeviceId();
-        ITelefonoService telefonoService=new TelefonoService(getApplicationContext());
+        ITelefonoService telefonoService=new TelefonoService(this,getApplicationContext());
         List<TelefonoImei> telefonoImeis=telefonoService.ObtenerTelefonoImeibyImeiBD(imei);
         for(TelefonoImei telefonoImei:telefonoImeis){
             if (telefonoImei.getTeImei().compareTo(imei)==0){
@@ -258,11 +257,16 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             finish();
         }
     }
+    //esto viene de la escucha de la interfaz TarjetaService.TarjetaServiceListener
     public void listenObtenerTarjetasDetalleRest(){
         //esto viene desde TarjetaService
         RecyclerviewFragment recyclerviewFragment;
         recyclerviewFragment=(RecyclerviewFragment)fragmets.get(0);
         recyclerviewFragment.recyclerviewFragmentPresenter.obtenerTarjetasDetalleBD();
+
+        //VOlvemos a llamar al servicio para agregar el geofence
+        startService(geolocationServiceIntent);
+        bindService(geolocationServiceIntent, mConnection, Context.BIND_AUTO_CREATE); //Binding to the service!
     }
 
     @Override
@@ -277,9 +281,12 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         }
     }
 
-    //Esto son metos para conectar con el service GeolocationService
+    //Esto son metos para conectar con el service GeolocationService, implementa su interza
     @Override
-    public void updateClient(long millis) {
+    public void updateClient(int taCoDeId) {
+        //unOnUiThread , no se exactamente que es lo que hacer pero como listenObtenerTarjetasDetalleRest se deriva
+        //de variso servicio y estos generan varios hilos tonces me daba un error que estavista no se peude actualizar
+        //desde otro hilo y con este metodo lo solucione
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -287,6 +294,12 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             }
         });
 
-        Toast.makeText(MainActivity.this, "Valor de retorno de servicio"+ millis, Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, "Valor de retorno de servicio"+ taCoDeId, Toast.LENGTH_SHORT).show();
+    }
+    //esto es de a interfaz TelefonoServiceListen
+    public void listenObtenerTelefonoImeiRest(){
+        validarImei(); // aqui obtenemos el BuId  y EmId
+        //panel el titulo a la actividad
+        setTitle("PlacaBus:"+BuPlaca);
     }
 }

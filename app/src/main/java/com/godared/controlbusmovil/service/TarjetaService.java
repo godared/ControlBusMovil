@@ -85,10 +85,8 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
 
                     //////
 
-                    ArrayList<TarjetaControlDetalle> tarjetaControls;
-                    tarjetaControls=GetAllTarjetaDetalleBDById(tarjetasDetalle.get(0).getTaCoId());
-
-
+                    //ArrayList<TarjetaControlDetalle> tarjetaControls;
+                    //tarjetaControls=GetAllTarjetaDetalleBDById(tarjetasDetalle.get(0).getTaCoId());
                     mListener.listenObtenerTarjetasDetalleRest();
 
                 }
