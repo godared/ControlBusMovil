@@ -125,41 +125,6 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         //obtiene el IMEI desde el servidor
         obtenerImeiRest();
 
-        tlTablaLayout=(TabLayout)findViewById(R.id.tlTablaLayout);
-        //Cargando el Reloj digital
-        DigitalClock dc = (DigitalClock)findViewById(R.id.fragment_clock_digital);
-
-        tlTablaLayout=(TabLayout)findViewById(R.id.tlTablaLayout);
-        vpViewPager=(ViewPager) findViewById(R.id.vpViewPager);
-
-        Bundle args = new Bundle();
-        args.putInt("BUS_ID",BuId);
-        args.putInt("TACO_ID",0);
-        args.putString("TACO_FECHA",FechaActual);
-        args.putBoolean("INDICA_GETDETALLEACTIVO",true);
-
-        fragmets=new ArrayList<>();
-        fragmets.add(new RecyclerviewFragment());
-        fragmets.add(new MapsFragment());
-        fragmets.get(0).setArguments(args);
-        //agremaos los fragments al viewPager
-        vpViewPager.setAdapter(new PageAdapterVP(getSupportFragmentManager(),fragmets));
-        tlTablaLayout.setupWithViewPager(vpViewPager);
-        tlTablaLayout.getTabAt(0).setIcon(R.drawable.icons8_tarjeta_para_fichar_48);
-        tlTablaLayout.getTabAt(1).setIcon(R.drawable.icons8_marcador_de_mapa_48);
-        //obteniendo la tarejacontrol activo
-        ITarjetaService tarjetaService=new TarjetaService(this);
-        TarjetaControl _tarjetaControl=null;
-
-        _tarjetaControl =tarjetaService.GetTarjetaControlActivo(BuId,this.FechaActual);//"16-08-2017"
-        this.TaCoId=_tarjetaControl.getTaCoId();
-        geolocationServiceIntent=new Intent(this, GeolocationService.class);
-        geolocationServiceIntent.putExtra("BUS_ID",BuId);
-        geolocationServiceIntent.putExtra("TACO_ID",TaCoId);
-        startService(geolocationServiceIntent);
-        bindService(geolocationServiceIntent, mConnection, Context.BIND_AUTO_CREATE); //Binding to the service!
-        //startService(new Intent(this, GeolocationService.class));}
-
 
     }
     //guardamos el estado de los controles(posicion de la grilla
@@ -265,8 +230,9 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         recyclerviewFragment.recyclerviewFragmentPresenter.obtenerTarjetasDetalleBD();
 
         //VOlvemos a llamar al servicio para agregar el geofence
-        startService(geolocationServiceIntent);
-        bindService(geolocationServiceIntent, mConnection, Context.BIND_AUTO_CREATE); //Binding to the service!
+        //geofencesAlreadyRegistered = false;
+        //startService(geolocationServiceIntent);
+        //bindService(geolocationServiceIntent, mConnection, Context.BIND_AUTO_CREATE); //Binding to the service!
     }
 
     @Override
@@ -301,5 +267,42 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         validarImei(); // aqui obtenemos el BuId  y EmId
         //panel el titulo a la actividad
         setTitle("PlacaBus:"+BuPlaca);
+
+
+        tlTablaLayout=(TabLayout)findViewById(R.id.tlTablaLayout);
+        //Cargando el Reloj digital
+        DigitalClock dc = (DigitalClock)findViewById(R.id.fragment_clock_digital);
+
+        tlTablaLayout=(TabLayout)findViewById(R.id.tlTablaLayout);
+        vpViewPager=(ViewPager) findViewById(R.id.vpViewPager);
+
+        Bundle args = new Bundle();
+        args.putInt("BUS_ID",BuId);
+        args.putInt("TACO_ID",0);
+        args.putString("TACO_FECHA",FechaActual);
+        args.putBoolean("INDICA_GETDETALLEACTIVO",true);
+
+        fragmets=new ArrayList<>();
+        fragmets.add(new RecyclerviewFragment());
+        fragmets.add(new MapsFragment());
+        fragmets.get(0).setArguments(args);
+        //agremaos los fragments al viewPager
+        vpViewPager.setAdapter(new PageAdapterVP(getSupportFragmentManager(),fragmets));
+        tlTablaLayout.setupWithViewPager(vpViewPager);
+        tlTablaLayout.getTabAt(0).setIcon(R.drawable.icons8_tarjeta_para_fichar_48);
+        tlTablaLayout.getTabAt(1).setIcon(R.drawable.icons8_marcador_de_mapa_48);
+        //obteniendo la tarejacontrol activo
+        ITarjetaService tarjetaService=new TarjetaService(this);
+        TarjetaControl _tarjetaControl=null;
+
+        _tarjetaControl =tarjetaService.GetTarjetaControlActivo(BuId,this.FechaActual);//"16-08-2017"
+        this.TaCoId=_tarjetaControl.getTaCoId();
+        geolocationServiceIntent=new Intent(this, GeolocationService.class);
+        geolocationServiceIntent.putExtra("BUS_ID",BuId);
+        geolocationServiceIntent.putExtra("TACO_ID",TaCoId);
+        startService(geolocationServiceIntent);
+        bindService(geolocationServiceIntent, mConnection, Context.BIND_AUTO_CREATE); //Binding to the service!
+        //startService(new Intent(this, GeolocationService.class));}
+
     }
 }
