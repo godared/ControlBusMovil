@@ -37,6 +37,7 @@ public class GeofenceReceiver extends IntentService {
     public static final int NOTIFICATION_ID = 1;
     ITarjetaService tarjetaService;
     int BuId;
+    int TaCoId;
     private final IBinder mBinder = new LocalBinder();
     Callbacks listenerOrigen;
     public interface Callbacks{
@@ -51,6 +52,7 @@ public class GeofenceReceiver extends IntentService {
         GeofencingEvent geoEvent = GeofencingEvent.fromIntent(intent);
         Bundle extra_buId=intent.getExtras();
         BuId=extra_buId.getInt("BUS_ID");
+        TaCoId=extra_buId.getInt("TACO_ID");
         if (geoEvent.hasError()) {
             Log.d(MainActivity.TAG, "Error GeofenceReceiver.onHandleIntent");
         } else {
@@ -97,7 +99,7 @@ public class GeofenceReceiver extends IntentService {
                     eds.close();*/
                    tarjetaService=new TarjetaService(getApplicationContext());
                     TarjetaControlDetalle tarjetaControlDetalle;
-                    tarjetaControlDetalle=tarjetaService.GetTarjetaDetalleByPuCoDe(sg.getPuCoDeId());
+                    tarjetaControlDetalle=tarjetaService.GetTarjetaDetalleByTaCoPuCoDe(TaCoId,sg.getPuCoDeId());
                     //verificamos si es que no se ha registrado o enviado la geofence
                     if (!tarjetaService.VerificarTarjetaDetalleBDByTaCoDeRegistradoEnviado(tarjetaControlDetalle.getTaCoDeId())) {
                         //tarjetaControlDetalle.setTaCoDeId(sg.getPuCoDeId());

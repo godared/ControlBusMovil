@@ -427,6 +427,9 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
     public TarjetaControlDetalle GetTarjetaDetalleByPuCoDe(int puCoDeId){
         return db.ObtenerTarjetaDetalleByPuCoDe(puCoDeId);
     }
+    public TarjetaControlDetalle GetTarjetaDetalleByTaCoPuCoDe(int taCoId, int puCoDeId){
+        return db.ObtenerTarjetaDetalleByTaCoPuCoDe(taCoId, puCoDeId);
+    }
     public void insertarTarjetaBD(BaseDatos baseDatos, TarjetaControl tarjetaControl){
         ContentValues contentValues = new ContentValues();
         contentValues.put("TaCoId", tarjetaControl.getTaCoId());

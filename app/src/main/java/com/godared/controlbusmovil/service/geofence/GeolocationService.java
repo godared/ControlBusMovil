@@ -202,6 +202,8 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
 
             geolocationServiceIntent2 = new Intent(this, GeofenceReceiver.class);
             geolocationServiceIntent2.putExtra("BUS_ID",BuId);
+            geolocationServiceIntent2.putExtra("TACO_ID",TaCoId);
+
             //return PendingIntent.getService(this, 0, intent,
                    // PendingIntent.FLAG_UPDATE_CURRENT);
             PendingIntent pendingIntent=PendingIntent.getService(this, 0, geolocationServiceIntent2,PendingIntent.FLAG_UPDATE_CURRENT);

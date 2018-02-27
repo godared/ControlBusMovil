@@ -30,6 +30,7 @@ public interface ITarjetaService {
     void FinalizarTarjetaIncompleta(int taCoId,int buId,String taCoFecha);
     void EnviarTodo(int buId, String taCoFecha, int enviado);
     TarjetaControlDetalle GetTarjetaDetalleByPuCoDe(int puCoDeId);
+    TarjetaControlDetalle GetTarjetaDetalleByTaCoPuCoDe(int taCoId,int puCoDeId);
     void insertarTarjetaBD(BaseDatos baseDatos,  TarjetaControl tarjetaControl);
     void actualizarTarjetaBD(BaseDatos baseDatos, TarjetaControl tarjetaControl);
     void insertarTarjetasDetalleBD(BaseDatos baseDatos, ArrayList<TarjetaControlDetalle> tarjetaControlDetalles);

@@ -107,19 +107,19 @@ public class TelefonoService implements  ITelefonoService {
                 telefonosImeiResponse = (ArrayList<TelefonoImei>) response.body();
                 telefonosImeiDetalle=telefonosImeiResponse;
                 InsertarTelefonoImeiBD(db,telefonosImeiDetalle);
-
-               // mListener.listenObtenerTelefonoImeiRest();
+                //aqui devuelve la escucha en a clase que implementa esta interfaz
+                mListener.listenObtenerTelefonoImeiRest();
             }
 
             @Override
             public void onFailure(Call<List<TelefonoImei>> call, Throwable t) {
                 Toast.makeText(context, "No hay conexion a Internet", Toast.LENGTH_SHORT).show();
                 Log.e("Fallo la conexion", t.toString());
-
+                //aqui devuelve la escucha en a clase que implementa esta interfaz
+                mListener.listenObtenerTelefonoImeiRest();
             }
         });
-        //aqui devuelve la escucha en a clase que implementa esta interfaz
-        mListener.listenObtenerTelefonoImeiRest();
+
     }
     @Override
     public List<TelefonoImei> ObtenerTelefonoImeibyImeiBD(String teImei){
