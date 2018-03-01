@@ -70,6 +70,13 @@
                 <action android:name="com.godared.controlbusmovil.ACTION_RECEIVE_GEOFENCE" />
             </intent-filter>
         </receiver>
+        <!--Es un broadcast para escuchar el cambio de GPS-->
+        <receiver android:name=".service.GpsLocationReceiver">
+            <intent-filter>
+                <action android:name="android.location.PROVIDERS_CHANGED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
 
 
     </application>
