@@ -1,9 +1,11 @@
 package com.godared.controlbusmovil;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
@@ -93,7 +95,16 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             //tbStartTask.setEnabled(false);
         }
     };
+    BroadcastReceiver broadcastReceiver =  new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
 
+            Bundle b = intent.getExtras();
+            String message = b.getString("message");
+            Log.e("newmesage", "" + message);
+            onResume();
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +115,8 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             TaCoId=savedInstanceState.getInt("TACO_ID");
 
         }
+        //Esto es para enlazar en broadcast
+        registerReceiver(broadcastReceiver, new IntentFilter("broadCastGpsLocationReceiver"));
 
         //tbToolBar=(Toolbar)findViewById(R.id.tbToolBar);
         String dateNow = DateFormat.format("dd-MM-yyyy",
