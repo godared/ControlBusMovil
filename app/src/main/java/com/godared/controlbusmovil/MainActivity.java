@@ -95,7 +95,19 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             //tbStartTask.setEnabled(false);
         }
     };
-    BroadcastReceiver broadcastReceiver =  new BroadcastReceiver() {
+    //Este el receptos de chageGPS
+    BroadcastReceiver broadcastReceiverChangeGps =  new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            Bundle b = intent.getExtras();
+            String message = b.getString("message");
+            Log.e("newmesage", "" + message);
+            onResume();
+        }
+    };
+    //Este es el receptor de changeTime
+    BroadcastReceiver broadcastReceiverChangeTime =  new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -115,8 +127,10 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             TaCoId=savedInstanceState.getInt("TACO_ID");
 
         }
-        //Esto es para enlazar en broadcast
-        registerReceiver(broadcastReceiver, new IntentFilter("broadCastGpsLocationReceiver"));
+        //Esto es para enlazar en broadcast de CHANGE GPS
+        registerReceiver(broadcastReceiverChangeGps, new IntentFilter("broadCastGpsLocationReceiver"));
+        //Esto es para enlazar en broadcast de CHANGE TIME
+        registerReceiver(broadcastReceiverChangeTime, new IntentFilter("broadCastTimeZoneChangedReceiver"));
 
         //tbToolBar=(Toolbar)findViewById(R.id.tbToolBar);
         String dateNow = DateFormat.format("dd-MM-yyyy",
@@ -187,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
 
           }
 
-
+    //Se te han mejor
     /* sobrescribimos para agregar el menu, estos metodos vienes ya
         para implementar implementar o agragr a otra clase*/
     @Override

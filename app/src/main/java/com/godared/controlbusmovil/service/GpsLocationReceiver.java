@@ -28,7 +28,7 @@ public class GpsLocationReceiver extends BroadcastReceiver {
             //Bundle extras = intent.getExtras();
             Intent i = new Intent("broadCastGpsLocationReceiver");
             // Data you need to pass to activity
-            i.putExtra("message","Enviar a la Activity");// extras.getString("Hola")
+            i.putExtra("message","Enviar de CHANGE GPS a la Activity");// extras.getString("Hola")
 
             context.sendBroadcast(i);
 
