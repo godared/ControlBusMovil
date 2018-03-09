@@ -9,11 +9,13 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.provider.Settings;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -149,12 +151,50 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     public void onResume(){
         super.onResume();
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
+        //verificamos si el GPS esta activo
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
             Toast.makeText(this, "GPS is Enabled in your devide", Toast.LENGTH_SHORT).show();
         }else{
             showGPSDisabledAlertToUser();
         }
+        //Verificamos si la fecha y hora esta en automatico
+        if (isTimeAutomatic(getApplicationContext())==true)
+            Toast.makeText(this, "AUTO_TIME is Enabled in your devide", Toast.LENGTH_SHORT).show();
+        else {
+            Toast.makeText(this, "AUTO_TIME  is not Enabled in your devide", Toast.LENGTH_SHORT).show();
+            showDateHourDisabledAlertToUser();
+        }
+    }
+
+    public static boolean isTimeAutomatic(Context c) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return Settings.Global.getInt(c.getContentResolver(), Settings.Global.AUTO_TIME, 0) == 1;
+        } else {
+            return android.provider.Settings.System.getInt(c.getContentResolver(), android.provider.Settings.System.AUTO_TIME, 0) == 1;
+        }
+    }
+    private void showDateHourDisabledAlertToUser(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("GPS esta desactivado en tu dispositivo. quieres activarlo?")
+                .setCancelable(false)
+                .setPositiveButton("Ir a configuracion para activar el GPS",
+                        new DialogInterface.OnClickListener(){
+                            public void onClick(DialogInterface dialog, int id){
+                                Intent callDateHourSettingIntent = new Intent(
+                                        android.provider.Settings.ACTION_DATE_SETTINGS);
+                                startActivity(callDateHourSettingIntent);
+                            }
+                        });
+        alertDialogBuilder.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int id){
+                        dialog.cancel();
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                        System.exit(1);
+                    }
+                });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
     }
     private void showGPSDisabledAlertToUser(){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
