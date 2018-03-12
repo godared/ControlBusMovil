@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
@@ -108,17 +109,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             onResume();
         }
     };
-    //Este es el receptor de changeTime
-    BroadcastReceiver broadcastReceiverChangeTime =  new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
 
-            Bundle b = intent.getExtras();
-            String message = b.getString("message");
-            Log.e("newmesage", "" + message);
-            onResume();
-        }
-    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,8 +122,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         }
         //Esto es para enlazar en broadcast de CHANGE GPS
         registerReceiver(broadcastReceiverChangeGps, new IntentFilter("broadCastGpsLocationReceiver"));
-        //Esto es para enlazar en broadcast de CHANGE TIME
-        registerReceiver(broadcastReceiverChangeTime, new IntentFilter("broadCastTimeZoneChangedReceiver"));
+
 
         //tbToolBar=(Toolbar)findViewById(R.id.tbToolBar);
         String dateNow = DateFormat.format("dd-MM-yyyy",
@@ -159,11 +149,23 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         }
         //Verificamos si la fecha y hora esta en automatico
         if (isTimeAutomatic(getApplicationContext())==true)
-            Toast.makeText(this, "AUTO_TIME is Enabled in your devide", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "AUTO_TIME esta habilitado en tu dispositivo", Toast.LENGTH_SHORT).show();
         else {
-            Toast.makeText(this, "AUTO_TIME  is not Enabled in your devide", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "AUTO_TIME  no esta habilitado en tu dispositivo", Toast.LENGTH_SHORT).show();
             showDateHourDisabledAlertToUser();
         }
+        //Verificamos si la TimeZone esta en automatico
+        if (isTimeZoneAutomatic(getApplicationContext())==true)
+            Toast.makeText(this, "AUTO_TIME_ZONE esta habilitado en tu dispositivo", Toast.LENGTH_SHORT).show();
+        else {
+            Toast.makeText(this, "AUTO_TIME_ZONE  no esta habilitado en tu dispositivo", Toast.LENGTH_SHORT).show();
+            showDateHourDisabledAlertToUser();
+        }
+        final Resources res = this.getResources();
+        final int id = Resources.getSystem().getIdentifier(
+                "config_ntpServer", "string","android");
+        final String defaultServer = res.getString(id);
+        Toast.makeText(this, defaultServer, Toast.LENGTH_SHORT).show();
     }
 
     public static boolean isTimeAutomatic(Context c) {
@@ -173,11 +175,18 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             return android.provider.Settings.System.getInt(c.getContentResolver(), android.provider.Settings.System.AUTO_TIME, 0) == 1;
         }
     }
+    public static boolean isTimeZoneAutomatic(Context c) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return Settings.Global.getInt(c.getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 0) == 1;
+        } else {
+            return android.provider.Settings.System.getInt(c.getContentResolver(), Settings.System.AUTO_TIME_ZONE, 0) == 1;
+        }
+    }
     private void showDateHourDisabledAlertToUser(){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setMessage("GPS esta desactivado en tu dispositivo. quieres activarlo?")
+        alertDialogBuilder.setMessage("Auto_Time-Zone esta desactivado en tu dispositivo. quieres activarlo?")
                 .setCancelable(false)
-                .setPositiveButton("Ir a configuracion para activar el GPS",
+                .setPositiveButton("Ir a configuracion para activar el Auto_Time",
                         new DialogInterface.OnClickListener(){
                             public void onClick(DialogInterface dialog, int id){
                                 Intent callDateHourSettingIntent = new Intent(
