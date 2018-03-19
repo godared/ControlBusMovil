@@ -31,6 +31,8 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.godared.controlbusmovil.adapter.PageAdapterVP;
@@ -42,6 +44,7 @@ import com.godared.controlbusmovil.service.ITarjetaService;
 import com.godared.controlbusmovil.service.ITelefonoService;
 import com.godared.controlbusmovil.service.TarjetaService;
 import com.godared.controlbusmovil.service.TelefonoService;
+import com.godared.controlbusmovil.service.TimerService;
 import com.godared.controlbusmovil.service.geofence.GeolocationService;
 import com.godared.controlbusmovil.pojo.TarjetaControl;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
@@ -50,19 +53,25 @@ import com.godared.controlbusmovil.vista.fragment.IRecyclerviewFragment;
 import com.godared.controlbusmovil.vista.fragment.RecyclerviewFragment;
 import com.godared.controlbusmovil.vista.fragment.MapsFragment;
 
+import java.lang.ref.WeakReference;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity implements TarjetaService.TarjetaServiceListener,
         GeolocationService.Callbacks, TelefonoService.TelefonoServiceListener {
+    //public static String TAG;
     private Toolbar tbToolBar;
     private TabLayout tlTablaLayout;
     private ViewPager vpViewPager;
     ArrayList<Fragment> fragmets;
     private ArrayList<TarjetaControlDetalle> tarjetasDetalle;
 
-    public static String TAG = "lstech.aos.debug";
+    public static String TAG2 = "lstech.aos.debug";
 
     static public boolean geofencesAlreadyRegistered = false;
     public int BuId;
@@ -76,6 +85,44 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     //variablea para el servicio Geolocation
     Intent geolocationServiceIntent;
     GeolocationService geolocationService;
+    //VAriable para timer-------------------------------------------------
+    public static final String TAG = MainActivity.class.getSimpleName();
+    private TimerService timerService;
+    private boolean serviceBound;
+    // Handler to update the UI every second when the timer is running
+    private final Handler mUpdateTimeHandler = new UIUpdateHandler(this);
+    // Message type for the handler
+    private final static int MSG_UPDATE_TIME = 0;
+    private TextView timerTextView;
+    /**
+     * Callback for service binding, passed to bindService()
+     */
+    private ServiceConnection mConnection2 = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                Log.v(TAG, "Service bound");
+            }
+            TimerService.RunServiceBinder binder = (TimerService.RunServiceBinder) service;
+            timerService = binder.getService();
+            serviceBound = true;
+            // Ensure the service is not in the foreground when bound
+            timerService.background();
+            // Update the UI if the service is already running the timer
+            if (timerService.isTimerRunning()) {
+                updateUIStartRun();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                Log.v(TAG, "Service disconnect");
+            }
+            serviceBound = false;
+        }
+    };
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -120,6 +167,8 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             TaCoId=savedInstanceState.getInt("TACO_ID");
 
         }
+        //timer
+        timerTextView = (TextView)findViewById(R.id.timer_text_view);
         //Esto es para enlazar en broadcast de CHANGE GPS
         registerReceiver(broadcastReceiverChangeGps, new IntentFilter("broadCastGpsLocationReceiver"));
 
@@ -133,8 +182,6 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         setSupportActionBar(tbToolBar);
         //obtiene el IMEI desde el servidor
         obtenerImeiRest();
-
-
     }
 
     @Override
@@ -240,15 +287,14 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     @Override
     protected void onStart(){
         super.onStart();
-        //vpViewPager.setAdapter(new PageAdapterVP(getSupportFragmentManager(),fragmets));
-       // Context context = parent.getContext();
-        //LayoutInflater inflater = LayoutInflater.from(context);
+        if (Log.isLoggable(TAG, Log.VERBOSE)) {
+            Log.v(TAG, "Starting and binding service");
+        }
+        Intent i = new Intent(this, TimerService.class);
+        startService(i);
+        bindService(i, mConnection2, 0);
 
-       // IRecyclerviewFragment rf=new RecyclerviewFragment();
-       // ArrayList<TarjetaControlDetalle> tarjetasDetalle=new ArrayList<>();
-       // rf.crearAdaptador(tarjetasDetalle);
-
-          }
+    }
 
     //Se te han mejor
     /* sobrescribimos para agregar el menu, estos metodos vienes ya
@@ -263,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             case R.id.mDescarga:
                 Sincronizar(this.getBaseContext());
                 iTarjetaService=new TarjetaService(this.getBaseContext());
-
+                runButtonClick();
 
                 break;
             case R.id.mSetting:
@@ -322,6 +368,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             Toast.makeText(getApplicationContext(), "Equipo IMEI no registrado", Toast.LENGTH_SHORT).show();
             finish();
         }
+
     }
     //esto viene de la escucha de la interfaz TarjetaService.TarjetaServiceListener
     public void listenObtenerTarjetasDetalleRest(){
@@ -334,14 +381,15 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         //geofencesAlreadyRegistered = false;
         //startService(geolocationServiceIntent);
         //bindService(geolocationServiceIntent, mConnection, Context.BIND_AUTO_CREATE); //Binding to the service!
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         try {
-            unbindService(mConnection);
-            stopService(geolocationServiceIntent);
+            //unbindService(mConnection);
+            //stopService(geolocationServiceIntent);
         }
         catch (Throwable t) {
             Log.e("MainActivity", "Failed to unbind from the service", t);
@@ -372,7 +420,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
 
         tlTablaLayout=(TabLayout)findViewById(R.id.tlTablaLayout);
         //Cargando el Reloj digital
-        DigitalClock dc = (DigitalClock)findViewById(R.id.fragment_clock_digital);
+        //DigitalClock dc = (DigitalClock)findViewById(R.id.fragment_clock_digital);
 
         tlTablaLayout=(TabLayout)findViewById(R.id.tlTablaLayout);
         vpViewPager=(ViewPager) findViewById(R.id.vpViewPager);
@@ -404,6 +452,110 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         startService(geolocationServiceIntent);
         bindService(geolocationServiceIntent, mConnection, Context.BIND_AUTO_CREATE); //Binding to the service!
         //startService(new Intent(this, GeolocationService.class));}
-
+        runButtonClick();
     }
+    protected void onStop() {
+        super.onStop();
+        updateUIStopRun();
+        if (serviceBound) {
+            // If a timer is active, foreground the service, otherwise kill the service
+            if (timerService.isTimerRunning()) {
+                timerService.foreground();
+            }
+            else {
+                stopService(new Intent(this, TimerService.class));
+            }
+            // Unbind the service
+            unbindService(mConnection2);
+            serviceBound = false;
+        }
+    }
+    ///-------------------------------------------------
+    //Metodos de timer -------------------------
+    public void runButtonClick() //View v
+    {
+        if (serviceBound && !timerService.isTimerRunning()) {
+            if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                Log.v(TAG, "Starting timer");
+            }
+            String myDate = new String("22-01-2015 23:58:56+05:00");//2013-09-19T03:27:23+01:00");
+            SimpleDateFormat format = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");//("yyyy-MM-dd'T'HH:mm:ss");
+            Date date=null;
+            try {
+                date = format.parse(myDate);
+            } catch (ParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            date.getTime();
+            timerService.startTimer(date);
+            updateUIStartRun();
+        }
+        else if (serviceBound && timerService.isTimerRunning()) {
+            if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                Log.v(TAG, "Stopping timer");
+            }
+            timerService.stopTimer();
+            updateUIStopRun();
+        }
+    }
+
+    /**
+     * Updates the UI when a run starts
+     */
+    private void updateUIStartRun() {
+        mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
+        //timerButton.setText(R.string.timer_stop_button);
+    }
+
+    /**
+     * Updates the UI when a run stops
+     */
+    private void updateUIStopRun() {
+        mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
+       // timerButton.setText(R.string.timer_start_button);
+    }
+
+    /**
+     * Updates the timer readout in the UI; the service must be bound
+     */
+    private void updateUITimer() {
+        if (serviceBound) {
+            Calendar cSchedStartCal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+            SimpleDateFormat formatDate = new SimpleDateFormat("dd-M-yyyy hh:mm:ss a");
+            long valorTime=timerService.elapsedTime();
+            cSchedStartCal.setTimeZone(TimeZone.getTimeZone("America/Lima"));
+            cSchedStartCal.setTimeInMillis(valorTime);
+            String formattedDate = formatDate.format(cSchedStartCal.getTime()).toString();
+            timerTextView.setText( formattedDate);//timerService.elapsedTime()
+        }
+    }
+
+    /**
+     * When the timer is running, use this handler to update
+     * the UI every second to show timer progress
+     */
+    static class UIUpdateHandler extends Handler {
+
+        private final static int UPDATE_RATE_MS = 1000;
+        private final WeakReference<MainActivity> activity;
+
+        UIUpdateHandler(MainActivity activity) {
+            this.activity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message message) {
+            if (MSG_UPDATE_TIME == message.what) {
+                if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                    Log.v(TAG, "updating time");
+                }
+                activity.get().updateUITimer();
+                sendEmptyMessageDelayed(MSG_UPDATE_TIME, UPDATE_RATE_MS);
+            }
+        }
+    }
+
+
+
 }
