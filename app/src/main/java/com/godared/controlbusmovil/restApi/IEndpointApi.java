@@ -1,5 +1,6 @@
 package com.godared.controlbusmovil.restApi;
 
+import com.godared.controlbusmovil.pojo.Configura;
 import com.godared.controlbusmovil.pojo.Georeferencia;
 import com.godared.controlbusmovil.pojo.PuntoControl;
 import com.godared.controlbusmovil.pojo.PuntoControlDetalle;
@@ -64,5 +65,8 @@ public interface IEndpointApi {
     Call<Boolean> saveGeoreferenciaOne(@Body Georeferencia georeferencia);
 
     @POST(ConstantesRestApi.URL_GEOREFERENCIA+"save")
-    Call<Boolean> saveGeoreferencia(@Body List<Georeferencia> georeferencias);//
+    Call<Boolean> saveGeoreferencia(@Body List<Georeferencia> georeferencias);
+
+    @GET(ConstantesRestApi.URL_CONFIGURA+"getallconfigurabyemperiodo")
+    Call<List<Configura>> getAllConfiguraByEmPeriodo(@Query("emId") int emId, @Query("coPeriodo") int coPeriodo);
 }

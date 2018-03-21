@@ -129,20 +129,8 @@ public class TelefonoService implements  ITelefonoService {
     public void InsertarTelefonoImeiBD(BaseDatos baseDatos, List<TelefonoImei> telefonosImei){
         TelefonoImei _telefonoImei=null;
         for(TelefonoImei telefonoImei:telefonosImei) {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put("TeId", telefonoImei.getTeId());
-            contentValues.put("BuId", telefonoImei.getBuId());
-            contentValues.put("EmId", telefonoImei.getEmId());
-            contentValues.put("SuEmRSocial", telefonoImei.getSuEmRSocial());
-            contentValues.put("BuPlaca", telefonoImei.getBuPlaca());
-            contentValues.put("TeMarca", telefonoImei.getTeMarca());
-            contentValues.put("TeImei", telefonoImei.getTeImei());
-            contentValues.put("EmConsorcio", telefonoImei.getEmConsorcio());
-            _telefonoImei=baseDatos.ObtenerTelefonoImei(telefonoImei.getTeId());
-            if(_telefonoImei.getTeId()<1)
-                baseDatos.InsertarTelefonoImei(contentValues);
-            else
-                baseDatos.ActualizarTelefonoImei(contentValues,telefonoImei.getTeId());
+
+
 
         }
     }

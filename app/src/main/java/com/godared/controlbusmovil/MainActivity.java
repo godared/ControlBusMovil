@@ -452,7 +452,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         startService(geolocationServiceIntent);
         bindService(geolocationServiceIntent, mConnection, Context.BIND_AUTO_CREATE); //Binding to the service!
         //startService(new Intent(this, GeolocationService.class));}
-        runButtonClick();
+
     }
     protected void onStop() {
         super.onStop();
@@ -522,7 +522,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     private void updateUITimer() {
         if (serviceBound) {
             Calendar cSchedStartCal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-            SimpleDateFormat formatDate = new SimpleDateFormat("dd-M-yyyy hh:mm:ss a");
+            SimpleDateFormat formatDate = new SimpleDateFormat("hh:mm:ss a"); //"dd-M-yyyy hh:mm:ss a"
             long valorTime=timerService.elapsedTime();
             cSchedStartCal.setTimeZone(TimeZone.getTimeZone("America/Lima"));
             cSchedStartCal.setTimeInMillis(valorTime);
