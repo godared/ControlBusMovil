@@ -37,9 +37,12 @@ import android.widget.Toast;
 
 import com.godared.controlbusmovil.adapter.PageAdapterVP;
 import com.godared.controlbusmovil.adapter.TarjetaAdaptadorRV;
+import com.godared.controlbusmovil.pojo.Configura;
 import com.godared.controlbusmovil.pojo.TelefonoImei;
+import com.godared.controlbusmovil.service.ConfiguraService;
 import com.godared.controlbusmovil.service.DigitalClock;
 import com.godared.controlbusmovil.service.GeoreferenciaService;
+import com.godared.controlbusmovil.service.IConfiguraService;
 import com.godared.controlbusmovil.service.ITarjetaService;
 import com.godared.controlbusmovil.service.ITelefonoService;
 import com.godared.controlbusmovil.service.TarjetaService;
@@ -63,7 +66,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity implements TarjetaService.TarjetaServiceListener,
-        GeolocationService.Callbacks, TelefonoService.TelefonoServiceListener {
+        GeolocationService.Callbacks, TelefonoService.TelefonoServiceListener,ConfiguraService.ConfiguraServiceListener {
     //public static String TAG;
     private Toolbar tbToolBar;
     private TabLayout tlTablaLayout;
@@ -174,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
 
 
         //tbToolBar=(Toolbar)findViewById(R.id.tbToolBar);
-        String dateNow = DateFormat.format("dd-MM-yyyy",
+        String dateNow = DateFormat.format("dd-M-yyyy hh:mm:ss",
                 new Date()).toString();
         this.FechaActual=dateNow;
         tbToolBar=(Toolbar)findViewById(R.id.miBarra);
@@ -182,6 +185,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         setSupportActionBar(tbToolBar);
         //obtiene el IMEI desde el servidor
         obtenerImeiRest();
+        obtenerFechaServer();
     }
 
     @Override
@@ -333,6 +337,10 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
 
         }
     }
+    public void obtenerFechaServer(){
+        IConfiguraService configuraService=new ConfiguraService(getApplicationContext());
+        configuraService.GetAllConfiguraByEmPeriodoRest(this.EmId,(new Date().getYear()));
+    }
     public void obtenerImeiRest() {
         TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
         int i=0;
@@ -344,7 +352,6 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         // aqui llama listenObtenerTelefonoImeiRest, devido a que implementa la interfzar
         //TelefonoService.TelefonoServiceListener, y cuando lla al metodo ObtenerTelefonoImeiRest esta actividad escucha
         // ahi en el servicio esta enlazado
-
 
     }
     public void validarImei() {
@@ -454,6 +461,11 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         //startService(new Intent(this, GeolocationService.class));}
 
     }
+    public void listenObtenerConfiguraRest(Date dateServer){
+        String dateNow = DateFormat.format("dd-M-yyyy hh:mm:ss",
+                dateServer).toString();
+        this.FechaActual=dateNow;
+    }
     protected void onStop() {
         super.onStop();
         updateUIStopRun();
@@ -478,7 +490,8 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             if (Log.isLoggable(TAG, Log.VERBOSE)) {
                 Log.v(TAG, "Starting timer");
             }
-            String myDate = new String("22-01-2015 23:58:56+05:00");//2013-09-19T03:27:23+01:00");
+            //String myDate = new String("22-01-2015 23:58:56+05:00");//2013-09-19T03:27:23+01:00");
+            String myDate=this.FechaActual;
             SimpleDateFormat format = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");//("yyyy-MM-dd'T'HH:mm:ss");
             Date date=null;
             try {
