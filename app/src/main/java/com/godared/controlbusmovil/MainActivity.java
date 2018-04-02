@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
@@ -38,12 +39,14 @@ import android.widget.Toast;
 import com.godared.controlbusmovil.adapter.PageAdapterVP;
 import com.godared.controlbusmovil.adapter.TarjetaAdaptadorRV;
 import com.godared.controlbusmovil.pojo.Configura;
+import com.godared.controlbusmovil.pojo.Georeferencia;
 import com.godared.controlbusmovil.pojo.TarjetaDetalleBitacoraMovil;
 import com.godared.controlbusmovil.pojo.TelefonoImei;
 import com.godared.controlbusmovil.service.ConfiguraService;
 import com.godared.controlbusmovil.service.DigitalClock;
 import com.godared.controlbusmovil.service.GeoreferenciaService;
 import com.godared.controlbusmovil.service.IConfiguraService;
+import com.godared.controlbusmovil.service.IGeoreferenciaService;
 import com.godared.controlbusmovil.service.ITarjetaService;
 import com.godared.controlbusmovil.service.ITelefonoService;
 import com.godared.controlbusmovil.service.TarjetaService;
@@ -58,6 +61,8 @@ import com.godared.controlbusmovil.vista.fragment.RecyclerviewFragment;
 import com.godared.controlbusmovil.vista.fragment.MapsFragment;
 
 import java.lang.ref.WeakReference;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -438,7 +443,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         TimeZone timeZone2 = TimeZone.getTimeZone(zona);
         Calendar cal = Calendar.getInstance(timeZone2);
         //Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
+        cal.setTime(this.FechaActual);
         ITarjetaService tarjetaService;
         tarjetaService=new TarjetaService(getApplicationContext());
         TarjetaControlDetalle tarjetaControlDetalle;
@@ -477,6 +482,45 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
 
         }
         this.updateClient(taCoDeId);
+    }
+    //Viene desde GeolocationService
+    //Con este procedimiento guardamos la Georeferencia en el servidor rest de la nube
+    public void  listenguardarGeoreferenciaGeolocationService(Location location){
+        IGeoreferenciaService _georeferenciaService=new GeoreferenciaService(getApplicationContext());
+        Georeferencia _georeferencia=new Georeferencia();
+        if (this.TaCoId>0){
+            //_georeferencia.setGeId(0);
+            _georeferencia.setTaCoId(this.TaCoId);
+            _georeferencia.setGeLatitud(location.getLatitude());
+            _georeferencia.setGeLongitud(location.getLongitude());
+            String dateNow = DateFormat.format("yyyy-dd-MM HH:mm:ss a",
+                    this.FechaActual).toString();
+            _georeferencia.setGeFechaHora(dateNow);
+            int cantidad=_georeferenciaService.GetCountGeoreferenciadByTaCo(this.TaCoId);
+            _georeferencia.setGeOrden(cantidad+1);
+            _georeferencia.setGeEnviadoMovil(false);
+            _georeferencia.setUsId(1);
+
+            //Verificamos si el ultimo registro no ha variado con respecto al actual
+            //primero obtenemos el ultimo registro
+            Georeferencia georeferencia=null;
+            georeferencia=_georeferenciaService.GetLastGeoreferenciaByTaCo(this.TaCoId);
+            //redondeamos a 3 digitos, debido que es ahi varia cuando varia de posicion auna distancia prudente de 30mts
+            DecimalFormat df = new DecimalFormat("####0.000");
+            //System.out.println("Value: " + df.format(value));
+            df.setRoundingMode(RoundingMode.CEILING);
+            double _latitudActual=Double.valueOf(df.format(location.getLatitude()));
+            double _longitudActual=Double.valueOf(df.format(location.getLongitude()));
+            double _latitudLastBD=Double.valueOf(df.format(georeferencia.getGeLatitud()));
+            double _longitudLastBD=Double.valueOf(df.format(georeferencia.getGeLongitud()));
+            //if(_latitudActual!=_latitudLastBD || _longitudActual!=_longitudLastBD)
+            //Calculamos la distancia en metros
+            double diferencia;
+            diferencia=Math.sqrt(Math.pow(_latitudLastBD-_latitudActual,2)+Math.pow(_longitudLastBD-_longitudActual,2));
+            if(diferencia>100 |_latitudLastBD==0)
+                _georeferenciaService.SaveGeoreferenciaRest(_georeferencia);
+
+        }
     }
     //esto es de a interfaz TelefonoServiceListen
     public void listenObtenerTelefonoImeiRest(){
