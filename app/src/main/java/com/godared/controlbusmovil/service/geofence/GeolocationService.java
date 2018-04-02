@@ -29,6 +29,8 @@ import android.widget.Toast;
 import com.godared.controlbusmovil.MainActivity;
 import com.godared.controlbusmovil.R;
 import com.godared.controlbusmovil.pojo.Georeferencia;
+import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
+import com.godared.controlbusmovil.pojo.TarjetaDetalleBitacoraMovil;
 import com.godared.controlbusmovil.service.GeoreferenciaService;
 import com.godared.controlbusmovil.service.IGeoreferenciaService;
 import com.godared.controlbusmovil.service.ITarjetaService;
@@ -45,10 +47,14 @@ import com.google.android.gms.location.LocationServices;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class GeolocationService extends Service implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<Status>,GeofenceReceiver.Callbacks {
@@ -58,6 +64,8 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
     protected LocationRequest mLocationRequest;
     int BuId;
     int TaCoId;
+    Date FechaActual;
+    Intent mintent;
     private PendingIntent mPendingIntent;
     //Variable para enlazar con la atividad
     private final IBinder mBinder = new LocalBinder();
@@ -65,6 +73,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
     //callbacks interface for communication with service clients MainActivity!
     public interface Callbacks{
         public void updateClient(int taCoDeId );
+        public void updateGeofenceGeolocationService(int taCoDeId,int puCoDeId,double latitude,double longitude);
     }
     //esto es para enlazar al otro servicio gefencereceive
     Intent geolocationServiceIntent2;
@@ -96,6 +105,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
     @Override
     public void onStart(Intent intent, int startId) {
         buildGoogleApiClient();
+        mintent=intent;
         Bundle extra_buId=intent.getExtras();
         BuId=extra_buId.getInt("BUS_ID");
         TaCoId=extra_buId.getInt("TACO_ID");
@@ -203,7 +213,10 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
             geolocationServiceIntent2 = new Intent(this, GeofenceReceiver.class);
             geolocationServiceIntent2.putExtra("BUS_ID",BuId);
             geolocationServiceIntent2.putExtra("TACO_ID",TaCoId);
-
+            //intent de MainActivity
+            Bundle extraBundle=mintent.getExtras();
+            Long fechaActual=extraBundle.getLong("FECHA_ACTUAL");
+            geolocationServiceIntent2.putExtra("FECHA_ACTUAL",fechaActual);
             //return PendingIntent.getService(this, 0, intent,
                    // PendingIntent.FLAG_UPDATE_CURRENT);
             PendingIntent pendingIntent=PendingIntent.getService(this, 0, geolocationServiceIntent2,PendingIntent.FLAG_UPDATE_CURRENT);
@@ -379,9 +392,22 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
             return GeolocationService.this;
         }
     }
+  /*  @Override
+    public int onStartCommand (Intent intent, int flags, int startId) {
+        Bundle extra_buId=intent.getExtras();
+        Long date=extra_buId.getLong("FECHA_ACTUAL");
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(date);
+        this.FechaActual=cal.getTime();
+        buildGoogleApiClient();
+        mGoogleApiClient.connect();
+        return START_STICKY;
+    } */
     //viene desde el GeofenceReceive, implementando su interfaz
-    public void updateOrigen(int taCoDeId){
+    public void updateOrigen(int taCoDeId,int puCoDeId,double latitude,double longitude){
+        //Llamamos al updateGeofenceGeolocationService en MainActivity(este lo implementa)
+        activity.updateGeofenceGeolocationService(taCoDeId,puCoDeId,latitude,longitude);
 
-        activity.updateClient(taCoDeId);
+
     }
 }

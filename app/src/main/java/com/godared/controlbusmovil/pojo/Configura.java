@@ -16,14 +16,14 @@ public class Configura {
     private int CoCountMovilTaCoDe;
     private String CoMembreReporte;
     private int UsId;
-    private Date UsFechaReg;
+    private String UsFechaReg;
     private int CoSiId;
-    private Date CoTiempoActual;
+    private String CoTiempoActual;
     public Configura(){
 
     }
     public Configura(int coId,int emId,int coPeriodo,int coNroMaxVueltas,String coLogo,int coCountMovilTaCo,
-                     int coCountMovilTaCoDe,String coMembreReporte,int usId,Date usFechaReg,int coSiId,Date coTiempoActual){
+                     int coCountMovilTaCoDe,String coMembreReporte,int usId,String usFechaReg,int coSiId,String coTiempoActual){
         this.CoId=coId;
         this.EmId=emId;
         this.CoPeriodo=coPeriodo;
@@ -111,11 +111,11 @@ public class Configura {
         UsId = usId;
     }
 
-    public Date getUsFechaReg() {
+    public String getUsFechaReg() {
         return UsFechaReg;
     }
 
-    public void setUsFechaReg(Date usFechaReg) {
+    public void setUsFechaReg(String usFechaReg) {
         UsFechaReg = usFechaReg;
     }
 
@@ -127,11 +127,11 @@ public class Configura {
         CoSiId = coSiId;
     }
 
-    public Date getCoTiempoActual() {
+    public String getCoTiempoActual() {
         return CoTiempoActual;
     }
 
-    public void setCoTiempoActual(Date coTiempoActual) {
+    public void setCoTiempoActual(String coTiempoActual) {
         CoTiempoActual = coTiempoActual;
     }
 }

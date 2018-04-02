@@ -38,6 +38,7 @@ import android.widget.Toast;
 import com.godared.controlbusmovil.adapter.PageAdapterVP;
 import com.godared.controlbusmovil.adapter.TarjetaAdaptadorRV;
 import com.godared.controlbusmovil.pojo.Configura;
+import com.godared.controlbusmovil.pojo.TarjetaDetalleBitacoraMovil;
 import com.godared.controlbusmovil.pojo.TelefonoImei;
 import com.godared.controlbusmovil.service.ConfiguraService;
 import com.godared.controlbusmovil.service.DigitalClock;
@@ -62,6 +63,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -83,7 +85,8 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     public int TaCoId;
     public String BuPlaca;
     public String EmConsorcio;
-    public String FechaActual;
+    public Date FechaActual;
+
     ITarjetaService iTarjetaService;
     //variablea para el servicio Geolocation
     Intent geolocationServiceIntent;
@@ -179,13 +182,13 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         //tbToolBar=(Toolbar)findViewById(R.id.tbToolBar);
         String dateNow = DateFormat.format("dd-M-yyyy hh:mm:ss",
                 new Date()).toString();
-        this.FechaActual=dateNow;
+        this.FechaActual=new Date();//dateNow;
         tbToolBar=(Toolbar)findViewById(R.id.miBarra);
 
         setSupportActionBar(tbToolBar);
         //obtiene el IMEI desde el servidor
         obtenerImeiRest();
-        obtenerFechaServer();
+
     }
 
     @Override
@@ -198,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         }else{
             showGPSDisabledAlertToUser();
         }
+        /*
         //Verificamos si la fecha y hora esta en automatico
         if (isTimeAutomatic(getApplicationContext())==true)
             Toast.makeText(this, "AUTO_TIME esta habilitado en tu dispositivo", Toast.LENGTH_SHORT).show();
@@ -212,11 +216,13 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             Toast.makeText(this, "AUTO_TIME_ZONE  no esta habilitado en tu dispositivo", Toast.LENGTH_SHORT).show();
             showDateHourDisabledAlertToUser();
         }
+        */
         final Resources res = this.getResources();
         final int id = Resources.getSystem().getIdentifier(
                 "config_ntpServer", "string","android");
         final String defaultServer = res.getString(id);
         Toast.makeText(this, defaultServer, Toast.LENGTH_SHORT).show();
+
     }
 
     public static boolean isTimeAutomatic(Context c) {
@@ -313,14 +319,16 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             case R.id.mDescarga:
                 Sincronizar(this.getBaseContext());
                 iTarjetaService=new TarjetaService(this.getBaseContext());
-                runButtonClick();
+
+                this.obtenerFechaServer();
 
                 break;
             case R.id.mSetting:
                 Intent intent= new Intent(this, SettingActivity.class);
                 intent.putExtra("BUS_ID",BuId);
-
-                intent.putExtra("TACO_FECHA",this.FechaActual);
+                SimpleDateFormat format2 = new SimpleDateFormat("dd-M-yyyy");//("yyyy-MM-dd'T'HH:mm:ss");
+                String dateFecha2=format2.format(this.FechaActual);
+                intent.putExtra("TACO_FECHA",dateFecha2);
                 this.startActivity(intent);
                 break;
 
@@ -330,16 +338,21 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     public void Sincronizar(Context context) {
         iTarjetaService=new TarjetaService(this,context);
         //MainActivity _actividadPrincipal = (MainActivity)getActivity();//getCallingActivity();
-
-        iTarjetaService.obtenerTarjetasRest(EmId,BuId,this.FechaActual);//"16-08-2017"
+        SimpleDateFormat format2 = new SimpleDateFormat("dd-M-yyyy");//("yyyy-MM-dd'T'HH:mm:ss");
+        String dateFecha2=format2.format(this.FechaActual);
+        iTarjetaService.obtenerTarjetasRest(EmId,BuId,dateFecha2);//"16-08-2017"
         // tarjetasControl=iTarjetaService.getTarjetasControl();
         if(tarjetasDetalle!=null) {
 
         }
     }
     public void obtenerFechaServer(){
-        IConfiguraService configuraService=new ConfiguraService(getApplicationContext());
-        configuraService.GetAllConfiguraByEmPeriodoRest(this.EmId,(new Date().getYear()));
+        IConfiguraService configuraService=new ConfiguraService(this,getApplicationContext());
+        Date date = new Date();
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+        int year = calendar.get(Calendar.YEAR);
+        configuraService.GetAllConfiguraByEmPeriodoRest(this.EmId,year);
     }
     public void obtenerImeiRest() {
         TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
@@ -418,9 +431,57 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
 
         Toast.makeText(MainActivity.this, "Valor de retorno de servicio"+ taCoDeId, Toast.LENGTH_SHORT).show();
     }
+    //Viene desde GeolocationService
+    public void updateGeofenceGeolocationService(int taCoDeId,int puCoDeId,double latitude,double longitude){
+        String date = DateFormat.format("dd-MM-yyyy",new Date()).toString();
+        String zona="America/Lima";
+        TimeZone timeZone2 = TimeZone.getTimeZone(zona);
+        Calendar cal = Calendar.getInstance(timeZone2);
+        //Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        ITarjetaService tarjetaService;
+        tarjetaService=new TarjetaService(getApplicationContext());
+        TarjetaControlDetalle tarjetaControlDetalle;
+        tarjetaControlDetalle=tarjetaService.GetTarjetaDetalleByTaCoPuCoDe(TaCoId,puCoDeId);
+        //verificamos si es que no se ha registrado o enviado la geofence
+        if (!tarjetaService.VerificarTarjetaDetalleBDByTaCoDeRegistradoEnviado(tarjetaControlDetalle.getTaCoDeId())) {
+            //tarjetaControlDetalle.setTaCoDeId(sg.getPuCoDeId());
+            Long value = cal.getTimeInMillis();
+            tarjetaControlDetalle.setTaCoDeFecha(value.toString());
+            tarjetaControlDetalle.setTaCoDeLatitud(latitude);
+            tarjetaControlDetalle.setTaCoDeLongitud(longitude);
+            Calendar cal2=Calendar.getInstance();
+            cal2.setTimeInMillis(this.FechaActual.getTime());
+            String hora = DateFormat.format("HH:mm:ss",
+                    cal2).toString(); //new Date()).toString();
+            SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
+            try {
+                cal.setTime(sdf2.parse(hora)); //cal.setTime(sdf2.parse(hora));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            value = cal.getTimeInMillis();
+            tarjetaControlDetalle.setTaCoDeTiempo(value.toString());
+            //actualizamos en la base de datos local
+            tarjetaService.actualizarTarjetaDetalleBD(tarjetaControlDetalle);
+            //Actualizamos el Registro
+            TarjetaDetalleBitacoraMovil tarjetaDetalleBitacoraMovil;
+            tarjetaDetalleBitacoraMovil=tarjetaService.obtenerTarjetaDetalleBitacoraMovilByTaCoDe(tarjetaControlDetalle.getTaCoDeId());
+            tarjetaDetalleBitacoraMovil.setTaDeBiMoRegistradoId(1);
+            tarjetaService.actualizarTarjetaDetalleBitacoraMovilBD(tarjetaControlDetalle.getTaCoDeId(),tarjetaDetalleBitacoraMovil);
+            //Actualizamos en el servidor
+            tarjetaService.UpdateTarjetaDetalleRest(tarjetaControlDetalle);
+            //verificamos si todo el detalle ya tienen registros para activar finaliza en la cabecera TarjetaCOntrol
+            tarjetaService.VerificarActualizaTarjetaFinaliza(tarjetaControlDetalle.getTaCoId());
+            ///devolvemos a MainActivity for Update RecyclerView
+
+        }
+        this.updateClient(taCoDeId);
+    }
     //esto es de a interfaz TelefonoServiceListen
     public void listenObtenerTelefonoImeiRest(){
         validarImei(); // aqui obtenemos el BuId  y EmId
+        obtenerFechaServer();
         //panel el titulo a la actividad
         setTitle("PlacaBus:"+BuPlaca);
 
@@ -435,7 +496,9 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         Bundle args = new Bundle();
         args.putInt("BUS_ID",BuId);
         args.putInt("TACO_ID",0);
-        args.putString("TACO_FECHA",FechaActual);
+        SimpleDateFormat format = new SimpleDateFormat("dd-M-yyyy");//("yyyy-MM-dd'T'HH:mm:ss");
+        String dateFecha=format.format(this.FechaActual);
+        args.putString("TACO_FECHA",dateFecha);
         args.putBoolean("INDICA_GETDETALLEACTIVO",true);
 
         fragmets=new ArrayList<>();
@@ -450,21 +513,23 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         //obteniendo la tarejacontrol activo
         ITarjetaService tarjetaService=new TarjetaService(this);
         TarjetaControl _tarjetaControl=null;
-
-        _tarjetaControl =tarjetaService.GetTarjetaControlActivo(BuId,this.FechaActual);//"16-08-2017"
+        // String myDate=this.FechaActual;
+        _tarjetaControl =tarjetaService.GetTarjetaControlActivo(BuId,dateFecha);//"16-08-2017"
         this.TaCoId=_tarjetaControl.getTaCoId();
         geolocationServiceIntent=new Intent(this, GeolocationService.class);
         geolocationServiceIntent.putExtra("BUS_ID",BuId);
         geolocationServiceIntent.putExtra("TACO_ID",TaCoId);
+        geolocationServiceIntent.putExtra("FECHA_ACTUAL",this.FechaActual.getTime());
         startService(geolocationServiceIntent);
         bindService(geolocationServiceIntent, mConnection, Context.BIND_AUTO_CREATE); //Binding to the service!
         //startService(new Intent(this, GeolocationService.class));}
 
     }
-    public void listenObtenerConfiguraRest(Date dateServer){
-        String dateNow = DateFormat.format("dd-M-yyyy hh:mm:ss",
-                dateServer).toString();
-        this.FechaActual=dateNow;
+    public void listenObtenerConfiguraRest(String dateServer,boolean isDateServer){
+        Date date=new Date();
+        date.setTime(Long.parseLong(dateServer));
+
+        runButtonClick(date,isDateServer);
     }
     protected void onStop() {
         super.onStop();
@@ -484,32 +549,25 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     }
     ///-------------------------------------------------
     //Metodos de timer -------------------------
-    public void runButtonClick() //View v
+    public void runButtonClick(Date fechaActualServer,boolean isDateServer) //View v
     {
+        //if (serviceBound)
+            timerService.startTimer(fechaActualServer,isDateServer);
         if (serviceBound && !timerService.isTimerRunning()) {
             if (Log.isLoggable(TAG, Log.VERBOSE)) {
                 Log.v(TAG, "Starting timer");
             }
             //String myDate = new String("22-01-2015 23:58:56+05:00");//2013-09-19T03:27:23+01:00");
-            String myDate=this.FechaActual;
-            SimpleDateFormat format = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");//("yyyy-MM-dd'T'HH:mm:ss");
-            Date date=null;
-            try {
-                date = format.parse(myDate);
-            } catch (ParseException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            date.getTime();
-            timerService.startTimer(date);
+
+            timerService.startTimer(fechaActualServer,isDateServer);
             updateUIStartRun();
         }
         else if (serviceBound && timerService.isTimerRunning()) {
             if (Log.isLoggable(TAG, Log.VERBOSE)) {
                 Log.v(TAG, "Stopping timer");
             }
-            timerService.stopTimer();
-            updateUIStopRun();
+            //timerService.stopTimer();
+            //updateUIStopRun();
         }
     }
 
@@ -541,6 +599,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             cSchedStartCal.setTimeInMillis(valorTime);
             String formattedDate = formatDate.format(cSchedStartCal.getTime()).toString();
             timerTextView.setText( formattedDate);//timerService.elapsedTime()
+            FechaActual.setTime(valorTime);
         }
     }
 

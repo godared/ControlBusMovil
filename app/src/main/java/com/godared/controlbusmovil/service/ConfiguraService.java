@@ -1,6 +1,7 @@
 package com.godared.controlbusmovil.service;
 
 import android.content.Context;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -26,13 +27,14 @@ import retrofit2.Response;
 public class ConfiguraService implements IConfiguraService {
     private Context context;
     BaseDatos db;
-    public ConfiguraService(Context context){
+    public ConfiguraService(ConfiguraServiceListener configuraServiceListener, Context context){
         this.context=context;
         db=new BaseDatos(context);
+        this.configuraServiceListener=configuraServiceListener;
         //tarjetaService=new TarjetaService(context);
     }
     public interface ConfiguraServiceListener {
-        public void listenObtenerConfiguraRest(Date dateServer);
+        void listenObtenerConfiguraRest(String dateServer,boolean isDateServer);
         //public void onDialogNegativeClick();
     }
     ConfiguraServiceListener configuraServiceListener;
@@ -47,14 +49,16 @@ public class ConfiguraService implements IConfiguraService {
                 ArrayList<Configura> configuraResponse;
                 configuraResponse = (ArrayList<Configura>) response.body();
 
-                configuraServiceListener.listenObtenerConfiguraRest(configuraResponse.get(0).getCoTiempoActual());
+                configuraServiceListener.listenObtenerConfiguraRest(configuraResponse.get(0).getCoTiempoActual(),true);
             }
 
             @Override
             public void onFailure(Call<List<Configura>> call, Throwable t) {
                 Toast.makeText(context, "Algo paso en la conexion", Toast.LENGTH_SHORT).show();
                 Log.e("Fallo la conexion", t.toString());
-                configuraServiceListener.listenObtenerConfiguraRest(new Date());
+
+                Date fecha=new Date();
+                configuraServiceListener.listenObtenerConfiguraRest(String.valueOf(fecha.getTime()),false);
             }
         });
     }

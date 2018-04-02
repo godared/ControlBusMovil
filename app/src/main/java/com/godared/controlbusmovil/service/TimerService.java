@@ -81,8 +81,8 @@ public  class TimerService extends Service {
     /**
      * Starts the timer
      */
-    public void startTimer(Date date) {
-        if (!isTimerRunning) {
+    public void startTimer(Date date,boolean isDateServer) {
+        if (!isTimerRunning ) {
             fechaServer=date;
             Calendar c=Calendar.getInstance(TimeZone.getTimeZone("GMT"));
             c.setTime(date); /* whatever*/
@@ -95,6 +95,18 @@ public  class TimerService extends Service {
         }
         else {
             Log.e(TAG, "startTimer request for an already running timer");
+            if (isDateServer==true){
+                fechaServer=date;
+                Calendar c=Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+                c.setTime(date); /* whatever*/
+                //c.set(1970,0,1,fechaServer.getHours(),fechaServer.getMinutes(),fechaServer.getSeconds());
+                c.setTimeZone(TimeZone.getTimeZone("America/Lima")); //if necessary
+                c.getTimeInMillis();
+                horaTimeServer=c.getTimeInMillis();
+                startTime =  System.currentTimeMillis();//
+                //isTimerRunning = true;
+            }
+
         }
     }
 
@@ -151,7 +163,7 @@ public  class TimerService extends Service {
      */
     private Notification createNotification() {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setContentTitle("CONBUSES Activo")
+                .setContentTitle("CONBUSES")
                 .setContentText("Toca para regresar a CONBUSES")
                 .setSmallIcon(R.mipmap.ic_launcher);
 
