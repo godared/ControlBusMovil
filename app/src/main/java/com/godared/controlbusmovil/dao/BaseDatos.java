@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.godared.controlbusmovil.pojo.AlertaIncidencia;
 import com.godared.controlbusmovil.pojo.Georeferencia;
 import com.godared.controlbusmovil.pojo.PuntoControl;
 import com.godared.controlbusmovil.pojo.PuntoControlDetalle;
@@ -78,6 +79,10 @@ public class BaseDatos extends SQLiteOpenHelper{
         String queryCrearTablaGeoreferencia="CREATE TABLE Georeferencia(GeId INTEGER PRIMARY KEY AUTOINCREMENT,"+
                 "TaCoId INTEGER, GeLatitud REAL, GeLongitud REAL,GeFechaHora TEXT,"+
                 "UsId INTEGER, UsFechaReg TEXT,GeOrden INTEGER,GeEnviadoMovil INTEGER) ";
+        //AlertaIncidencia
+        String queryCrearTablaAlertaIncidencia="CREATE TABLE AlertaIncidencia(AlInId INTEGER PRIMARY KEY AUTOINCREMENT,"+
+                "EmId INTEGER, AlInFecha TEXT, AlInDescripcion TEXT, AlInTipo INTEGER, AlInLatitud REAL, AlInLongitud REAL,"+
+                "UsId INTEGER, UsFechaReg TEXT,TaCoId INTEGER) ";
         //Bitacora, estas tablas es para el control de envios
         String queryCrearTablaTarjetaBitacoraMovil="CREATE TABLE TarjetaBitacoraMovil(TaCoId INTEGER,"+
                 "TaBiMoRemotoId INTEGER, TaBiMoEnviado INTEGER, TaBiMoActivo integer, TaBiMoFinalDetalle INTEGER) ";
@@ -93,6 +98,7 @@ public class BaseDatos extends SQLiteOpenHelper{
         db.execSQL(queryCrearTablaTelefono);
         db.execSQL(queryCrearTablaTelefonoImei);
         db.execSQL(queryCrearTablaGeoreferencia);
+        db.execSQL(queryCrearTablaAlertaIncidencia);
         db.execSQL(queryCrearTablaTarjetaBitacoraMovil);
         db.execSQL(queryCrearTablaTarjetaDetalleBitacoraMovil);
     }
@@ -107,6 +113,7 @@ public class BaseDatos extends SQLiteOpenHelper{
         db.execSQL("DROP TABLE IF EXIST Telefono");
         db.execSQL("DROP TABLE IF EXIST TelefonoImei");
         db.execSQL("DROP TABLE IF EXIST Georeferencia");
+        db.execSQL("DROP TABLE IF EXIST AlertaIncidencia");
         db.execSQL("DROP TABLE IF EXIST TarjetaBitacoraMovil");
         db.execSQL("DROP TABLE IF EXIST TarjetaDetalleBitacoraMovil");
         onCreate(db);
@@ -691,6 +698,63 @@ public class BaseDatos extends SQLiteOpenHelper{
         db.close();
         return georeferenciaActual;
     }
+    //AlertaIncidencia
+    public void InsertarAlertaIncidencia(ContentValues contentValues){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.insert("AlertaIncidencia",null,contentValues);
+        db.close();
+    }
+    public void ActualizarAlertaIncidencia(ContentValues contentValues,int alInId){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.update("AlertaIncidencia",contentValues,"AlInId="+alInId,null);
+        db.close();
+    }
+    public void EliminarAlertaIncidencia(int alInId){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.delete("AlertaIncidencia","AlInId="+alInId, null);
+        db.close();
+    }
+    public AlertaIncidencia GetAllAlertaIncidenciaById(int alInId){
+        AlertaIncidencia alertaIncidenciaActual=new AlertaIncidencia();
+        String query="SELECT * FROM AlertaIncidencia where AlInId="+alInId;
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor registros=db.rawQuery(query,null);
+        while(registros.moveToNext()){
+            alertaIncidenciaActual.setAlInId(registros.getInt(0));
+            alertaIncidenciaActual.setEmId(registros.getInt(1));
+            alertaIncidenciaActual.setAlInFecha(registros.getString(2));
+            alertaIncidenciaActual.setAlInDescripcion(registros.getString(3));
+            alertaIncidenciaActual.setAlInTipo(registros.getInt(4)==1?true:false);
+            alertaIncidenciaActual.setAlInLatitud(registros.getDouble(5));
+            alertaIncidenciaActual.setAlInLongitud(registros.getDouble(6));
+            alertaIncidenciaActual.setUsId(registros.getInt(7));
+            alertaIncidenciaActual.setUsFechaReg(registros.getString(8));
+            alertaIncidenciaActual.setTaCoId(registros.getInt(9));
+        }
+        db.close();
+        return alertaIncidenciaActual;
+    }
+    public AlertaIncidencia GetAllAlertaIncidenciaByTaCo(int taCoId){
+        AlertaIncidencia alertaIncidenciaActual=new AlertaIncidencia();
+        String query="SELECT * FROM AlertaIncidencia where TaCoId="+taCoId;
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor registros=db.rawQuery(query,null);
+        while(registros.moveToNext()){
+            alertaIncidenciaActual.setAlInId(registros.getInt(0));
+            alertaIncidenciaActual.setEmId(registros.getInt(1));
+            alertaIncidenciaActual.setAlInFecha(registros.getString(2));
+            alertaIncidenciaActual.setAlInDescripcion(registros.getString(3));
+            alertaIncidenciaActual.setAlInTipo(registros.getInt(4)==1?true:false);
+            alertaIncidenciaActual.setAlInLatitud(registros.getDouble(5));
+            alertaIncidenciaActual.setAlInLongitud(registros.getDouble(6));
+            alertaIncidenciaActual.setUsId(registros.getInt(7));
+            alertaIncidenciaActual.setUsFechaReg(registros.getString(8));
+            alertaIncidenciaActual.setTaCoId(registros.getInt(9));
+        }
+        db.close();
+        return alertaIncidenciaActual;
+    }
+
     ///TarjetaBitacoraMovil
     public void insertarTarjetaBitacoraMovil(ContentValues contentValues){
         SQLiteDatabase db=this.getWritableDatabase();
