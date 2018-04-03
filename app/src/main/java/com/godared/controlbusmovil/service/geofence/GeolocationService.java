@@ -74,6 +74,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
     public interface Callbacks{
         public void updateClient(int taCoDeId );
         public void updateGeofenceGeolocationService(int taCoDeId,int puCoDeId,double latitude,double longitude);
+        public void listenguardarGeoreferenciaGeolocationService(Location location);
     }
     //esto es para enlazar al otro servicio gefencereceive
     Intent geolocationServiceIntent2;
@@ -305,50 +306,13 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
         else{
             removeGeoFences();
         }
-        //es aqui que vamos a guardar la georeferencia(movimientos del bus
-        GuardarGeoreferenciaRest(this,location);
-
+        //es aqui que vamos a guardar la georeferencia(movimientos del bus)
+        //lo reenviamos al MainActivity por eso de la fecha que no pude enviarlos aqui
+        activity.listenguardarGeoreferenciaGeolocationService(location);
 
     }
     //Con este procedimiento guardamos en el servidor rest de la nube
-    //sino en la base de datos del movil
-    private void GuardarGeoreferenciaRest(Context context,Location location){
-        IGeoreferenciaService _georeferenciaService=new GeoreferenciaService(context);
-        Georeferencia _georeferencia=new Georeferencia();
-        if (this.TaCoId>0){
-            //_georeferencia.setGeId(0);
-            _georeferencia.setTaCoId(this.TaCoId);
-            _georeferencia.setGeLatitud(location.getLatitude());
-            _georeferencia.setGeLongitud(location.getLongitude());
-            String dateNow = DateFormat.format("yyyy-dd-MM",
-                    new Date()).toString();
-            _georeferencia.setGeFechaHora(dateNow);
-            int cantidad=_georeferenciaService.GetCountGeoreferenciadByTaCo(this.TaCoId);
-            _georeferencia.setGeOrden(cantidad+1);
-            _georeferencia.setGeEnviadoMovil(false);
-            _georeferencia.setUsId(1);
 
-            //Verificamos si el ultimo registro no ha variado con respecto al actual
-            //primero obtenemos el ultimo registro
-            Georeferencia georeferencia=null;
-            georeferencia=_georeferenciaService.GetLastGeoreferenciaByTaCo(this.TaCoId);
-            //redondeamos a 3 digitos, debido que es ahi varia cuando varia de posicion auna distancia prudente de 30mts
-            DecimalFormat df = new DecimalFormat("####0.000");
-            //System.out.println("Value: " + df.format(value));
-            df.setRoundingMode(RoundingMode.CEILING);
-            double _latitudActual=Double.valueOf(df.format(location.getLatitude()));
-            double _longitudActual=Double.valueOf(df.format(location.getLongitude()));
-            double _latitudLastBD=Double.valueOf(df.format(georeferencia.getGeLatitud()));
-            double _longitudLastBD=Double.valueOf(df.format(georeferencia.getGeLongitud()));
-            //if(_latitudActual!=_latitudLastBD || _longitudActual!=_longitudLastBD)
-            //Calculamos la distancia en metros
-            double diferencia;
-            diferencia=Math.sqrt(Math.pow(_latitudLastBD-_latitudActual,2)+Math.pow(_longitudLastBD-_longitudActual,2));
-            if(diferencia>100 |_latitudLastBD==0)
-                _georeferenciaService.SaveGeoreferenciaRest(_georeferencia);
-
-        }
-    }
     protected synchronized void buildGoogleApiClient() {
         Log.i(MainActivity.TAG, "Building GoogleApiClient");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
