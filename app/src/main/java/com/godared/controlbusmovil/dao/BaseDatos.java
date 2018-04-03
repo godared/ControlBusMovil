@@ -734,12 +734,14 @@ public class BaseDatos extends SQLiteOpenHelper{
         db.close();
         return alertaIncidenciaActual;
     }
-    public AlertaIncidencia GetAllAlertaIncidenciaByTaCo(int taCoId){
-        AlertaIncidencia alertaIncidenciaActual=new AlertaIncidencia();
+    public ArrayList<AlertaIncidencia> GetAllAlertaIncidenciaByTaCo(int taCoId){
+        ArrayList<AlertaIncidencia> alertaIncidencias=new ArrayList<>();
+
         String query="SELECT * FROM AlertaIncidencia where TaCoId="+taCoId;
         SQLiteDatabase db=this.getWritableDatabase();
         Cursor registros=db.rawQuery(query,null);
         while(registros.moveToNext()){
+            AlertaIncidencia alertaIncidenciaActual=new AlertaIncidencia();
             alertaIncidenciaActual.setAlInId(registros.getInt(0));
             alertaIncidenciaActual.setEmId(registros.getInt(1));
             alertaIncidenciaActual.setAlInFecha(registros.getString(2));
@@ -750,9 +752,10 @@ public class BaseDatos extends SQLiteOpenHelper{
             alertaIncidenciaActual.setUsId(registros.getInt(7));
             alertaIncidenciaActual.setUsFechaReg(registros.getString(8));
             alertaIncidenciaActual.setTaCoId(registros.getInt(9));
+            alertaIncidencias.add(alertaIncidenciaActual);
         }
         db.close();
-        return alertaIncidenciaActual;
+        return alertaIncidencias;
     }
 
     ///TarjetaBitacoraMovil

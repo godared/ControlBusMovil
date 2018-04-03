@@ -18,5 +18,6 @@ public final class ConstantesRestApi {
     public static final String URL_TELEFONO_IMEI="/rest/telefono/getalltelefonobyimei";
     public static final String URL_GEOREFERENCIA="/rest/georeferencia/";
     public static final String URL_CONFIGURA="/rest/configura/";
+    public static final String URL_ALERTA_INCIDENCIA="/rest/alertaincidencia/";
 
 }

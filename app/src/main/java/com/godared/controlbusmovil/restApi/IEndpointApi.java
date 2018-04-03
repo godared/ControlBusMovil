@@ -1,5 +1,6 @@
 package com.godared.controlbusmovil.restApi;
 
+import com.godared.controlbusmovil.pojo.AlertaIncidencia;
 import com.godared.controlbusmovil.pojo.Configura;
 import com.godared.controlbusmovil.pojo.Georeferencia;
 import com.godared.controlbusmovil.pojo.PuntoControl;
@@ -69,4 +70,11 @@ public interface IEndpointApi {
 
     @GET(ConstantesRestApi.URL_CONFIGURA+"getallconfigurabyemperiodo")
     Call<List<Configura>> getAllConfiguraByEmPeriodo(@Query("emId") int emId, @Query("coPeriodo") int coPeriodo);
+
+    //AlertaIncidencia
+    @GET(ConstantesRestApi.URL_ALERTA_INCIDENCIA+"getallalertaincidenciabyemtaco")
+    Call<List<AlertaIncidencia>> getAllAlertaIncidenciaByEmTaCo(@Query("emId") int emId, @Query("taCoId") int taCoId);
+
+    @POST(ConstantesRestApi.URL_ALERTA_INCIDENCIA+"save")
+    Call<Boolean> saveAlertaIncidencia(@Body List<AlertaIncidencia> alertaIncidencias);
 }
