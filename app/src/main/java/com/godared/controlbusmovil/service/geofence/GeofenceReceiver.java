@@ -38,7 +38,6 @@ public class GeofenceReceiver extends IntentService {
     ITarjetaService tarjetaService;
     int BuId;
     int TaCoId;
-    long FechaActual;
     private final IBinder mBinder = new LocalBinder();
     Callbacks listenerOrigen;
     public interface Callbacks{
@@ -54,7 +53,7 @@ public class GeofenceReceiver extends IntentService {
         Bundle extra_buId=intent.getExtras();
         BuId=extra_buId.getInt("BUS_ID");
         TaCoId=extra_buId.getInt("TACO_ID");
-        FechaActual=extra_buId.getLong("FECHA_ACTUAL");
+
         if (geoEvent.hasError()) {
             Log.d(MainActivity.TAG, "Error GeofenceReceiver.onHandleIntent");
         } else {

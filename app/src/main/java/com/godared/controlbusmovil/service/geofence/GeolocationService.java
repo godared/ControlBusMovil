@@ -215,10 +215,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
             geolocationServiceIntent2.putExtra("BUS_ID",BuId);
             geolocationServiceIntent2.putExtra("TACO_ID",TaCoId);
             //intent de MainActivity
-            Bundle extraBundle=mintent.getExtras();
-            Long fechaActual=extraBundle.getLong("FECHA_ACTUAL");
-            geolocationServiceIntent2.putExtra("FECHA_ACTUAL",fechaActual);
-            //return PendingIntent.getService(this, 0, intent,
+                     //return PendingIntent.getService(this, 0, intent,
                    // PendingIntent.FLAG_UPDATE_CURRENT);
             PendingIntent pendingIntent=PendingIntent.getService(this, 0, geolocationServiceIntent2,PendingIntent.FLAG_UPDATE_CURRENT);
             bindService(geolocationServiceIntent2, mConnection, Context.BIND_AUTO_CREATE);

@@ -56,6 +56,7 @@ import com.godared.controlbusmovil.service.geofence.GeolocationService;
 import com.godared.controlbusmovil.pojo.TarjetaControl;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
 import com.godared.controlbusmovil.vista.SettingActivity;
+import com.godared.controlbusmovil.vista.fragment.AlertaIncidenciaFragment;
 import com.godared.controlbusmovil.vista.fragment.IRecyclerviewFragment;
 import com.godared.controlbusmovil.vista.fragment.RecyclerviewFragment;
 import com.godared.controlbusmovil.vista.fragment.MapsFragment;
@@ -545,15 +546,20 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         args.putString("TACO_FECHA",dateFecha);
         args.putBoolean("INDICA_GETDETALLEACTIVO",true);
 
+        Bundle args2 = new Bundle();
+        args2.putInt("TACO_ID",TaCoId);
         fragmets=new ArrayList<>();
         fragmets.add(new RecyclerviewFragment());
         fragmets.add(new MapsFragment());
+        fragmets.add(new AlertaIncidenciaFragment());
         fragmets.get(0).setArguments(args);
+        fragmets.get(2).setArguments(args2);
         //agremaos los fragments al viewPager
         vpViewPager.setAdapter(new PageAdapterVP(getSupportFragmentManager(),fragmets));
         tlTablaLayout.setupWithViewPager(vpViewPager);
         tlTablaLayout.getTabAt(0).setIcon(R.drawable.icons8_tarjeta_para_fichar_48);
         tlTablaLayout.getTabAt(1).setIcon(R.drawable.icons8_marcador_de_mapa_48);
+        tlTablaLayout.getTabAt(2).setIcon(R.drawable.icons8_identificaci_n_verificada_48);
         //obteniendo la tarejacontrol activo
         ITarjetaService tarjetaService=new TarjetaService(this);
         TarjetaControl _tarjetaControl=null;

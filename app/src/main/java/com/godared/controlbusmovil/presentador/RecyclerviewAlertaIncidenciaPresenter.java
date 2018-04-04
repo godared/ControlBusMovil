@@ -21,10 +21,9 @@ public class RecyclerviewAlertaIncidenciaPresenter implements IRecyclerviewAlert
     private int EmId;
     private int TaCoId;
 
-    public RecyclerviewAlertaIncidenciaPresenter(IAlertaIncidenciaFragment alertaIncidenciaFragment, Context context, ArrayList<AlertaIncidencia> alertaIncidencias, int taCoId) {
+    public RecyclerviewAlertaIncidenciaPresenter(IAlertaIncidenciaFragment alertaIncidenciaFragment, Context context, int taCoId) {
         this.alertaIncidenciaFragment = alertaIncidenciaFragment;
         this.context = context;
-        this.alertaIncidencias = alertaIncidencias;
         TaCoId = taCoId;
         obtenerAlertaIncidenciasBD(this.TaCoId);
     }
