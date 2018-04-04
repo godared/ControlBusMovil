@@ -528,7 +528,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         validarImei(); // aqui obtenemos el BuId  y EmId
         obtenerFechaServer();
         //panel el titulo a la actividad
-        setTitle("PlacaBus:"+BuPlaca);
+        setTitle("BUS:"+BuPlaca);
 
 
         tlTablaLayout=(TabLayout)findViewById(R.id.tlTablaLayout);
@@ -559,7 +559,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         tlTablaLayout.setupWithViewPager(vpViewPager);
         tlTablaLayout.getTabAt(0).setIcon(R.drawable.icons8_tarjeta_para_fichar_48);
         tlTablaLayout.getTabAt(1).setIcon(R.drawable.icons8_marcador_de_mapa_48);
-        tlTablaLayout.getTabAt(2).setIcon(R.drawable.icons8_identificaci_n_verificada_48);
+        tlTablaLayout.getTabAt(2).setIcon(R.drawable.icons8_mensaje_urgente_48);
         //obteniendo la tarejacontrol activo
         ITarjetaService tarjetaService=new TarjetaService(this);
         TarjetaControl _tarjetaControl=null;
