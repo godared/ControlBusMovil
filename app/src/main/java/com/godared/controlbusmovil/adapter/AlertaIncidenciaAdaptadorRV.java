@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.godared.controlbusmovil.R;
 import com.godared.controlbusmovil.pojo.AlertaIncidencia;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -38,16 +39,21 @@ public class AlertaIncidenciaAdaptadorRV extends RecyclerView.Adapter<AlertaInci
     @Override
     public void onBindViewHolder(AlertaIncidenciaAdaptadorRV.AlertaIncidenciaViewHolder holder,int position){
         AlertaIncidencia alertaIncidencia=alertaIncidencias.get(position);
-        holder.txtTipoDescripcion.setText(alertaIncidencia.getAlInDescripcion());
+        holder.txtTipoDescripcion.setText(alertaIncidencia.getAlInTipo()==true?" : ALERTA":" : INCIDENCIA");
         holder.txtDescripcion.setText(alertaIncidencia.getAlInDescripcion());
         //Formateando Hora
         String zona="America/Lima";
         TimeZone timeZone2 = TimeZone.getTimeZone(zona);
         String hora=alertaIncidencia.getAlInFecha();//
         Calendar cal=Calendar.getInstance(timeZone2);
-        cal.setTimeInMillis(Long.parseLong(hora));
+        //cal.setTime(hora);//.setTimeInMillis(Long.parseLong(hora));
 
         SimpleDateFormat sdf2 = new SimpleDateFormat("dd-MM-yyyy");//"yyyy-MM-dd HH:mm:ss"
+        try {
+            cal.setTime(sdf2.parse(hora));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         sdf2.setTimeZone(cal.getTimeZone());
         String formatted2 = sdf2.format(cal.getTime());
         holder.txtFecha.setText(formatted2);//

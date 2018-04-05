@@ -5,32 +5,50 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 
-import com.godared.controlbusmovil.MainActivity;
 import com.godared.controlbusmovil.R;
 import com.godared.controlbusmovil.adapter.AlertaIncidenciaAdaptadorRV;
 import com.godared.controlbusmovil.pojo.AlertaIncidencia;
 import com.godared.controlbusmovil.presentador.IRecyclerviewAlertaIncidenciaPresenter;
 import com.godared.controlbusmovil.presentador.RecyclerviewAlertaIncidenciaPresenter;
+import com.godared.controlbusmovil.service.AlertaIncidenciaService;
+import com.godared.controlbusmovil.service.TarjetaService;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * create an instance of this fragment.
  */
-public class AlertaIncidenciaFragment extends Fragment implements IAlertaIncidenciaFragment {
+public class AlertaIncidenciaFragment extends Fragment implements IAlertaIncidenciaFragment,
+        NewAlertaIncidenciaDialogFragment.NewAlertaIncidenciaDialogListener {
     RecyclerView listaAlertaIncidencias;
     public IRecyclerviewAlertaIncidenciaPresenter alertaIncidenciaPresenter;
     int TaCoId;
     FloatingActionButton btnFab;
+    public interface AlertaIncidenciaFragmentListerner{
+        void listenNuevaIncidenciaDialog(String descripcion);
+    }
+    AlertaIncidenciaFragmentListerner mlistener;
+    public AlertaIncidenciaFragment(){
+
+    }
+    /*public AlertaIncidenciaFragment(AlertaIncidenciaFragmentListerner alertaIncidenciaFragmentListerner){
+        this.mlistener=alertaIncidenciaFragmentListerner;
+    }*/
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -46,6 +64,8 @@ public class AlertaIncidenciaFragment extends Fragment implements IAlertaInciden
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(getContext(), "Hello FAB!", Toast.LENGTH_SHORT).show();
+                    NewAlertaIncidenciaDialogFragment df= new NewAlertaIncidenciaDialogFragment(AlertaIncidenciaFragment.this);
+                    df.show(getFragmentManager(), "NewAlertaIncidenciaDialogFragment");
                 }
             });
         }
@@ -81,5 +101,34 @@ public class AlertaIncidenciaFragment extends Fragment implements IAlertaInciden
     @Override
     public void inicializarAdaptadorRV(AlertaIncidenciaAdaptadorRV adaptadorRV) {
         listaAlertaIncidencias.setAdapter(adaptadorRV);
+    }
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog, String descripcion) {
+        // User touched the dialog's positive button
+        AlertaIncidenciaService alertaIncidenciaService=new AlertaIncidenciaService(getContext());
+        List<AlertaIncidencia> alertaIncidencias=new ArrayList<>();
+        AlertaIncidencia alertaIncidencia=new AlertaIncidencia();
+        //alertaIncidencia.setAlInId(0);
+        alertaIncidencia.setAlInTipo(false);
+        alertaIncidencia.setTaCoId(this.TaCoId);
+        SimpleDateFormat format = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");//("yyyy-MM-dd'T'HH:mm:ss");
+        String dateFecha=format.format(new Date());
+        alertaIncidencia.setAlInFecha(dateFecha);
+        alertaIncidencia.setAlInDescripcion(descripcion);
+        alertaIncidencias.add(alertaIncidencia);
+        alertaIncidenciaService.GuardarAlertaIncidenciaBD(alertaIncidencias);
+
+        //esto viene desde TarjetaService
+        //AlertaIncidenciaFragment alertaIncidenciaFragment;
+        //alertaIncidenciaFragment=(AlertaIncidenciaFragment) fragmets.get(2);
+        alertaIncidenciaPresenter.obtenerAlertaIncidenciasBD(this.TaCoId);
+
+        Toast.makeText(getContext(), "Se guardo", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's negative button
+        Toast.makeText(getContext(), "Se cancelo la finalizacion", Toast.LENGTH_SHORT).show();
     }
 }

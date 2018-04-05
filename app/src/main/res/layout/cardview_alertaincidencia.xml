@@ -24,14 +24,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Ronald"
-                    android:textSize="30dp"
+                    android:textSize="20dp"
                     android:textStyle="bold" />
                 <TextView
                     android:id="@+id/txtTipoDescripcion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Ronald"
-                    android:textSize="30dp"
+                    android:textSize="20dp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -65,7 +65,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Descripcion"
-                    android:textSize="30dp"
+                    android:textSize="15dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"/>
             </LinearLayout>

@@ -38,10 +38,12 @@ import android.widget.Toast;
 
 import com.godared.controlbusmovil.adapter.PageAdapterVP;
 import com.godared.controlbusmovil.adapter.TarjetaAdaptadorRV;
+import com.godared.controlbusmovil.pojo.AlertaIncidencia;
 import com.godared.controlbusmovil.pojo.Configura;
 import com.godared.controlbusmovil.pojo.Georeferencia;
 import com.godared.controlbusmovil.pojo.TarjetaDetalleBitacoraMovil;
 import com.godared.controlbusmovil.pojo.TelefonoImei;
+import com.godared.controlbusmovil.service.AlertaIncidenciaService;
 import com.godared.controlbusmovil.service.ConfiguraService;
 import com.godared.controlbusmovil.service.DigitalClock;
 import com.godared.controlbusmovil.service.GeoreferenciaService;
@@ -57,6 +59,7 @@ import com.godared.controlbusmovil.pojo.TarjetaControl;
 import com.godared.controlbusmovil.pojo.TarjetaControlDetalle;
 import com.godared.controlbusmovil.vista.SettingActivity;
 import com.godared.controlbusmovil.vista.fragment.AlertaIncidenciaFragment;
+import com.godared.controlbusmovil.vista.fragment.IAlertaIncidenciaFragment;
 import com.godared.controlbusmovil.vista.fragment.IRecyclerviewFragment;
 import com.godared.controlbusmovil.vista.fragment.RecyclerviewFragment;
 import com.godared.controlbusmovil.vista.fragment.MapsFragment;
@@ -74,7 +77,8 @@ import java.util.List;
 import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity implements TarjetaService.TarjetaServiceListener,
-        GeolocationService.Callbacks, TelefonoService.TelefonoServiceListener,ConfiguraService.ConfiguraServiceListener {
+        GeolocationService.Callbacks, TelefonoService.TelefonoServiceListener,
+        ConfiguraService.ConfiguraServiceListener, AlertaIncidenciaFragment.AlertaIncidenciaFragmentListerner {
     //public static String TAG;
     private Toolbar tbToolBar;
     private TabLayout tlTablaLayout;
@@ -106,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     // Message type for the handler
     private final static int MSG_UPDATE_TIME = 0;
     private TextView timerTextView;
+
     /**
      * Callback for service binding, passed to bindService()
      */
@@ -194,6 +199,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         setSupportActionBar(tbToolBar);
         //obtiene el IMEI desde el servidor
         obtenerImeiRest();
+
 
     }
 
@@ -676,6 +682,26 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
                 sendEmptyMessageDelayed(MSG_UPDATE_TIME, UPDATE_RATE_MS);
             }
         }
+    }
+    //esto viene delescucha de Dialog New Incidencia
+   public void listenNuevaIncidenciaDialog(String descripcion){
+        AlertaIncidenciaService alertaIncidenciaService=new AlertaIncidenciaService(getApplicationContext());
+        List<AlertaIncidencia> alertaIncidencias=new ArrayList<>();
+        AlertaIncidencia alertaIncidencia=new AlertaIncidencia();
+        alertaIncidencia.setAlInId(0);
+        alertaIncidencia.setAlInTipo(false);
+        alertaIncidencia.setTaCoId(this.TaCoId);
+       SimpleDateFormat format = new SimpleDateFormat("dd-M-yyyy");//("yyyy-MM-dd'T'HH:mm:ss");
+       String dateFecha=format.format(this.FechaActual);
+        alertaIncidencia.setAlInFecha(dateFecha);
+        alertaIncidencia.setAlInDescripcion(descripcion);
+        alertaIncidencias.add(alertaIncidencia);
+        alertaIncidenciaService.GuardarAlertaIncidenciaBD(alertaIncidencias);
+
+       //esto viene desde TarjetaService
+       AlertaIncidenciaFragment alertaIncidenciaFragment;
+       alertaIncidenciaFragment=(AlertaIncidenciaFragment) fragmets.get(2);
+       alertaIncidenciaFragment.alertaIncidenciaPresenter.obtenerAlertaIncidenciasBD(this.TaCoId);
     }
 
 

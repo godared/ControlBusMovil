@@ -14,7 +14,7 @@ import java.util.List;
 
 public interface IAlertaIncidenciaService {
     ArrayList<AlertaIncidencia> ObtenerAlertaIncidenciaRest(int emId,int taCoId);
-    void GuardarAlertaIncidenciaBD(BaseDatos baseDatos, List<AlertaIncidencia> alertaIncidencia);
+    void GuardarAlertaIncidenciaBD(List<AlertaIncidencia> alertaIncidencia);
     //void ActualizarAlertaIncidenciaBD(BaseDatos baseDatos, AlertaIncidencia alertaIncidencia);
     ArrayList<AlertaIncidencia> ObtenerAlertaIncidenciabyTaCoBD(int taCoId);
     AlertaIncidencia GetAllAlertaIncidenciaByIdBD (int alInId);

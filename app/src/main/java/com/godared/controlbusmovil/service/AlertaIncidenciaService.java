@@ -41,7 +41,7 @@ public class AlertaIncidenciaService implements IAlertaIncidenciaService {
             public void onResponse(Call<List<AlertaIncidencia>> call, Response<List<AlertaIncidencia>> response) {
                 ArrayList<AlertaIncidencia> alertaIncidencias;
                 alertaIncidencias=(ArrayList<AlertaIncidencia>) response.body();
-                GuardarAlertaIncidenciaBD(db,alertaIncidencias);
+                GuardarAlertaIncidenciaBD(alertaIncidencias);
             }
 
             @Override
@@ -54,11 +54,11 @@ public class AlertaIncidenciaService implements IAlertaIncidenciaService {
     }
 
     @Override
-    public void GuardarAlertaIncidenciaBD(BaseDatos baseDatos, List<AlertaIncidencia> alertaIncidencias) {
+    public void GuardarAlertaIncidenciaBD( List<AlertaIncidencia> alertaIncidencias) {
            AlertaIncidencia _alertaIncidencia=null;
         for (AlertaIncidencia alertaIncidencia:alertaIncidencias) {
             ContentValues contentValues = new ContentValues();
-            contentValues.put("AlInId", alertaIncidencia.getAlInId());
+            //contentValues.put("AlInId", alertaIncidencia.getAlInId());
             contentValues.put("EmId", alertaIncidencia.getEmId());
             contentValues.put("AlInFecha", alertaIncidencia.getAlInFecha());
             contentValues.put("AlInDescripcion", alertaIncidencia.getAlInDescripcion());
@@ -68,11 +68,11 @@ public class AlertaIncidenciaService implements IAlertaIncidenciaService {
             contentValues.put("UsId", alertaIncidencia.getUsId());
             contentValues.put("UsFechaReg", alertaIncidencia.getUsFechaReg());
             contentValues.put("TaCoId", alertaIncidencia.getTaCoId());
-            _alertaIncidencia = baseDatos.GetAllAlertaIncidenciaById(alertaIncidencia.getAlInId());
+            _alertaIncidencia = db.GetAllAlertaIncidenciaById(alertaIncidencia.getAlInId());
             if (_alertaIncidencia.getAlInId() < 1)
-                baseDatos.InsertarAlertaIncidencia(contentValues);
+                db.InsertarAlertaIncidencia(contentValues);
             else
-                baseDatos.ActualizarAlertaIncidencia(contentValues, alertaIncidencia.getAlInId());
+                db.ActualizarAlertaIncidencia(contentValues, alertaIncidencia.getAlInId());
         }
     }
 
