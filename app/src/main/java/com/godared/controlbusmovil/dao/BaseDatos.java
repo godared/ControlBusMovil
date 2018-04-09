@@ -80,7 +80,7 @@ public class BaseDatos extends SQLiteOpenHelper{
                 "TaCoId INTEGER, GeLatitud REAL, GeLongitud REAL,GeFechaHora TEXT,"+
                 "UsId INTEGER, UsFechaReg TEXT,GeOrden INTEGER,GeEnviadoMovil INTEGER) ";
         //AlertaIncidencia
-        String queryCrearTablaAlertaIncidencia="CREATE TABLE AlertaIncidencia(AlInId INTEGER PRIMARY KEY AUTOINCREMENT,"+
+        String queryCrearTablaAlertaIncidencia="CREATE TABLE AlertaIncidencia(AlInId INTEGER,"+
                 "EmId INTEGER, AlInFecha TEXT, AlInDescripcion TEXT, AlInTipo INTEGER, AlInLatitud REAL, AlInLongitud REAL,"+
                 "UsId INTEGER, UsFechaReg TEXT,TaCoId INTEGER) ";
         //Bitacora, estas tablas es para el control de envios

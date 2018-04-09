@@ -108,7 +108,7 @@ public class AlertaIncidenciaFragment extends Fragment implements IAlertaInciden
         AlertaIncidenciaService alertaIncidenciaService=new AlertaIncidenciaService(getContext());
         List<AlertaIncidencia> alertaIncidencias=new ArrayList<>();
         AlertaIncidencia alertaIncidencia=new AlertaIncidencia();
-        //alertaIncidencia.setAlInId(0);
+        alertaIncidencia.setAlInId(0);
         alertaIncidencia.setAlInTipo(false);
         alertaIncidencia.setTaCoId(this.TaCoId);
         SimpleDateFormat format = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");//("yyyy-MM-dd'T'HH:mm:ss");

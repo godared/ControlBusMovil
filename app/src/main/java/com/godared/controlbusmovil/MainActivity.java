@@ -47,6 +47,7 @@ import com.godared.controlbusmovil.service.AlertaIncidenciaService;
 import com.godared.controlbusmovil.service.ConfiguraService;
 import com.godared.controlbusmovil.service.DigitalClock;
 import com.godared.controlbusmovil.service.GeoreferenciaService;
+import com.godared.controlbusmovil.service.IAlertaIncidenciaService;
 import com.godared.controlbusmovil.service.IConfiguraService;
 import com.godared.controlbusmovil.service.IGeoreferenciaService;
 import com.godared.controlbusmovil.service.ITarjetaService;
@@ -78,7 +79,8 @@ import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity implements TarjetaService.TarjetaServiceListener,
         GeolocationService.Callbacks, TelefonoService.TelefonoServiceListener,
-        ConfiguraService.ConfiguraServiceListener, AlertaIncidenciaFragment.AlertaIncidenciaFragmentListerner {
+        ConfiguraService.ConfiguraServiceListener, AlertaIncidenciaFragment.AlertaIncidenciaFragmentListerner,
+        AlertaIncidenciaService.AlertaIncidenciaServiceListener{
     //public static String TAG;
     private Toolbar tbToolBar;
     private TabLayout tlTablaLayout;
@@ -354,9 +356,9 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         String dateFecha2=format2.format(this.FechaActual);
         iTarjetaService.obtenerTarjetasRest(EmId,BuId,dateFecha2);//"16-08-2017"
         // tarjetasControl=iTarjetaService.getTarjetasControl();
-        if(tarjetasDetalle!=null) {
-
-        }
+        // ahora descargamos las incidencias de la nube
+        IAlertaIncidenciaService alertaIncidenciaService=new AlertaIncidenciaService(context);
+        alertaIncidenciaService.ObtenerAlertaIncidenciaRest(this.EmId,this.TaCoId);
     }
     public void obtenerFechaServer(){
         IConfiguraService configuraService=new ConfiguraService(this,getApplicationContext());
@@ -415,7 +417,13 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         //bindService(geolocationServiceIntent, mConnection, Context.BIND_AUTO_CREATE); //Binding to the service!
 
     }
-
+    //esto viene desde la escucha interfaz AlertaIncidenciaService.AlertaIncidenciaServiceListener
+    public void listenObtenerAlertaIncidenciaRest(){
+        //Cargamos en el recyclerview de incidencias
+        AlertaIncidenciaFragment alertaIncidenciaFragment;
+        alertaIncidenciaFragment=(AlertaIncidenciaFragment) fragmets.get(2);
+        alertaIncidenciaFragment.alertaIncidenciaPresenter.obtenerAlertaIncidenciasBD(this.TaCoId);
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();

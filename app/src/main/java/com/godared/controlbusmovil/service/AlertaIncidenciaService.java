@@ -26,8 +26,18 @@ public class AlertaIncidenciaService implements IAlertaIncidenciaService {
     BaseDatos db;
     private Context context;
 
+    public interface AlertaIncidenciaServiceListener{
+        void listenObtenerAlertaIncidenciaRest();
+    }
+    private AlertaIncidenciaServiceListener mListener;
+
     public AlertaIncidenciaService(Context context) {
         this.context = context;
+        this.db=new BaseDatos(context);
+    }
+    public AlertaIncidenciaService(AlertaIncidenciaServiceListener mListener,Context context) {
+        this.context = context;
+        this.mListener=mListener;
         this.db=new BaseDatos(context);
     }
 
@@ -42,6 +52,7 @@ public class AlertaIncidenciaService implements IAlertaIncidenciaService {
                 ArrayList<AlertaIncidencia> alertaIncidencias;
                 alertaIncidencias=(ArrayList<AlertaIncidencia>) response.body();
                 GuardarAlertaIncidenciaBD(alertaIncidencias);
+                mListener.listenObtenerAlertaIncidenciaRest();
             }
 
             @Override
@@ -58,7 +69,11 @@ public class AlertaIncidenciaService implements IAlertaIncidenciaService {
            AlertaIncidencia _alertaIncidencia=null;
         for (AlertaIncidencia alertaIncidencia:alertaIncidencias) {
             ContentValues contentValues = new ContentValues();
-            //contentValues.put("AlInId", alertaIncidencia.getAlInId());
+            //si viene del server tons guarda su id
+            if (alertaIncidencia.getAlInId()>0)
+                contentValues.put("AlInId", alertaIncidencia.getAlInId());
+            else
+                contentValues.put("AlInId", 0);
             contentValues.put("EmId", alertaIncidencia.getEmId());
             contentValues.put("AlInFecha", alertaIncidencia.getAlInFecha());
             contentValues.put("AlInDescripcion", alertaIncidencia.getAlInDescripcion());
