@@ -709,6 +709,11 @@ public class BaseDatos extends SQLiteOpenHelper{
         db.update("AlertaIncidencia",contentValues,"AlInId="+alInId,null);
         db.close();
     }
+    public void ActualizarAlertaIncidencia(ContentValues contentValues,int alInId, String fecha){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.update("AlertaIncidencia",contentValues,"TaCoId="+alInId+" and AlInFecha="+fecha,null);
+        db.close();
+    }
     public void EliminarAlertaIncidencia(int alInId){
         SQLiteDatabase db=this.getWritableDatabase();
         db.delete("AlertaIncidencia","AlInId="+alInId, null);
@@ -757,7 +762,26 @@ public class BaseDatos extends SQLiteOpenHelper{
         db.close();
         return alertaIncidencias;
     }
-
+    public AlertaIncidencia GetAllAlertaIncidenciaByFechaTaCo(String fecha, int taCoId){
+        AlertaIncidencia alertaIncidenciaActual=new AlertaIncidencia();
+        String query="SELECT * FROM AlertaIncidencia where TaCoId="+taCoId+" and AlInFecha="+fecha;
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor registros=db.rawQuery(query,null);
+        while(registros.moveToNext()){
+            alertaIncidenciaActual.setAlInId(registros.getInt(0));
+            alertaIncidenciaActual.setEmId(registros.getInt(1));
+            alertaIncidenciaActual.setAlInFecha(registros.getString(2));
+            alertaIncidenciaActual.setAlInDescripcion(registros.getString(3));
+            alertaIncidenciaActual.setAlInTipo(registros.getInt(4)==1?true:false);
+            alertaIncidenciaActual.setAlInLatitud(registros.getDouble(5));
+            alertaIncidenciaActual.setAlInLongitud(registros.getDouble(6));
+            alertaIncidenciaActual.setUsId(registros.getInt(7));
+            alertaIncidenciaActual.setUsFechaReg(registros.getString(8));
+            alertaIncidenciaActual.setTaCoId(registros.getInt(9));
+        }
+        db.close();
+        return alertaIncidenciaActual;
+    }
     ///TarjetaBitacoraMovil
     public void insertarTarjetaBitacoraMovil(ContentValues contentValues){
         SQLiteDatabase db=this.getWritableDatabase();
@@ -769,6 +793,7 @@ public class BaseDatos extends SQLiteOpenHelper{
         db.update("TarjetaBitacoraMovil",contentValues,"TaCoId="+taCoId,null);
         db.close();
     }
+
     public void eliminarTarjetaBitacoraMovilByTaCo(int taCoId){
         SQLiteDatabase db=this.getWritableDatabase();
         db.delete("TarjetaBitacoraMovil","TaCoId="+taCoId, null);

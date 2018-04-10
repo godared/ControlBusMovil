@@ -40,7 +40,28 @@ public class AlertaIncidenciaService implements IAlertaIncidenciaService {
         this.mListener=mListener;
         this.db=new BaseDatos(context);
     }
+    @Override
+    public void SaveAlertaIncidenciaRest(AlertaIncidencia alertaIncidencia){
+        final AlertaIncidencia alertaIncidencia1=alertaIncidencia;
+        RestApiAdapter restApiAdapter = new RestApiAdapter();
+        IEndpointApi endpointApi=restApiAdapter.establecerConexionRestApi();
+        Call<Integer> alertaIncidenciaSend = endpointApi.saveAlertaIncidenciaOne(alertaIncidencia);
+        alertaIncidenciaSend.enqueue(new Callback<Integer>() {
+            @Override
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                Integer _alInId=(Integer)response.body();
+                //AlertaIncidencia alertaIncidencia2;
+                //alertaIncidencia2=db.GetAllAlertaIncidenciaByFechaTaCo(alertaIncidencia1.getAlInFecha(),alertaIncidencia1.getTaCoId());
+                alertaIncidencia1.setAlInId(_alInId);
+                ActualizarAlertaIncidenciaBD(alertaIncidencia1);
+            }
 
+            @Override
+            public void onFailure(Call<Integer> call, Throwable t) {
+                Toast.makeText(context, "Algo paso en la conexion", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
     @Override
     public ArrayList<AlertaIncidencia> ObtenerAlertaIncidenciaRest(int emId,int taCoId) {
         RestApiAdapter restApiAdapter = new RestApiAdapter();
@@ -64,6 +85,20 @@ public class AlertaIncidenciaService implements IAlertaIncidenciaService {
         return null;
     }
 
+    public void ActualizarAlertaIncidenciaBD( AlertaIncidencia alertaIncidencia){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("AlInId", alertaIncidencia.getAlInId());
+        contentValues.put("EmId", alertaIncidencia.getEmId());
+        contentValues.put("AlInFecha", alertaIncidencia.getAlInFecha());
+        contentValues.put("AlInDescripcion", alertaIncidencia.getAlInDescripcion());
+        contentValues.put("AlInTipo", alertaIncidencia.getAlInTipo() == true ? 1 : 0);
+        contentValues.put("AlInLatitud", alertaIncidencia.getAlInLatitud());
+        contentValues.put("AlInLongitud", alertaIncidencia.getAlInLongitud());
+        contentValues.put("UsId", alertaIncidencia.getUsId());
+        contentValues.put("UsFechaReg", alertaIncidencia.getUsFechaReg());
+        contentValues.put("TaCoId", alertaIncidencia.getTaCoId());
+        db.ActualizarAlertaIncidencia(contentValues,alertaIncidencia.getTaCoId(), alertaIncidencia.getAlInFecha());
+    }
     @Override
     public void GuardarAlertaIncidenciaBD( List<AlertaIncidencia> alertaIncidencias) {
            AlertaIncidencia _alertaIncidencia=null;
