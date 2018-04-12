@@ -357,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         iTarjetaService.obtenerTarjetasRest(EmId,BuId,dateFecha2);//"16-08-2017"
         // tarjetasControl=iTarjetaService.getTarjetasControl();
         // ahora descargamos las incidencias de la nube
-        IAlertaIncidenciaService alertaIncidenciaService=new AlertaIncidenciaService(context);
+        IAlertaIncidenciaService alertaIncidenciaService=new AlertaIncidenciaService(this,context);
         alertaIncidenciaService.ObtenerAlertaIncidenciaRest(this.EmId,this.TaCoId);
     }
     public void obtenerFechaServer(){
