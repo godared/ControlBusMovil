@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.godared.controlbusmovil.adapter.TarjetaAdaptadorRV;
 import com.godared.controlbusmovil.dao.BaseDatos;
+import com.godared.controlbusmovil.pojo.AlertaIncidencia;
 import com.godared.controlbusmovil.pojo.Georeferencia;
 import com.godared.controlbusmovil.pojo.TarjetaBitacoraMovil;
 import com.godared.controlbusmovil.pojo.TarjetaControl;
@@ -18,6 +19,7 @@ import com.godared.controlbusmovil.restApi.adapter.RestApiAdapter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -36,6 +38,7 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
     private  ArrayList<TarjetaControlDetalle> tarjetasDetalle;
     PuntoControlService puntoControlService;
     GeoreferenciaService georeferenciaService;
+    AlertaIncidenciaService alertaIncidenciaService;
     TarjetaControl tarjetaControl222;
     public interface TarjetaServiceListener {
         public void listenObtenerTarjetasDetalleRest();
@@ -59,6 +62,7 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
         db=new BaseDatos(context);
         puntoControlService=new PuntoControlService(context);
         georeferenciaService=new GeoreferenciaService(context);
+        alertaIncidenciaService=new AlertaIncidenciaService(context);
     }
     public TarjetaService(Context context){ //IMapsFragment iSettingFragment,this.iSettingFragment=iSettingFragment;
         this.context=context;
@@ -66,6 +70,7 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
         db=new BaseDatos(context);
         puntoControlService=new PuntoControlService(context);
         georeferenciaService=new GeoreferenciaService(context);
+        alertaIncidenciaService=new AlertaIncidenciaService(context);
     }
     public void obtenerTarjetasDetalleRest(int taCoId){
         RestApiAdapter restApiAdapter = new RestApiAdapter();
@@ -417,6 +422,22 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
             if (_tarjetaBitacoraMovil.getTaBiMoFinalDetalle()==1 || _tarjetaBitacoraMovil.getTaBiMoFinalDetalle()==2){
                 //Actualizamos al servidor
                 this.UpdateTarjetaRest(tarjetaControl);
+
+            }
+            //Aqui tambien enviamos incidencias, asi no este completado o finalizado la tarjeta
+            List<AlertaIncidencia> alertaIncidencias;
+            alertaIncidencias=alertaIncidenciaService.ObtenerAlertaIncidenciabyTaCoBD(tarjetaControl.getTaCoId());
+            //filtramos eliminando a los que tienen codigo getAlInId
+            //este codigo filtra y el resultado lo devuelve en alertaIncidencias
+            Iterator<AlertaIncidencia> it = alertaIncidencias.iterator();
+            while (it.hasNext()) {
+                AlertaIncidencia current = it.next();
+                if (current.getAlInId()>0) {
+                    it.remove();
+                }
+            }
+            for(AlertaIncidencia alertaIncidencia:alertaIncidencias){
+                alertaIncidenciaService.SaveAlertaIncidenciaRest(alertaIncidencia);
             }
             //Ahora si enviamos la georeferencia
             List<Georeferencia> georeferencias=null;

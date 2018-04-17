@@ -420,9 +420,9 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     //esto viene desde la escucha interfaz AlertaIncidenciaService.AlertaIncidenciaServiceListener
     public void listenObtenerAlertaIncidenciaRest(){
         //Cargamos en el recyclerview de incidencias
-        AlertaIncidenciaFragment alertaIncidenciaFragment;
-        alertaIncidenciaFragment=(AlertaIncidenciaFragment) fragmets.get(2);
-        alertaIncidenciaFragment.alertaIncidenciaPresenter.obtenerAlertaIncidenciasBD(this.TaCoId);
+        //AlertaIncidenciaFragment alertaIncidenciaFragment;
+        //alertaIncidenciaFragment=(AlertaIncidenciaFragment) fragmets.get(2);
+        //alertaIncidenciaFragment.alertaIncidenciaPresenter.obtenerAlertaIncidenciasBD(this.TaCoId);
     }
     @Override
     protected void onDestroy() {
@@ -552,11 +552,19 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         tlTablaLayout=(TabLayout)findViewById(R.id.tlTablaLayout);
         vpViewPager=(ViewPager) findViewById(R.id.vpViewPager);
 
+        //obteniendo la tarejacontrol activo
+        ITarjetaService tarjetaService=new TarjetaService(this);
+        TarjetaControl _tarjetaControl=null;
+        // String myDate=this.FechaActual;
+        SimpleDateFormat format = new SimpleDateFormat("dd-M-yyyy");//("yyyy-MM-dd'T'HH:mm:ss");
+        String dateFecha=format.format(this.FechaActual);
+        _tarjetaControl =tarjetaService.GetTarjetaControlActivo(BuId,dateFecha);//"16-08-2017"
+        this.TaCoId=_tarjetaControl.getTaCoId();
+
         Bundle args = new Bundle();
         args.putInt("BUS_ID",BuId);
         args.putInt("TACO_ID",0);
-        SimpleDateFormat format = new SimpleDateFormat("dd-M-yyyy");//("yyyy-MM-dd'T'HH:mm:ss");
-        String dateFecha=format.format(this.FechaActual);
+
         args.putString("TACO_FECHA",dateFecha);
         args.putBoolean("INDICA_GETDETALLEACTIVO",true);
 
@@ -574,12 +582,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         tlTablaLayout.getTabAt(0).setIcon(R.drawable.icons8_tarjeta_para_fichar_48);
         tlTablaLayout.getTabAt(1).setIcon(R.drawable.icons8_marcador_de_mapa_48);
         tlTablaLayout.getTabAt(2).setIcon(R.drawable.icons8_mensaje_urgente_48);
-        //obteniendo la tarejacontrol activo
-        ITarjetaService tarjetaService=new TarjetaService(this);
-        TarjetaControl _tarjetaControl=null;
-        // String myDate=this.FechaActual;
-        _tarjetaControl =tarjetaService.GetTarjetaControlActivo(BuId,dateFecha);//"16-08-2017"
-        this.TaCoId=_tarjetaControl.getTaCoId();
+
         geolocationServiceIntent=new Intent(this, GeolocationService.class);
         geolocationServiceIntent.putExtra("BUS_ID",BuId);
         geolocationServiceIntent.putExtra("TACO_ID",TaCoId);
