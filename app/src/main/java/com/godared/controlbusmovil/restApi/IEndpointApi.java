@@ -72,12 +72,12 @@ public interface IEndpointApi {
     Call<List<Configura>> getAllConfiguraByEmPeriodo(@Query("emId") int emId, @Query("coPeriodo") int coPeriodo);
 
     //AlertaIncidencia
-    @POST(ConstantesRestApi.URL_GEOREFERENCIA+"save")
+    @POST(ConstantesRestApi.URL_ALERTA_INCIDENCIA+"save")
     Call<Integer> saveAlertaIncidenciaOne(@Body AlertaIncidencia alertaIncidencia);
 
     @GET(ConstantesRestApi.URL_ALERTA_INCIDENCIA+"getallalertaincidenciabyemtaco")
     Call<List<AlertaIncidencia>> getAllAlertaIncidenciaByEmTaCo(@Query("emId") int emId, @Query("taCoId") int taCoId);
 
-    @POST(ConstantesRestApi.URL_ALERTA_INCIDENCIA+"save")
+    @POST(ConstantesRestApi.URL_ALERTA_INCIDENCIA+"saves")
     Call<Boolean> saveAlertaIncidencia(@Body List<AlertaIncidencia> alertaIncidencias);
 }

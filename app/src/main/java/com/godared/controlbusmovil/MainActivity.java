@@ -420,9 +420,12 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     //esto viene desde la escucha interfaz AlertaIncidenciaService.AlertaIncidenciaServiceListener
     public void listenObtenerAlertaIncidenciaRest(){
         //Cargamos en el recyclerview de incidencias
-        //AlertaIncidenciaFragment alertaIncidenciaFragment;
-        //alertaIncidenciaFragment=(AlertaIncidenciaFragment) fragmets.get(2);
-        //alertaIncidenciaFragment.alertaIncidenciaPresenter.obtenerAlertaIncidenciasBD(this.TaCoId);
+
+        if (vpViewPager.getCurrentItem()==2){
+            AlertaIncidenciaFragment alertaIncidenciaFragment;
+            alertaIncidenciaFragment=(AlertaIncidenciaFragment) fragmets.get(2);
+            alertaIncidenciaFragment.alertaIncidenciaPresenter.obtenerAlertaIncidenciasBD(this.TaCoId);
+        }
     }
     @Override
     protected void onDestroy() {
@@ -582,6 +585,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         tlTablaLayout.getTabAt(0).setIcon(R.drawable.icons8_tarjeta_para_fichar_48);
         tlTablaLayout.getTabAt(1).setIcon(R.drawable.icons8_marcador_de_mapa_48);
         tlTablaLayout.getTabAt(2).setIcon(R.drawable.icons8_mensaje_urgente_48);
+
 
         geolocationServiceIntent=new Intent(this, GeolocationService.class);
         geolocationServiceIntent.putExtra("BUS_ID",BuId);
