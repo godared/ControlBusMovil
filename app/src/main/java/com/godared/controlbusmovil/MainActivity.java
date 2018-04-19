@@ -356,9 +356,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         String dateFecha2=format2.format(this.FechaActual);
         iTarjetaService.obtenerTarjetasRest(EmId,BuId,dateFecha2);//"16-08-2017"
         // tarjetasControl=iTarjetaService.getTarjetasControl();
-        // ahora descargamos las incidencias de la nube
-        IAlertaIncidenciaService alertaIncidenciaService=new AlertaIncidenciaService(this,context);
-        alertaIncidenciaService.ObtenerAlertaIncidenciaRest(this.EmId,this.TaCoId);
+
     }
     public void obtenerFechaServer(){
         IConfiguraService configuraService=new ConfiguraService(this,getApplicationContext());
@@ -415,6 +413,17 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         //geofencesAlreadyRegistered = false;
         //startService(geolocationServiceIntent);
         //bindService(geolocationServiceIntent, mConnection, Context.BIND_AUTO_CREATE); //Binding to the service!
+
+        //obteniendo la tarejacontrol activo
+        ITarjetaService tarjetaService=new TarjetaService(this);
+        TarjetaControl _tarjetaControl=null;
+        SimpleDateFormat format = new SimpleDateFormat("dd-M-yyyy");//("yyyy-MM-dd'T'HH:mm:ss");
+        String dateFecha=format.format(this.FechaActual);
+        _tarjetaControl =tarjetaService.GetTarjetaControlActivo(BuId,dateFecha);//"16-08-2017"
+        this.TaCoId=_tarjetaControl.getTaCoId();
+        // ahora descargamos las incidencias de la nube
+        IAlertaIncidenciaService alertaIncidenciaService=new AlertaIncidenciaService(this,getApplicationContext());
+        alertaIncidenciaService.ObtenerAlertaIncidenciaRest(this.EmId,this.TaCoId);
 
     }
     //esto viene desde la escucha interfaz AlertaIncidenciaService.AlertaIncidenciaServiceListener

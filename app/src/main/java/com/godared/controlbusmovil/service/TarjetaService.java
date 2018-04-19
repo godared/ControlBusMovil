@@ -442,6 +442,7 @@ public class TarjetaService  implements ITarjetaService{  // extends ContextWrap
             //Ahora si enviamos la georeferencia
             List<Georeferencia> georeferencias=null;
             georeferencias=georeferenciaService.GetAllGeoreferenciaByTaCoNoEnviado(tarjetaControl.getTaCoId());
+            if(georeferencias.size()>0)
             georeferenciaService.SaveGeoreferenciaRest(georeferencias);
         }
     }

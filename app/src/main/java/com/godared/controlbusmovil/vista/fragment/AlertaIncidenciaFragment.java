@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 
+import com.godared.controlbusmovil.MainActivity;
 import com.godared.controlbusmovil.R;
 import com.godared.controlbusmovil.adapter.AlertaIncidenciaAdaptadorRV;
 import com.godared.controlbusmovil.pojo.AlertaIncidencia;
@@ -55,7 +56,8 @@ public class AlertaIncidenciaFragment extends Fragment implements IAlertaInciden
         //return super.onCreateView(inflater, container, savedInstanceState);
         View v=inflater.inflate(R.layout.fragment_alerta_incidencia,container,false); //asignamos un layout
         listaAlertaIncidencias=(RecyclerView)v.findViewById(R.id.rvAlertaIncidencia);
-        TaCoId=getArguments().getInt("TACO_ID");
+        MainActivity _mainActivity=(MainActivity)getActivity();
+        TaCoId=_mainActivity.TaCoId; //getArguments().getInt("TACO_ID");
         alertaIncidenciaPresenter=new RecyclerviewAlertaIncidenciaPresenter(this,getContext(),TaCoId );
         btnFab = (FloatingActionButton)v.findViewById(R.id.fab2);
         if (btnFab != null) {
