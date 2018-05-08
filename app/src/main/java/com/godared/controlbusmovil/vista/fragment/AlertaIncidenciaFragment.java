@@ -38,6 +38,8 @@ public class AlertaIncidenciaFragment extends Fragment implements IAlertaInciden
     RecyclerView listaAlertaIncidencias;
     public IRecyclerviewAlertaIncidenciaPresenter alertaIncidenciaPresenter;
     int TaCoId;
+    int EmId;
+    MainActivity mainActivity;
     FloatingActionButton btnFab;
     public interface AlertaIncidenciaFragmentListerner{
         void listenNuevaIncidenciaDialog(String descripcion);
@@ -56,8 +58,9 @@ public class AlertaIncidenciaFragment extends Fragment implements IAlertaInciden
         //return super.onCreateView(inflater, container, savedInstanceState);
         View v=inflater.inflate(R.layout.fragment_alerta_incidencia,container,false); //asignamos un layout
         listaAlertaIncidencias=(RecyclerView)v.findViewById(R.id.rvAlertaIncidencia);
-        MainActivity _mainActivity=(MainActivity)getActivity();
-        TaCoId=_mainActivity.TaCoId; //getArguments().getInt("TACO_ID");
+        mainActivity=(MainActivity)getActivity();
+        TaCoId=mainActivity.TaCoId; //getArguments().getInt("TACO_ID");
+        EmId=mainActivity.EmId;
         alertaIncidenciaPresenter=new RecyclerviewAlertaIncidenciaPresenter(this,getContext(),TaCoId );
         btnFab = (FloatingActionButton)v.findViewById(R.id.fab2);
         if (btnFab != null) {
@@ -113,9 +116,12 @@ public class AlertaIncidenciaFragment extends Fragment implements IAlertaInciden
         alertaIncidencia.setAlInId(0);
         alertaIncidencia.setAlInTipo(false);
         alertaIncidencia.setTaCoId(this.TaCoId);
+        alertaIncidencia.setEmId(this.EmId);
         SimpleDateFormat format = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");//("yyyy-MM-dd'T'HH:mm:ss");
         String dateFecha=format.format(new Date());
-        alertaIncidencia.setAlInFecha(dateFecha);
+        mainActivity=(MainActivity)getActivity();
+        Date fecha2=mainActivity.FechaActual;
+        alertaIncidencia.setAlInFecha(String.valueOf(fecha2.getTime()));
         alertaIncidencia.setAlInDescripcion(descripcion);
         alertaIncidencias.add(alertaIncidencia);
         alertaIncidenciaService.GuardarAlertaIncidenciaBD(alertaIncidencias);

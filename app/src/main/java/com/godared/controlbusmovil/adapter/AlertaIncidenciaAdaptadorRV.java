@@ -44,13 +44,13 @@ public class AlertaIncidenciaAdaptadorRV extends RecyclerView.Adapter<AlertaInci
         //Formateando Hora
         String zona="America/Lima";
         TimeZone timeZone2 = TimeZone.getTimeZone(zona);
-        String hora=alertaIncidencia.getAlInFecha();//
+        String fecha1=alertaIncidencia.getAlInFecha();//
         Calendar cal=Calendar.getInstance(timeZone2);
         //cal.setTime(hora);//.setTimeInMillis(Long.parseLong(hora));
 
         SimpleDateFormat sdf2 = new SimpleDateFormat("dd-MM-yyyy");//"yyyy-MM-dd HH:mm:ss"
         try {
-            cal.setTime(sdf2.parse(hora));
+            cal.setTime(sdf2.parse(fecha1));
         } catch (ParseException e) {
             e.printStackTrace();
         }

@@ -715,6 +715,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         alertaIncidencia.setAlInId(0);
         alertaIncidencia.setAlInTipo(false);
         alertaIncidencia.setTaCoId(this.TaCoId);
+       alertaIncidencia.setEmId(this.EmId);
        SimpleDateFormat format = new SimpleDateFormat("dd-M-yyyy");//("yyyy-MM-dd'T'HH:mm:ss");
        String dateFecha=format.format(this.FechaActual);
         alertaIncidencia.setAlInFecha(dateFecha);
