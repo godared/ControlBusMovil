@@ -119,9 +119,12 @@ public class AlertaIncidenciaFragment extends Fragment implements IAlertaInciden
         alertaIncidencia.setEmId(this.EmId);
         SimpleDateFormat format = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");//("yyyy-MM-dd'T'HH:mm:ss");
         String dateFecha=format.format(new Date());
+        //Obtenemos los ultimo datos del MaintActivity
         mainActivity=(MainActivity)getActivity();
         Date fecha2=mainActivity.FechaActual;
         alertaIncidencia.setAlInFecha(String.valueOf(fecha2.getTime()));
+        alertaIncidencia.setAlInLatitud(mainActivity.Latitud);
+        alertaIncidencia.setAlInLongitud(mainActivity.Longitud);
         alertaIncidencia.setAlInDescripcion(descripcion);
         alertaIncidencias.add(alertaIncidencia);
         alertaIncidenciaService.GuardarAlertaIncidenciaBD(alertaIncidencias);

@@ -98,6 +98,8 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     public String BuPlaca;
     public String EmConsorcio;
     public Date FechaActual;
+    public double Latitud;
+    public double Longitud;
 
     ITarjetaService iTarjetaService;
     //variablea para el servicio Geolocation
@@ -515,6 +517,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     public void  listenguardarGeoreferenciaGeolocationService(Location location){
         IGeoreferenciaService _georeferenciaService=new GeoreferenciaService(getApplicationContext());
         Georeferencia _georeferencia=new Georeferencia();
+
         if (this.TaCoId>0){
             //_georeferencia.setGeId(0);
             _georeferencia.setTaCoId(this.TaCoId);
@@ -548,6 +551,9 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
                 _georeferenciaService.SaveGeoreferenciaRest(_georeferencia);
 
         }
+        //Estos dos datos lo uso en AlertaIncidenciaFragment(se guarda ahi)
+        this.Latitud=location.getLatitude();
+        this.Longitud=location.getLongitude();
     }
     //esto es de a interfaz TelefonoServiceListen
     public void listenObtenerTelefonoImeiRest(){
