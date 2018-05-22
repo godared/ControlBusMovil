@@ -13,11 +13,7 @@ import android.content.res.Resources;
 import android.location.Location;
 import android.os.Binder;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -35,6 +31,8 @@ import com.godared.controlbusmovil.service.GeoreferenciaService;
 import com.godared.controlbusmovil.service.IGeoreferenciaService;
 import com.godared.controlbusmovil.service.ITarjetaService;
 import com.godared.controlbusmovil.service.TarjetaService;
+import com.godared.controlbusmovil.service.TimerService;
+import com.godared.controlbusmovil.vista.SettingActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -49,7 +47,6 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -76,8 +73,12 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
         public void updateGeofenceGeolocationService(int taCoDeId,int puCoDeId,double latitude,double longitude);
         public void listenguardarGeoreferenciaGeolocationService(Location location);
     }
+    //VAriable para timer-------------------------------------------------
+    public static final String TAG = GeolocationService.class.getSimpleName();
+    private TimerService timerService;
+    private boolean serviceBound;
     //esto es para enlazar al otro servicio gefencereceive
-    Intent geolocationServiceIntent2;
+    Intent intentGeofenceReceiveServiceIntent;
     GeofenceReceiver geofenceReceiver;
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -100,9 +101,34 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
             //tbStartTask.setEnabled(false);
         }
     };
+    private ServiceConnection mConnection2 = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                Log.v(TAG, "Service bound");
+            }
+            TimerService.RunServiceBinder binder = (TimerService.RunServiceBinder) service;
+            timerService = binder.getService();
+            serviceBound = true;
+            // Ensure the service is not in the foreground when bound
+            timerService.background();
+            // Update the UI if the service is already running the timer
+            if (timerService.isTimerRunning()) {
+                //updateHoraofTimerService();
+                Toast.makeText(getApplicationContext(), String.valueOf(timerService.elapsedTime()), Toast.LENGTH_SHORT).show();
+            }
+        }
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                Log.v(TAG, "Service disconnect");
+            }
+            serviceBound = false;
+        }
+    };
     public GeolocationService() {
     }
-
+/*
     @Override
     public void onStart(Intent intent, int startId) {
         buildGoogleApiClient();
@@ -115,15 +141,41 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
         mGoogleApiClient.connect();
 
     }
-   /* @Override
+    */
+   @Override
+    public void onCreate() {
+        super.onCreate();
+        buildGoogleApiClient();
+        mGoogleApiClient.connect();
+
+
+    }
+
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (isLocationPermissionGranted() && intent != null) {
-            registerGeofences();
+      if (intent != null) {
+          Bundle extra_buId = intent.getExtras();
+          BuId = extra_buId.getInt("BUS_ID");
+          TaCoId = extra_buId.getInt("TACO_ID");
+      } else {
+        this.stopSelf(startId);
+       }
+      /*if (isLocationPermissionGranted() && intent != null) {
+            //registerGeofences();
+            //activity=intent. ;
         } else {
-            this.stopSelf(startId);
+            ///this.stopSelf(startId);
         }
-        return START_REDELIVER_INTENT;
-    }*/
+     */
+        //Este servicio esta ejecutandose desde el MainActivity, entonces ya solo obtenemos la referencia del servicio
+        Intent intentTimerService = new Intent(this, TimerService.class);
+        startService(intentTimerService);
+        bindService(intentTimerService, mConnection2, 0);
+      //Esto es necesario si se esta pasando datos en un intent, si el service no inicia, se reinicia intentando recuperar los datos del intent
+        return  START_REDELIVER_INTENT;
+        //return START_STICKY;
+    }
     private boolean isLocationPermissionGranted() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
@@ -138,7 +190,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
         //esto es para parar el servicio geolocationService si este se detruye
         try {
             unbindService(mConnection);
-            stopService(geolocationServiceIntent2);
+            stopService(intentGeofenceReceiveServiceIntent);
         }
         catch (Throwable t) {
             Log.e("MainActivity", "Failed to unbind from the service", t);
@@ -211,14 +263,14 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
             return mPendingIntent;
         } else {
 
-            geolocationServiceIntent2 = new Intent(this, GeofenceReceiver.class);
-            geolocationServiceIntent2.putExtra("BUS_ID",BuId);
-            geolocationServiceIntent2.putExtra("TACO_ID",TaCoId);
+            intentGeofenceReceiveServiceIntent = new Intent(this, GeofenceReceiver.class);
+            intentGeofenceReceiveServiceIntent.putExtra("BUS_ID",BuId);
+            intentGeofenceReceiveServiceIntent.putExtra("TACO_ID",TaCoId);
             //intent de MainActivity
                      //return PendingIntent.getService(this, 0, intent,
                    // PendingIntent.FLAG_UPDATE_CURRENT);
-            PendingIntent pendingIntent=PendingIntent.getService(this, 0, geolocationServiceIntent2,PendingIntent.FLAG_UPDATE_CURRENT);
-            bindService(geolocationServiceIntent2, mConnection, Context.BIND_AUTO_CREATE);
+            PendingIntent pendingIntent=PendingIntent.getService(this, 0, intentGeofenceReceiveServiceIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+            bindService(intentGeofenceReceiveServiceIntent, mConnection, Context.BIND_AUTO_CREATE);
             return pendingIntent;
         }
     }
@@ -253,14 +305,11 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
     }
-
-
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.i(MainActivity.TAG, "Connected to GoogleApiClient");
         startLocationUpdates();
     }
-
     @Override
     public void onConnectionSuspended(int i) {
         Log.i(MainActivity.TAG, "Connection suspended");
@@ -305,6 +354,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
         }
         //es aqui que vamos a guardar la georeferencia(movimientos del bus)
         //lo reenviamos al MainActivity por eso de la fecha que no pude enviarlos aqui
+        this.guardarGeoreferenciaGeolocationService(location);
         activity.listenguardarGeoreferenciaGeolocationService(location);
 
     }
@@ -318,7 +368,6 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
                 .addApi(LocationServices.API).build();
         createLocationRequest();
     }
-
     protected void createLocationRequest() {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
@@ -340,9 +389,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
                 return mResources.getString(R.string.unknown_geofence_error);
         }
     }
-
     //esto es para conectar con la actividad y devolver un valor
-
     //Here Activity register to the service as Callbacks client
     public void registerClient(Activity activity){
         this.activity = (Callbacks)activity;
@@ -366,9 +413,103 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
     } */
     //viene desde el GeofenceReceive, implementando su interfaz
     public void updateOrigen(int taCoDeId,int puCoDeId,double latitude,double longitude){
+        this.updateGeofenceGeolocationService(taCoDeId,puCoDeId,latitude,longitude);
         //Llamamos al updateGeofenceGeolocationService en MainActivity(este lo implementa)
         activity.updateGeofenceGeolocationService(taCoDeId,puCoDeId,latitude,longitude);
+    }
+    //Con este procedimiento actualizamos los puntos de control, viene desde GeofenceReceive
+    public void updateGeofenceGeolocationService(int taCoDeId,int puCoDeId,double latitude,double longitude){
+        String date = DateFormat.format("dd-MM-yyyy",new Date()).toString();
+        String zona="America/Lima";
+        TimeZone timeZone2 = TimeZone.getTimeZone(zona);
+        Calendar cal = Calendar.getInstance(timeZone2);
+        //Calendar cal = Calendar.getInstance();
+        this.FechaActual=new Date();
+        //Obtenemos la fecha del TimerService que esta en ejecucion tambien.
+        this.FechaActual.setTime(timerService.elapsedTime());
+        cal.setTime(this.FechaActual);
+        ITarjetaService tarjetaService;
+        tarjetaService=new TarjetaService(getApplicationContext());
+        TarjetaControlDetalle tarjetaControlDetalle;
+        tarjetaControlDetalle=tarjetaService.GetTarjetaDetalleByTaCoPuCoDe(TaCoId,puCoDeId);
+        //verificamos si es que no se ha registrado o enviado la geofence
+        if (!tarjetaService.VerificarTarjetaDetalleBDByTaCoDeRegistradoEnviado(tarjetaControlDetalle.getTaCoDeId())) {
+            //tarjetaControlDetalle.setTaCoDeId(sg.getPuCoDeId());
+            Long value = cal.getTimeInMillis();
+            tarjetaControlDetalle.setTaCoDeFecha(value.toString());
+            tarjetaControlDetalle.setTaCoDeLatitud(latitude);
+            tarjetaControlDetalle.setTaCoDeLongitud(longitude);
+            Calendar cal2=Calendar.getInstance();
+            cal2.setTimeInMillis(this.FechaActual.getTime());
+            String hora = DateFormat.format("HH:mm:ss",
+                    cal2).toString(); //new Date()).toString();
+            SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
+            try {
+                cal.setTime(sdf2.parse(hora)); //cal.setTime(sdf2.parse(hora));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            value = cal.getTimeInMillis();
+            tarjetaControlDetalle.setTaCoDeTiempo(value.toString());
+            //actualizamos en la base de datos local
+            tarjetaService.actualizarTarjetaDetalleBD(tarjetaControlDetalle);
+            //Actualizamos el Registro
+            TarjetaDetalleBitacoraMovil tarjetaDetalleBitacoraMovil;
+            tarjetaDetalleBitacoraMovil=tarjetaService.obtenerTarjetaDetalleBitacoraMovilByTaCoDe(tarjetaControlDetalle.getTaCoDeId());
+            tarjetaDetalleBitacoraMovil.setTaDeBiMoRegistradoId(1);
+            tarjetaService.actualizarTarjetaDetalleBitacoraMovilBD(tarjetaControlDetalle.getTaCoDeId(),tarjetaDetalleBitacoraMovil);
+            //Actualizamos en el servidor
+            tarjetaService.UpdateTarjetaDetalleRest(tarjetaControlDetalle);
+            //verificamos si todo el detalle ya tienen registros para activar finaliza en la cabecera TarjetaCOntrol
+            tarjetaService.VerificarActualizaTarjetaFinaliza(tarjetaControlDetalle.getTaCoId());
+            ///devolvemos a MainActivity for Update RecyclerView
 
+        }
+    }
+    //Con este procedimiento guardamos la Georeferencia en el servidor rest de la nube
+    public void  guardarGeoreferenciaGeolocationService(Location location){
+        IGeoreferenciaService _georeferenciaService=new GeoreferenciaService(getApplicationContext());
+        Georeferencia _georeferencia=new Georeferencia();
+        this.FechaActual=new Date();
+        //Obtenemos la fecha del TimerService que esta en ejecucion tambien.
+        this.FechaActual.setTime(timerService.elapsedTime());
+        if (this.TaCoId>0){
+            //_georeferencia.setGeId(0);
+            _georeferencia.setTaCoId(this.TaCoId);
+            _georeferencia.setGeLatitud(location.getLatitude());
+            _georeferencia.setGeLongitud(location.getLongitude());
+            String dateNow = DateFormat.format("yyyy-dd-MM HH:mm:ss a",
+                    this.FechaActual).toString();
+            Date fecha2=this.FechaActual;
+            _georeferencia.setGeFechaHora(String.valueOf(fecha2.getTime()));
+            int cantidad=_georeferenciaService.GetCountGeoreferenciadByTaCo(this.TaCoId);
+            _georeferencia.setGeOrden(cantidad+1);
+            _georeferencia.setGeEnviadoMovil(false);
+            _georeferencia.setUsId(1);
+
+            //Verificamos si el ultimo registro no ha variado con respecto al actual
+            //primero obtenemos el ultimo registro
+            Georeferencia georeferencia=null;
+            georeferencia=_georeferenciaService.GetLastGeoreferenciaByTaCo(this.TaCoId);
+            //redondeamos a 3 digitos, debido que es ahi varia cuando varia de posicion auna distancia prudente de 30mts
+            DecimalFormat df = new DecimalFormat("####0.0000");
+            //System.out.println("Value: " + df.format(value));
+            df.setRoundingMode(RoundingMode.CEILING);
+            double _latitudActual=Double.valueOf(df.format(location.getLatitude()));
+            double _longitudActual=Double.valueOf(df.format(location.getLongitude()));
+            double _latitudLastBD=Double.valueOf(df.format(georeferencia.getGeLatitud()));
+            double _longitudLastBD=Double.valueOf(df.format(georeferencia.getGeLongitud()));
+            //if(_latitudActual!=_latitudLastBD || _longitudActual!=_longitudLastBD)
+            //Calculamos la distancia en metros
+            double diferencia,diferencia2;
+            diferencia = Math.sqrt(Math.pow(_latitudLastBD - _latitudActual, 2) + Math.pow(_longitudLastBD - _longitudActual, 2))*100; //se multiplico por 100 no se de acuerdo a las pruebas que hice en excel
+            diferencia2=diferencia*1000; //Aqui para convertir a metros(nos da en kilometros)
+            if (diferencia2 > 50 | _latitudLastBD == 0)
+                _georeferenciaService.SaveGeoreferenciaRest(_georeferencia);
+            //else
+            // _georeferenciaService.SaveGeoreferenciaRest(_georeferencia);
+
+        }
 
     }
 }

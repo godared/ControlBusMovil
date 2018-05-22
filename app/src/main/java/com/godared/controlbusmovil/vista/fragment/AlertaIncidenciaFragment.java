@@ -69,7 +69,8 @@ public class AlertaIncidenciaFragment extends Fragment implements IAlertaInciden
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(getContext(), "Hello FAB!", Toast.LENGTH_SHORT).show();
-                    NewAlertaIncidenciaDialogFragment df= new NewAlertaIncidenciaDialogFragment(AlertaIncidenciaFragment.this);
+                    String tituloDialogo="Nueva Incidencia";
+                    NewAlertaIncidenciaDialogFragment df= new NewAlertaIncidenciaDialogFragment(AlertaIncidenciaFragment.this,tituloDialogo,TaCoId);
                     df.show(getFragmentManager(), "NewAlertaIncidenciaDialogFragment");
                 }
             });
@@ -108,7 +109,7 @@ public class AlertaIncidenciaFragment extends Fragment implements IAlertaInciden
         listaAlertaIncidencias.setAdapter(adaptadorRV);
     }
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog, String descripcion) {
+    public void onDialogPositiveClick(DialogFragment dialog, String descripcion, int taCoId) {
         // User touched the dialog's positive button
         AlertaIncidenciaService alertaIncidenciaService=new AlertaIncidenciaService(getContext());
         List<AlertaIncidencia> alertaIncidencias=new ArrayList<>();
@@ -128,6 +129,8 @@ public class AlertaIncidenciaFragment extends Fragment implements IAlertaInciden
         alertaIncidencia.setAlInDescripcion(descripcion);
         alertaIncidencias.add(alertaIncidencia);
         alertaIncidenciaService.GuardarAlertaIncidenciaBD(alertaIncidencias);
+        //enviamos al servidor en la nube
+        alertaIncidenciaService.SaveAlertaIncidenciaRest(alertaIncidencia);
 
         //esto viene desde TarjetaService
         //AlertaIncidenciaFragment alertaIncidenciaFragment;

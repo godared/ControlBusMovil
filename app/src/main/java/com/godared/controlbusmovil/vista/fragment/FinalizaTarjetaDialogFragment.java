@@ -69,7 +69,7 @@ public class FinalizaTarjetaDialogFragment extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("¿Esta seguro de finalizar la Tarjeta?");
-// Add the buttons
+        // Add the buttons
         builder.setPositiveButton("SI", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked OK button

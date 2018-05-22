@@ -18,6 +18,8 @@ import com.godared.controlbusmovil.vista.DetalleActivity;
 import com.godared.controlbusmovil.vista.SettingActivity;
 import com.godared.controlbusmovil.vista.fragment.FinalizaTarjetaDialogFragment;
 import android.support.v4.app.FragmentManager.*;
+import android.widget.Toast;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -71,6 +73,11 @@ public class EnvioTarjetaAdaptadorRV extends RecyclerView.Adapter<EnvioTarjetaAd
         holder.txtNroVuelta.setText(String.valueOf(_tarjetaControl.getTaCoNroVuelta()));
         holder.txtEstado.setText(_tarjetaControl.getUsFechaReg());
         holder.txtRegistro.setText(String.valueOf(_tarjetaControl.getTaCoCodEnvioMovil()));
+        final int _codEnvio=_tarjetaControl.getTaCoCodEnvioMovil();
+        if (_codEnvio>0)
+            holder.btnFinalizar.setVisibility(View.INVISIBLE);
+        else
+            holder.btnFinalizar.setVisibility(View.VISIBLE);
         holder.btnFinalizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,6 +85,7 @@ public class EnvioTarjetaAdaptadorRV extends RecyclerView.Adapter<EnvioTarjetaAd
                 //tarjetaService.FinalizarTarjetaIncompleta(_tarjetaControl.getTaCoId(),BuId,TaCoFecha);
                 //aqui llamano al cuadro de dialogo, esta interfaz esta enlazado con el fragmento RecyclerEncioTarjetaFragment,
                 //que es de donde llamo al cuadro de dialogo FinalizaTarjetaDialogFragment
+
                 listener.onItemClicked(v,_tarjetaControl.getTaCoId());
 
             }

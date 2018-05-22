@@ -1,5 +1,6 @@
 package com.godared.controlbusmovil;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -87,9 +88,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     private ViewPager vpViewPager;
     ArrayList<Fragment> fragmets;
     private ArrayList<TarjetaControlDetalle> tarjetasDetalle;
-
     public static String TAG2 = "lstech.aos.debug";
-
     static public boolean geofencesAlreadyRegistered = false;
     public int BuId;
     public int EmId;
@@ -114,12 +113,10 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     // Message type for the handler
     private final static int MSG_UPDATE_TIME = 0;
     private TextView timerTextView;
-
     /**
      * Callback for service binding, passed to bindService()
      */
     private ServiceConnection mConnection2 = new ServiceConnection() {
-
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
             if (Log.isLoggable(TAG, Log.VERBOSE)) {
@@ -135,7 +132,6 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
                 updateUIStartRun();
             }
         }
-
         @Override
         public void onServiceDisconnected(ComponentName name) {
             if (Log.isLoggable(TAG, Log.VERBOSE)) {
@@ -177,7 +173,6 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             onResume();
         }
     };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -206,7 +201,6 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
 
 
     }
-
     @Override
     public void onResume(){
         super.onResume();
@@ -240,7 +234,6 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         Toast.makeText(this, defaultServer, Toast.LENGTH_SHORT).show();
 
     }
-
     public static boolean isTimeAutomatic(Context c) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             return Settings.Global.getInt(c.getContentResolver(), Settings.Global.AUTO_TIME, 0) == 1;
@@ -309,19 +302,18 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         savedInstanceState.putInt("TACO_ID", TaCoId);
         super.onSaveInstanceState(savedInstanceState);
     }
-
     @Override
     protected void onStart(){
         super.onStart();
         if (Log.isLoggable(TAG, Log.VERBOSE)) {
             Log.v(TAG, "Starting and binding service");
         }
-        Intent i = new Intent(this, TimerService.class);
-        startService(i);
-        bindService(i, mConnection2, 0);
+        //tiene que ejecutarse antes del servicio GeolcationService
+        Intent intentTimerService = new Intent(this, TimerService.class);
+        startService(intentTimerService);
+        bindService(intentTimerService, mConnection2, 0);
 
     }
-
     //Se te han mejor
     /* sobrescribimos para agregar el menu, estos metodos vienes ya
         para implementar implementar o agragr a otra clase*/
@@ -333,15 +325,18 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.mDescarga:
+                //ProgressDialog progress = ProgressDialog.show(this, "dialog title", "dialog message", true);
                 Sincronizar(this.getBaseContext());
                 iTarjetaService=new TarjetaService(this.getBaseContext());
 
                 this.obtenerFechaServer();
-
+                //progress.dismiss();
                 break;
             case R.id.mSetting:
                 Intent intent= new Intent(this, SettingActivity.class);
                 intent.putExtra("BUS_ID",BuId);
+                intent.putExtra("EMP_ID",EmId);
+                intent.putExtra("TACO_ID",TaCoId);
                 SimpleDateFormat format2 = new SimpleDateFormat("dd-M-yyyy");//("yyyy-MM-dd'T'HH:mm:ss");
                 String dateFecha2=format2.format(this.FechaActual);
                 intent.putExtra("TACO_FECHA",dateFecha2);
@@ -467,90 +462,12 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     }
     //Viene desde GeolocationService
     public void updateGeofenceGeolocationService(int taCoDeId,int puCoDeId,double latitude,double longitude){
-        String date = DateFormat.format("dd-MM-yyyy",new Date()).toString();
-        String zona="America/Lima";
-        TimeZone timeZone2 = TimeZone.getTimeZone(zona);
-        Calendar cal = Calendar.getInstance(timeZone2);
-        //Calendar cal = Calendar.getInstance();
-        cal.setTime(this.FechaActual);
-        ITarjetaService tarjetaService;
-        tarjetaService=new TarjetaService(getApplicationContext());
-        TarjetaControlDetalle tarjetaControlDetalle;
-        tarjetaControlDetalle=tarjetaService.GetTarjetaDetalleByTaCoPuCoDe(TaCoId,puCoDeId);
-        //verificamos si es que no se ha registrado o enviado la geofence
-        if (!tarjetaService.VerificarTarjetaDetalleBDByTaCoDeRegistradoEnviado(tarjetaControlDetalle.getTaCoDeId())) {
-            //tarjetaControlDetalle.setTaCoDeId(sg.getPuCoDeId());
-            Long value = cal.getTimeInMillis();
-            tarjetaControlDetalle.setTaCoDeFecha(value.toString());
-            tarjetaControlDetalle.setTaCoDeLatitud(latitude);
-            tarjetaControlDetalle.setTaCoDeLongitud(longitude);
-            Calendar cal2=Calendar.getInstance();
-            cal2.setTimeInMillis(this.FechaActual.getTime());
-            String hora = DateFormat.format("HH:mm:ss",
-                    cal2).toString(); //new Date()).toString();
-            SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
-            try {
-                cal.setTime(sdf2.parse(hora)); //cal.setTime(sdf2.parse(hora));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            value = cal.getTimeInMillis();
-            tarjetaControlDetalle.setTaCoDeTiempo(value.toString());
-            //actualizamos en la base de datos local
-            tarjetaService.actualizarTarjetaDetalleBD(tarjetaControlDetalle);
-            //Actualizamos el Registro
-            TarjetaDetalleBitacoraMovil tarjetaDetalleBitacoraMovil;
-            tarjetaDetalleBitacoraMovil=tarjetaService.obtenerTarjetaDetalleBitacoraMovilByTaCoDe(tarjetaControlDetalle.getTaCoDeId());
-            tarjetaDetalleBitacoraMovil.setTaDeBiMoRegistradoId(1);
-            tarjetaService.actualizarTarjetaDetalleBitacoraMovilBD(tarjetaControlDetalle.getTaCoDeId(),tarjetaDetalleBitacoraMovil);
-            //Actualizamos en el servidor
-            tarjetaService.UpdateTarjetaDetalleRest(tarjetaControlDetalle);
-            //verificamos si todo el detalle ya tienen registros para activar finaliza en la cabecera TarjetaCOntrol
-            tarjetaService.VerificarActualizaTarjetaFinaliza(tarjetaControlDetalle.getTaCoId());
-            ///devolvemos a MainActivity for Update RecyclerView
 
-        }
         this.updateClient(taCoDeId);
     }
     //Viene desde GeolocationService
     //Con este procedimiento guardamos la Georeferencia en el servidor rest de la nube
     public void  listenguardarGeoreferenciaGeolocationService(Location location){
-        IGeoreferenciaService _georeferenciaService=new GeoreferenciaService(getApplicationContext());
-        Georeferencia _georeferencia=new Georeferencia();
-
-        if (this.TaCoId>0){
-            //_georeferencia.setGeId(0);
-            _georeferencia.setTaCoId(this.TaCoId);
-            _georeferencia.setGeLatitud(location.getLatitude());
-            _georeferencia.setGeLongitud(location.getLongitude());
-            String dateNow = DateFormat.format("yyyy-dd-MM HH:mm:ss a",
-                    this.FechaActual).toString();
-            _georeferencia.setGeFechaHora(dateNow);
-            int cantidad=_georeferenciaService.GetCountGeoreferenciadByTaCo(this.TaCoId);
-            _georeferencia.setGeOrden(cantidad+1);
-            _georeferencia.setGeEnviadoMovil(false);
-            _georeferencia.setUsId(1);
-
-            //Verificamos si el ultimo registro no ha variado con respecto al actual
-            //primero obtenemos el ultimo registro
-            Georeferencia georeferencia=null;
-            georeferencia=_georeferenciaService.GetLastGeoreferenciaByTaCo(this.TaCoId);
-            //redondeamos a 3 digitos, debido que es ahi varia cuando varia de posicion auna distancia prudente de 30mts
-            DecimalFormat df = new DecimalFormat("####0.000");
-            //System.out.println("Value: " + df.format(value));
-            df.setRoundingMode(RoundingMode.CEILING);
-            double _latitudActual=Double.valueOf(df.format(location.getLatitude()));
-            double _longitudActual=Double.valueOf(df.format(location.getLongitude()));
-            double _latitudLastBD=Double.valueOf(df.format(georeferencia.getGeLatitud()));
-            double _longitudLastBD=Double.valueOf(df.format(georeferencia.getGeLongitud()));
-            //if(_latitudActual!=_latitudLastBD || _longitudActual!=_longitudLastBD)
-            //Calculamos la distancia en metros
-            double diferencia;
-            diferencia=Math.sqrt(Math.pow(_latitudLastBD-_latitudActual,2)+Math.pow(_longitudLastBD-_longitudActual,2));
-            if(diferencia>100 |_latitudLastBD==0)
-                _georeferenciaService.SaveGeoreferenciaRest(_georeferencia);
-
-        }
         //Estos dos datos lo uso en AlertaIncidenciaFragment(se guarda ahi)
         this.Latitud=location.getLatitude();
         this.Longitud=location.getLongitude();
@@ -561,7 +478,6 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         obtenerFechaServer();
         //panel el titulo a la actividad
         setTitle("BUS:"+BuPlaca);
-
 
         tlTablaLayout=(TabLayout)findViewById(R.id.tlTablaLayout);
         //Cargando el Reloj digital
@@ -656,26 +572,17 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             //updateUIStopRun();
         }
     }
-
-    /**
-     * Updates the UI when a run starts
-     */
+    /*** Updates the UI when a run starts*/
     private void updateUIStartRun() {
         mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME);
         //timerButton.setText(R.string.timer_stop_button);
     }
-
-    /**
-     * Updates the UI when a run stops
-     */
+    /*** Updates the UI when a run stops*/
     private void updateUIStopRun() {
         mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
        // timerButton.setText(R.string.timer_start_button);
     }
-
-    /**
-     * Updates the timer readout in the UI; the service must be bound
-     */
+    /*** Updates the timer readout in the UI; the service must be bound*/
     private void updateUITimer() {
         if (serviceBound) {
             Calendar cSchedStartCal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -688,11 +595,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             FechaActual.setTime(valorTime);
         }
     }
-
-    /**
-     * When the timer is running, use this handler to update
-     * the UI every second to show timer progress
-     */
+    /*** When the timer is running, use this handler to update* the UI every second to show timer progress*/
     static class UIUpdateHandler extends Handler {
 
         private final static int UPDATE_RATE_MS = 1000;
@@ -715,7 +618,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     }
     //esto viene delescucha de Dialog New Incidencia
    public void listenNuevaIncidenciaDialog(String descripcion){
-        AlertaIncidenciaService alertaIncidenciaService=new AlertaIncidenciaService(getApplicationContext());
+      /* AlertaIncidenciaService alertaIncidenciaService=new AlertaIncidenciaService(getApplicationContext());
         List<AlertaIncidencia> alertaIncidencias=new ArrayList<>();
         AlertaIncidencia alertaIncidencia=new AlertaIncidencia();
         alertaIncidencia.setAlInId(0);
@@ -733,8 +636,6 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
        AlertaIncidenciaFragment alertaIncidenciaFragment;
        alertaIncidenciaFragment=(AlertaIncidenciaFragment) fragmets.get(2);
        alertaIncidenciaFragment.alertaIncidenciaPresenter.obtenerAlertaIncidenciasBD(this.TaCoId);
+       */
     }
-
-
-
 }

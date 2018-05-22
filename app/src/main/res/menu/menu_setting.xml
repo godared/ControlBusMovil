@@ -3,11 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/mVisible"
-        android:title="Visible"
-        android:orderInCategory="101"
-        app:showAsAction="always"
         android:icon="@drawable/icons8_invisible_48"
-        ></item>
+        android:orderInCategory="101"
+        android:title="Visible"
+        app:showAsAction="always"></item>
     <item
         android:id="@+id/mSubida"
         android:title="Subida"
