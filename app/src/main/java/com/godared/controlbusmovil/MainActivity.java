@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     public Date FechaActual;
     public double Latitud;
     public double Longitud;
-
+    ProgressDialog progress;
     ITarjetaService iTarjetaService;
     //variablea para el servicio Geolocation
     Intent geolocationServiceIntent;
@@ -325,7 +325,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.mDescarga:
-                //ProgressDialog progress = ProgressDialog.show(this, "dialog title", "dialog message", true);
+                //progress = ProgressDialog.show(this, "Descargando..", "Tarjeta de Control...", true);
                 Sincronizar(this.getBaseContext());
                 iTarjetaService=new TarjetaService(this.getBaseContext());
 
@@ -408,8 +408,8 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
 
         //VOlvemos a llamar al servicio para agregar el geofence
         //geofencesAlreadyRegistered = false;
-        //startService(geolocationServiceIntent);
-        //bindService(geolocationServiceIntent, mConnection, Context.BIND_AUTO_CREATE); //Binding to the service!
+        //stopService(geolocationServiceIntent);
+
 
         //obteniendo la tarejacontrol activo
         ITarjetaService tarjetaService=new TarjetaService(this);
@@ -422,16 +422,20 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         IAlertaIncidenciaService alertaIncidenciaService=new AlertaIncidenciaService(this,getApplicationContext());
         alertaIncidenciaService.ObtenerAlertaIncidenciaRest(this.EmId,this.TaCoId);
 
+        //startService(geolocationServiceIntent);
+        //bindService(geolocationServiceIntent, mConnection, Context.BIND_AUTO_CREATE); //Binding to the service!
+
     }
     //esto viene desde la escucha interfaz AlertaIncidenciaService.AlertaIncidenciaServiceListener
     public void listenObtenerAlertaIncidenciaRest(){
         //Cargamos en el recyclerview de incidencias
-
         if (vpViewPager.getCurrentItem()==2){
             AlertaIncidenciaFragment alertaIncidenciaFragment;
             alertaIncidenciaFragment=(AlertaIncidenciaFragment) fragmets.get(2);
             alertaIncidenciaFragment.alertaIncidenciaPresenter.obtenerAlertaIncidenciasBD(this.TaCoId);
         }
+        //fin de cuadro de Progress
+        progress.dismiss();
     }
     @Override
     protected void onDestroy() {

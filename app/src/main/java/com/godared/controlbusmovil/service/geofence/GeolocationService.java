@@ -480,8 +480,8 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
             _georeferencia.setGeLongitud(location.getLongitude());
             String dateNow = DateFormat.format("yyyy-dd-MM HH:mm:ss a",
                     this.FechaActual).toString();
-            Date fecha2=this.FechaActual;
-            _georeferencia.setGeFechaHora(String.valueOf(fecha2.getTime()));
+            Date fechaActual2=this.FechaActual;
+            _georeferencia.setGeFechaHora(String.valueOf(fechaActual2.getTime()));
             int cantidad=_georeferenciaService.GetCountGeoreferenciadByTaCo(this.TaCoId);
             _georeferencia.setGeOrden(cantidad+1);
             _georeferencia.setGeEnviadoMovil(false);
@@ -506,7 +506,13 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
             diferencia2=diferencia*1000; //Aqui para convertir a metros(nos da en kilometros)
             if (diferencia2 > 50 | _latitudLastBD == 0)
                 _georeferenciaService.SaveGeoreferenciaRest(_georeferencia);
-            //else
+            else {
+                //aqui si esta parado(sin movimiento) tons reporta cada 5 minutos(300seg, esto xq asi es el tiempo de la consulta online)
+                // y como timestamp esta en segundos
+                Long diferencia3=fechaActual2.getTime()-Long.parseLong(georeferencia.getGeFechaHora());
+                if(diferencia3>300)
+                    _georeferenciaService.SaveGeoreferenciaRest(_georeferencia);
+            }
             // _georeferenciaService.SaveGeoreferenciaRest(_georeferencia);
 
         }
