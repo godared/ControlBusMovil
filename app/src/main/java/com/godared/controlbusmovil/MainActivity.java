@@ -435,7 +435,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
             alertaIncidenciaFragment.alertaIncidenciaPresenter.obtenerAlertaIncidenciasBD(this.TaCoId);
         }
         //fin de cuadro de Progress
-        progress.dismiss();
+        //progress.dismiss();
     }
     @Override
     protected void onDestroy() {

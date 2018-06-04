@@ -510,7 +510,7 @@ public class GeolocationService extends Service implements GoogleApiClient.Conne
                 //aqui si esta parado(sin movimiento) tons reporta cada 5 minutos(300seg, esto xq asi es el tiempo de la consulta online)
                 // y como timestamp esta en segundos
                 Long diferencia3=fechaActual2.getTime()-Long.parseLong(georeferencia.getGeFechaHora());
-                if(diferencia3>300)
+                if(diferencia3>300000) //milisegundos 5min X 60seg X 1000miliseg
                     _georeferenciaService.SaveGeoreferenciaRest(_georeferencia);
             }
             // _georeferenciaService.SaveGeoreferenciaRest(_georeferencia);
