@@ -68,6 +68,7 @@ public class TarjetaAdaptadorRV extends RecyclerView.Adapter<TarjetaAdaptadorRV.
         }else{
             holder.txtHoraReg.setText("");
         }
+        //
 
     }
 

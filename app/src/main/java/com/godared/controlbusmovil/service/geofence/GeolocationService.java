@@ -55,7 +55,7 @@ import java.util.TimeZone;
 
 public class GeolocationService extends Service implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<Status>,GeofenceReceiver.Callbacks {
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000; //1000 es un segundo
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 1000; //1000 es un segundo //5000 es 5 segundo;
     public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 3;
     protected GoogleApiClient mGoogleApiClient;
     protected LocationRequest mLocationRequest;
