@@ -310,9 +310,9 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
         }
         //tiene que ejecutarse antes del servicio GeolcationService
         Intent intentTimerService = new Intent(this, TimerService.class);
-        startService(intentTimerService);
-        bindService(intentTimerService, mConnection2, 0);
 
+        bindService(intentTimerService, mConnection2, 0);
+        startService(intentTimerService);
     }
     //Se te han mejor
     /* sobrescribimos para agregar el menu, estos metodos vienes ya
@@ -534,8 +534,9 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     public void listenObtenerConfiguraRest(String dateServer,boolean isDateServer){
         Date date=new Date();
         date.setTime(Long.parseLong(dateServer));
-
+        serviceBound=true;
         runButtonClick(date,isDateServer);
+
     }
     protected void onStop() {
         super.onStop();
@@ -558,7 +559,7 @@ public class MainActivity extends AppCompatActivity implements TarjetaService.Ta
     public void runButtonClick(Date fechaActualServer,boolean isDateServer) //View v
     {
         //if (serviceBound)
-            timerService.startTimer(fechaActualServer,isDateServer);
+          //  timerService.startTimer(fechaActualServer,isDateServer);
         if (serviceBound && !timerService.isTimerRunning()) {
             if (Log.isLoggable(TAG, Log.VERBOSE)) {
                 Log.v(TAG, "Starting timer");
